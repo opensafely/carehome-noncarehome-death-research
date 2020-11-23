@@ -1,8 +1,8 @@
-# OpenSAFELY Research Template
+# Work In Progress 
 
 This is a template repository for making new OpenSAFELY resarch projects.  Eventually it'll become a framework. To get started, create a new repo using this repo as a template, delete this front matter, and edit the text that follows.
 
-# _title goes here_
+# The impact of the COVID-19 pandemic on mortality risk among older adults living in care homes in the UK : An OpenSAFELY Cohort Study 
 
 This is the code and configuration for our paper, _name goes here_
 
