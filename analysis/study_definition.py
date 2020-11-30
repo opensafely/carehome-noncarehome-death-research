@@ -70,6 +70,21 @@ study = StudyDefinition(
             "int": {"distribution": "population_ages"},
         },
     ),
+    ## age groups 
+    ageband = patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "18-49": """ age >= 18 AND age < 50""",
+            "50-59": """ age >=  50 AND age < 60""",
+            "60-69": """ age >=  60 AND age < 70""",
+            "70-79": """ age >=  70 AND age < 80""",
+            "80+": """ age >=  80 AND age < 120""",
+        },
+        return_expectations={
+            "rate":"universal",
+            "category": {"ratios": {"18-49": 0.5, "50-59": 0.2, "60-69": 0.1, "70-79":0.1, "80+":0.1 }}
+        },
+    ),
     ## sex 
     sex=patients.sex(
         return_expectations={
