@@ -35,47 +35,17 @@ study = StudyDefinition(
           "first_day_of_month(index_date)", "last_day_of_month(index_date)"
         ),
     ),
-    care_home=patients.care_home_status_as_of(
-        "index_date",
-        categorised_as={
-            "Y": """
-              IsPotentialCareHome
-              AND LocationDoesNotRequireNursing='Y'
-              OR LocationRequiresNursing='N'
-            """,
-            "Y": """
-              IsPotentialCareHome
-              AND LocationDoesNotRequireNursing='N'
-              AND LocationRequiresNursing='Y'
-            """,
-            "Y": "IsPotentialCareHome",
-            "N": "DEFAULT",
-        },
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"Y": 0.20, "N": 0.80},},
-        },
-    ),
-    care_home_type=patients.care_home_status_as_of(
-        "index_date",
-        categorised_as={
-            "PC": """
-              IsPotentialCareHome
-              AND LocationDoesNotRequireNursing='Y'
-              AND LocationRequiresNursing='N'
-            """,
-            "PN": """
-              IsPotentialCareHome
-              AND LocationDoesNotRequireNursing='N'
-              AND LocationRequiresNursing='Y'
-            """,
-            "PS": "IsPotentialCareHome",
-            "U": "DEFAULT",
-        },
-        return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"PC": 0.40, "PN": 0.30, "PS": 0.30},},
-        },
+    ons_any_death=patients.died_from_any_cause(
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
+    ), 
+    ons_covid_death=patients.with_these_codes_on_death_certificate(
+       covid_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=False,
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
     ),
     age=patients.age_as_of(
         "index_date",
@@ -90,25 +60,14 @@ study = StudyDefinition(
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
         }
     ),
-    ons_covid_death=patients.with_these_codes_on_death_certificate(
-       covid_codelist,
-       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
-       match_only_underlying_cause=False,
-       returning="date_of_death",
-       date_format="YYYY-MM-DD",
-       return_expectations={"date": {"earliest": "2020-02-01"},
-                            "rate" : "exponential_increase"
-                            }, 
-    ),  
 )
 
-# Specify Measures to be calculated 
+# Specify measures to be calculated 
 
 measures = [
     Measure(
         id="ons_covid_death",
         numerator="ons_covid_death",
         denominator="population",
-        group_by="care_home",
     ),
 ]
