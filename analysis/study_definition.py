@@ -38,6 +38,13 @@ study = StudyDefinition(
 
     # define and select variables 
 
+    # ADMINISTRATIVE 
+
+    ## deregistration (censor) date
+    dereg_date=patients.date_deregistered_from_all_supported_practices(
+        on_or_after="2020-02-01", date_format="YYYY-MM",
+    ),
+
     # HOUSEHOLD INFORMATION
     ## care home status 
     care_home_type=patients.care_home_status_as_of(
