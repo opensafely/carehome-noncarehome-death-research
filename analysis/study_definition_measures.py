@@ -112,4 +112,22 @@ measures = [
         denominator="population",
         group_by = "ageband", 
     ),
+    Measure(
+        id="allcause_death_all",
+        numerator="ons_any_death",
+        denominator="population",
+        group_by = "allpatients", 
+    ),
+    Measure(
+        id="allcause_death_sex",
+        numerator="ons_any_death",
+        denominator="population",
+        group_by = "sex", 
+    ),
+    Measure(
+        id="allcause_death_age",
+        numerator="ons_any_death",
+        denominator="population",
+        group_by = "ageband", 
+    ),
 ]
