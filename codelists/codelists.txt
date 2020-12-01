@@ -1,3 +1,15 @@
+opensafely/dementia/2020-04-22
+opensafely/ethnicity/2020-04-27
+opensafely/covid-identification/2020-06-03
+opensafely/chronic-respiratory-disease/2020-04-10
 opensafely/chronic-cardiac-disease/2020-04-08
+opensafely/haematological-cancer/2020-04-15
+opensafely/lung-cancer/2020-04-15
+opensafely/cancer-excluding-lung-and-haematological/2020-04-15
+opensafely/diabetes/2020-04-15
+opensafely/chronic-kidney-disease/2020-04-14
+opensafely/influenza-vaccination/2020-05-12
+opensafely/influenza-vaccination-clinical-codes-given/2020-05-21
+opensafely/influenza-vaccination-clinical-codes-not-given/2020-05-19 
+opensafely/stroke-updated/2020-06-02
 opensafely/chronic-liver-disease/2020-06-02
-opensafely/asthma-inhaler-salbutamol-medication/2020-04-15
