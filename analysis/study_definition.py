@@ -65,7 +65,7 @@ study = StudyDefinition(
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"PC": 0.40, "PN": 0.30, "PS": 0.30},},
+            "category": {"ratios": {"PC": 0.30, "PN": 0.10, "PS": 0.10, "U":0.5},},
         },
     ),
      # DEMOGRAPHICS  
@@ -106,7 +106,7 @@ study = StudyDefinition(
         find_last_match_in_period=True,
         include_date_of_match=True,
         return_expectations={
-            "category": {"ratios": {"1": 0.8, "5": 0.1, "3": 0.1}},
+            "category": {"ratios": {"1": 0.5, "2": 0.2, "3": 0.1, "4": 0.1, "5": 0.1}},
             "incidence": 0.75,
         },
     ),   
@@ -156,8 +156,8 @@ study = StudyDefinition(
         returning="index_of_multiple_deprivation",
         round_to_nearest=100,
         return_expectations={
-            "rate": "universal",
-            "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
+            "float": {"distribution": "normal", "mean": 60.0, "stddev": 15},
+            "incidence": 0.95,
         },
     ),   
     # CLINICAL COMORBIDITIES  
@@ -242,6 +242,13 @@ study = StudyDefinition(
         on_or_before="index_date",
         return_first_date_in_period=True,
         include_month=True,
+    ),
+    ## dementia 
+    dementia=patients.with_these_clinical_events(
+        dementia,
+        # return_first_date_in_period=True,
+        # include_month=True,
+        return_expectations={"incidence": 0.1, "date": {"latest": "2020-02-01"}},
     ),
 
     ## varaibles to define flu vaccination status 
