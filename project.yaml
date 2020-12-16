@@ -1,31 +1,85 @@
-version: '3.0'
+version: "3.0"
 
 expectations:
   population_size: 1000
 
 actions:
-
-  generate_cohorts:
+  generate_cohort:
     run: cohortextractor:latest generate_cohort --study-definition study_definition
     outputs:
       highly_sensitive:
         cohort: output/input.csv
 
-  run_model:
-    run: stata-mp:latest analysis/model.do
-    needs: [generate_cohorts]
+  generate_measures_cohorts:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-10-01 by month"
     outputs:
-      moderately_sensitive:
-        log: logs/model.log
+      highly_sensitive:
+        cohort1: output/input_2019-02-01.csv
+        cohort2: output/input_2019-03-01.csv
+        cohort3: output/input_2019-04-01.csv
+        cohort4: output/input_2019-05-01.csv
+        cohort5: output/input_2019-06-01.csv
+        cohort6: output/input_2019-07-01.csv
+        cohort7: output/input_2019-08-01.csv
+        cohort8: output/input_2019-09-01.csv
+        cohort9: output/input_2019-10-01.csv
+        cohort10: output/input_2019-11-01.csv
+        cohort11: output/input_2019-12-01.csv
+        cohort12: output/input_2020-01-01.csv
+        cohort13: output/input_2020-02-01.csv
+        cohort14: output/input_2020-03-01.csv
+        cohort15: output/input_2020-04-01.csv
+        cohort16: output/input_2020-05-01.csv
+        cohort17: output/input_2020-06-01.csv
+        cohort18: output/input_2020-07-01.csv
+        cohort19: output/input_2020-08-01.csv
+        cohort20: output/input_2020-09-01.csv
+        cohort21: output/input_2020-10-01.csv
 
-  run_all:
-    needs:
-      - run_model
-    # In order to be valid this action needs to define a run commmand and some
-    # output. We don't really care what these are but the below does the trick.
-    # In a future release of the platform, this special action won't need to be
-    # defined at all.
-    run: cohortextractor:latest --version
+  generate_measures:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_measures
+    needs: [generate_measures_cohorts]
     outputs:
       moderately_sensitive:
-        whatever: project.yaml
+        measure1: output/measure_covid_death_all.csv
+        measure2: output/measure_covid_death_sex.csv
+        measure3: output/measure_covid_death_age.csv
+        measure4: output/measure_covid_death_sex_age.csv
+        measure5: output/measure_allcause_death_all.csv
+        measure6: output/measure_allcause_death_sex.csv
+        measure7: output/measure_allcause_death_age.csv
+        measure8: output/measure_allcause_death_sex_age.csv
+
+  00_data_management: 
+    run: r:latest analysis/01_data_management.R 
+    needs: [generate_cohort]
+    outputs: 
+      highly_sensitive:
+        data: data/study_population.csv 
+        
+  01_baseline_characteristics: 
+    run: r:latest analysis/02_baseline_characteristics.R
+    needs: [generate_cohort, 00_data_management]
+    outputs: 
+      moderately_sensitive: 
+        table_1: analysis/outfiles/table_1.txt
+
+  02_descriptive_mortality_rates: 
+    run: r:latest analysis/run_feasibility_checks.R output/input.csv data/tpp_msoa_coverage.csv
+    needs: [generate_measures]
+    outputs: 
+      moderately_sensitive: 
+        table_2a: analysis/outfiles/table_2a.txt
+        table_2b: analysis/outfiles/table_2b.txt
+        table_2c: analysis/outfiles/table_2c.txt
+        table_2d: analysis/outfiles/table_2d.txt
+        table_3a: analysis/outfiles/table_3a.txt
+        table_3b: analysis/outfiles/table_3b.txt
+        table_3c: analysis/outfiles/table_3c.txt
+        table_3d: analysis/outfiles/table_3d.txt
+        plot_1a: analysis/outfiles/plot_1a.png
+        plot_1b: analysis/outfiles/plot_1b.png
+        plot_1c: analysis/outfiles/plot_1c.png
+        plot_2a: analysis/outfiles/plot_2a.png
+        plot_2b: analysis/outfiles/plot_2b.png
+        plot_2c: analysis/outfiles/plot_2c.png
