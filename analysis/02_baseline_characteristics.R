@@ -23,6 +23,18 @@ library(data.table)
 library(janitor)
 library(lubridate)
 
+# make sure my favoured output folder exists
+
+mainDir <- getwd() 
+subDir <- "./analysis/outfiles"
+
+if (file.exists(subDir)){
+  print("Out directory exists")
+} else {
+  dir.create(file.path(mainDir, subDir))
+  print("Out directory didn't exist, but I created it")
+}
+
 # Read in Data ------------------------------------------------------------
 
 study_population <- fread("./data/study_population.csv", data.table = FALSE, na.strings = "")
