@@ -31,10 +31,15 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         (age >= 65) AND 
-        is_registered_with_tpp 
+        is_registered_with_tpp AND NOT 
+        lives_in_care_home
         """,
         is_registered_with_tpp=patients.registered_as_of(
           "index_date + 14 days"
+        ),
+        lives_in_care_home=patients.care_home_status_as_of(
+          "index_date",
+        categorised_as=None
         ),
     ),
 
@@ -88,46 +93,79 @@ study = StudyDefinition(
             "category": {"ratios": {"M": 0.49, "F": 0.51}},
         }
     ),
-
+    #care_home_type
+    care_home_type=patients.care_home_status_as_of(
+        "index_date",
+        categorised_as={
+            "Y": """
+              IsPotentialCareHome
+              AND LocationDoesNotRequireNursing='Y'
+              AND LocationRequiresNursing='N'
+            """,
+            "Y": """
+              IsPotentialCareHome
+              AND LocationDoesNotRequireNursing='N'
+              AND LocationRequiresNursing='Y'
+            """,
+            "Y": "IsPotentialCareHome",
+            "N": "DEFAULT",
+        },
+        return_expectations={
+            "rate": "universal",
+            "category": {"ratios": {"Y": 0.30, "N": 0.70},},
+        },
+    ),
 )
 
-# Specify mortality rates to be calculated 
 
 measures = [
+    
     Measure(
         id="covid_death_all",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = "allpatients", 
+        group_by = ["allpatients", "care_home_type"], 
     ),
     Measure(
         id="covid_death_sex",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = "sex", 
+        group_by = ["sex", "care_home_type"], 
     ),
     Measure(
         id="covid_death_age",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = "ageband", 
+        group_by = ["ageband", "care_home_type"],
+    ),
+    Measure(
+        id="covid_death_sex_age",
+        numerator="ons_covid_death",
+        denominator="population",
+        group_by = ["sex", "ageband", "care_home_type"],  
     ),
     Measure(
         id="allcause_death_all",
         numerator="ons_any_death",
         denominator="population",
-        group_by = "allpatients", 
+        group_by = ["allpatients", "care_home_type"], 
     ),
     Measure(
         id="allcause_death_sex",
         numerator="ons_any_death",
         denominator="population",
-        group_by = "sex", 
+        group_by = ["sex", "care_home_type"],  
     ),
     Measure(
         id="allcause_death_age",
         numerator="ons_any_death",
         denominator="population",
-        group_by = "ageband", 
+        group_by = ["ageband", "care_home_type"],
+    ),
+    Measure(
+        id="allcause_death_sex_age",
+        numerator="ons_any_death",
+        denominator="population",
+        group_by = ["sex", "ageband", "care_home_type"],    
     ),
 ]
