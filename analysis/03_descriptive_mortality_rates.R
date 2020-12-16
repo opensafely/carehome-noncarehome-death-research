@@ -24,6 +24,18 @@ library(janitor)
 library(lubridate)
 library(Hmisc)
 
+# make sure my favoured output folder exists
+
+mainDir <- getwd() 
+subDir <- "./analysis/outfiles"
+
+if (file.exists(subDir)){
+  print("Out directory exists")
+} else {
+  dir.create(file.path(mainDir, subDir))
+  print("Out directory didn't exist, but I created it")
+}
+
 # Read in Data ------------------------------------------------------------
 # To do; develop function for thus 
 
