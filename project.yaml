@@ -65,7 +65,7 @@ actions:
         table_1: analysis/outfiles/table_1.txt
 
   02_descriptive_mortality_rates: 
-    run: r:latest analysis/run_feasibility_checks.R output/input.csv data/tpp_msoa_coverage.csv
+    run: r:latest analysis/02_descriptive_mortality_rates.R 
     needs: [generate_measures]
     outputs: 
       moderately_sensitive: 
