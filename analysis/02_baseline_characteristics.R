@@ -47,6 +47,7 @@ summary <- summary %>%
 # Define Functions --------------------------------------------------------
 # these are not particularly generalised at the moment 
 # the idea was to have small discrete functions that can then be applied many times to build a table one
+# honestly I can't quite get my head around R functions but these broadly seem to do the thing
 
 # function for summarising categorical variable in table format
 #-- the input values are: 
@@ -74,7 +75,7 @@ tabulate_me <- function(x, y) {
     select(varname, everything()) %>% 
     select(-c(row))
     
-    bind_rows(table_one, table)
+    bind_rows(table_1, table)
     
 }
 
@@ -107,38 +108,38 @@ summarise_me <- function(x, y) {
     select(varname, everything()) %>% 
     select(-c(row)) 
     
-    bind_rows(table_one, table)
+    bind_rows(table_1, table)
 }
 
 # create an empty table structure to append generated tables to 
 # if someone can think of a neater way to do this, please let me know
 # i think I might be approaching it too much like table outputting in SAS 
 
-table_one <- NULL
+table_1 <- NULL
 
 # tabulate and summarise the variables I want 
 
-table_one <- tabulate_me(x = total, y = Total)
-table_one <- tabulate_me(x = care_home_cat, y = Care_Home_Type)
-table_one <- tabulate_me(x = sex, y = Gender) 
-table_one <- summarise_me(x = age, y = Age_in_Years)
-table_one <- tabulate_me(x = ethnicity_cat, y = Self-reported_Ethnicity)
-table_one <- tabulate_me(x = region, y = Geographical_Region)
-table_one <- tabulate_me(x = rural_urban, y = Rural_or_Urban_Area)
-table_one <- tabulate_me(x = imd_cat, y = Quintile_of_Index_of_Multiple_Deprivation)
-table_one <- tabulate_me(x = diabetes, y = Diabetes)
-table_one <- tabulate_me(x = ckd, y = Chronic_Kidney_Disease)
-table_one <- tabulate_me(x = lung_cancer, y = Lung_Cancer)
-table_one <- tabulate_me(x = haem_cancer, y = Haematological_Cancer)
-table_one <- tabulate_me(x = other_cancer, y = Other_Cancer)
-table_one <- tabulate_me(x = chronic_liver_disease, y = Chronic_Liver_Disease)
-table_one <- tabulate_me(x = chronic_cardiac_disease, y = Chronic_Cardiac_Disease)
-table_one <- tabulate_me(x = chronic_respiratory_disease, y = Chronic_Respiratory_Disease)
-table_one <- tabulate_me(x = stroke, y = History_of_Stroke)
-table_one <- tabulate_me(x = dementia, y = Dementia)
+table_1 <- tabulate_me(x = total, y = Total)
+table_1 <- tabulate_me(x = care_home_cat, y = Care_Home_Type)
+table_1 <- tabulate_me(x = sex, y = Gender) 
+table_1 <- summarise_me(x = age, y = Age_in_Years)
+table_1 <- tabulate_me(x = ethnicity_cat, y = Self-reported_Ethnicity)
+table_1 <- tabulate_me(x = region, y = Geographical_Region)
+table_1 <- tabulate_me(x = rural_urban, y = Rural_or_Urban_Area)
+table_1 <- tabulate_me(x = imd_cat, y = Quintile_of_Index_of_Multiple_Deprivation)
+table_1 <- tabulate_me(x = diabetes, y = Diabetes)
+table_1 <- tabulate_me(x = ckd, y = Chronic_Kidney_Disease)
+table_1 <- tabulate_me(x = lung_cancer, y = Lung_Cancer)
+table_1 <- tabulate_me(x = haem_cancer, y = Haematological_Cancer)
+table_1 <- tabulate_me(x = other_cancer, y = Other_Cancer)
+table_1 <- tabulate_me(x = chronic_liver_disease, y = Chronic_Liver_Disease)
+table_1 <- tabulate_me(x = chronic_cardiac_disease, y = Chronic_Cardiac_Disease)
+table_1 <- tabulate_me(x = chronic_respiratory_disease, y = Chronic_Respiratory_Disease)
+table_1 <- tabulate_me(x = stroke, y = History_of_Stroke)
+table_1 <- tabulate_me(x = dementia, y = Dementia)
 
 # export tbe table as a nice text file 
-write.table(table_one, file = "./analysis/outfiles/tableone.txt", sep = "\t", na = "")
+write.table(table_1, file = "./analysis/outfiles/table_1.txt", sep = "\t", na = "", row.names=FALSE)
 
 # To do 
 # Fix the evaluation of presentation names so you can use spaces rather than underscores 
