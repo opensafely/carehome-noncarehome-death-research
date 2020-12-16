@@ -50,21 +50,21 @@ actions:
         measure7: output/measure_allcause_death_age.csv
         measure8: output/measure_allcause_death_sex_age.csv
 
-  00_data_management: 
+  01_data_management: 
     run: r:latest analysis/01_data_management.R 
     needs: [generate_cohort]
     outputs: 
       highly_sensitive:
         data: data/study_population.csv 
         
-  01_baseline_characteristics: 
+  02_baseline_characteristics: 
     run: r:latest analysis/02_baseline_characteristics.R
     needs: [generate_cohort, 00_data_management]
     outputs: 
       moderately_sensitive: 
         table_1: analysis/outfiles/table_1.txt
 
-  02_descriptive_mortality_rates: 
+  03_descriptive_mortality_rates: 
     run: r:latest analysis/03_descriptive_mortality_rates.R 
     needs: [generate_measures]
     outputs: 
