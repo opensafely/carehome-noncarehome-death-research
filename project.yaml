@@ -59,7 +59,7 @@ actions:
         
   02_baseline_characteristics: 
     run: r:latest analysis/02_baseline_characteristics.R
-    needs: [generate_cohort, 00_data_management]
+    needs: [generate_cohort, 01_data_management]
     outputs: 
       moderately_sensitive: 
         table_1: analysis/outfiles/table_1.txt
