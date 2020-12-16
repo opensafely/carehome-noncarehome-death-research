@@ -35,9 +35,7 @@ study = StudyDefinition(
             "index_date", "index_date"
         ),
     ),
-
     # define and select variables 
-
     # ADMINISTRATIVE 
 
     ## deregistration (censor) date
@@ -65,10 +63,11 @@ study = StudyDefinition(
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"PC": 0.40, "PN": 0.30, "PS": 0.30},},
+            "category": {"ratios": {"PC": 0.30, "PN": 0.10, "PS": 0.10, "U":0.5},},
         },
     ),
-     # DEMOGRAPHICS  
+
+    # DEMOGRAPHICS  
     ## age 
     age=patients.age_as_of(
         "index_date",
@@ -106,11 +105,10 @@ study = StudyDefinition(
         find_last_match_in_period=True,
         include_date_of_match=True,
         return_expectations={
-            "category": {"ratios": {"1": 0.8, "5": 0.1, "3": 0.1}},
+            "category": {"ratios": {"1": 0.5, "2": 0.2, "3": 0.1, "4": 0.1, "5": 0.1}},
             "incidence": 0.75,
         },
-    ),   
-
+    ),  
     # GEOGRAPHICAL VARIABLES 
     ## grouped region of the practice
     region=patients.registered_practice_as_of(
@@ -157,10 +155,23 @@ study = StudyDefinition(
         round_to_nearest=100,
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"100": 0.1, "200": 0.2, "300": 0.7}},
+            "category": {
+                "ratios": {
+                    "100": 0.1,
+                    "200": 0.1,
+                    "300": 0.1,
+                    "400": 0.1,
+                    "500": 0.1,
+                    "600": 0.1,
+                    "700": 0.1,
+                    "800": 0.1,
+                    "900": 0.1,
+                    "1000": 0.1,
+                }
+            },
         },
-    ),   
-    # CLINICAL COMORBIDITIES  
+    ),
+  # CLINICAL COMORBIDITIES  
     ## cancer 
     lung_cancer=patients.with_these_clinical_events(
         lung_cancer_codes,
@@ -243,6 +254,13 @@ study = StudyDefinition(
         return_first_date_in_period=True,
         include_month=True,
     ),
+    ## dementia 
+    dementia=patients.with_these_clinical_events(
+        dementia,
+        on_or_before="index_date",
+        return_first_date_in_period=True,
+        include_month=True,
+    ),
 
     ## varaibles to define flu vaccination status 
     ### flu vaccine in tpp
@@ -293,7 +311,7 @@ study = StudyDefinition(
         returning="date_of_death",
         date_format="YYYY-MM-DD",
         return_expectations={"date": {"earliest": "2020-02-01"},
-                            "rate" : "exponential_increase"
+                             "rate" : "exponential_increase"
                             }, 
     ), 
 
@@ -308,4 +326,4 @@ study = StudyDefinition(
                             "rate" : "exponential_increase"
                             }, 
     ),  
-)
+) 

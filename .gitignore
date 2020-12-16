@@ -4,3 +4,8 @@ model.log
 __pycache__
 .python-version
 output/*
+.Rproj.user
+analysis.Rproj
+.Rhistory
+data/*
+!data/.gitkeep
