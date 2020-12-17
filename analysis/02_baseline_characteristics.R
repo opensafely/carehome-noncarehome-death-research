@@ -101,15 +101,25 @@ summarise_me <- function(x, y) {
   
     table <- summary %>% 
     group_by(care_home_group) %>% 
-    summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) %>% 
+    summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) 
+    
+    print("I calculated the mean")
+    
+    table <- table %>% 
     pivot_wider(names_from = c(care_home_group), values_from=c(Mean, SD), 
                 names_glue = "{care_home_group}_{.value}") %>% 
-      rename(Overall_Count = Overall_Mean) %>% 
-      rename(Overall_Percentage = Overall_SD) %>% 
-      rename(Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean) %>% 
-      rename(Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD) %>% 
-      rename(Private_Home_Count = Private_Home_Mean) %>% 
-      rename(Private_Home_Percentage = Private_Home_SD) %>% 
+      dplyr::rename(Overall_Count = Overall_Mean) %>% 
+      dplyr::rename(Overall_Percentage = Overall_SD) 
+    
+    print("I pivoted wider and renamed the overall columns")
+    print("These are the column names I now can use")
+    print(colnames(table))
+    
+    table <- table %>% 
+      dplyr::rename(Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean) %>% 
+      dplyr::rename(Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD) %>% 
+      dplyr::rename(Private_Home_Count = Private_Home_Mean) %>% 
+      dplyr::rename(Private_Home_Percentage = Private_Home_SD) %>% 
     mutate(varlevel = "Mean, SD") %>% 
     mutate(varlevel = as.character(varlevel)) %>% 
     select(varlevel, (matches("Over*")), (matches("Care*")), (matches("Priv*"))) %>% 
