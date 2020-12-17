@@ -31,15 +31,10 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         (age >= 65) AND 
-        is_registered_with_tpp AND NOT 
-        lives_in_care_home
+        is_registered_with_tpp 
         """,
         is_registered_with_tpp=patients.registered_as_of(
           "index_date + 14 days"
-        ),
-        lives_in_care_home=patients.care_home_status_as_of(
-          "index_date",
-        categorised_as=None
         ),
     ),
 

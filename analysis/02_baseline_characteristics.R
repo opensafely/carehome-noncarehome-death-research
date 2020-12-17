@@ -103,7 +103,11 @@ summarise_me <- function(x, y) {
     group_by(care_home_group) %>% 
     summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) 
     
+    print("These are the column names I started with")
+    print(colnames(summary))
     print("I calculated the mean")
+    print(mean(summary$age))
+    print(tabyl(summary$care_home_group))
     
     table <- table %>% 
     pivot_wider(names_from = c(care_home_group), values_from=c(Mean, SD), 
@@ -112,7 +116,7 @@ summarise_me <- function(x, y) {
       dplyr::rename(Overall_Percentage = Overall_SD) 
     
     print("I pivoted wider and renamed the overall columns")
-    print("These are the column names I now can use")
+    print("These are the column names I now can see")
     print(colnames(table))
     
     table <- table %>% 
@@ -142,9 +146,13 @@ table_1 <- NULL
 # tabulate and summarise the variables I want 
 
 table_1 <- tabulate_me(x = total, y = Total)
+print(table_1)
 table_1 <- tabulate_me(x = care_home_cat, y = Care_Home_Type)
+print(table_1)
 table_1 <- tabulate_me(x = sex, y = Gender) 
+print(table_1)
 table_1 <- summarise_me(x = age, y = Age_in_Years)
+print(table_1)
 table_1 <- tabulate_me(x = ethnicity_cat, y = Self-reported_Ethnicity)
 table_1 <- tabulate_me(x = region, y = Geographical_Region)
 table_1 <- tabulate_me(x = rural_urban, y = Rural_or_Urban_Area)
