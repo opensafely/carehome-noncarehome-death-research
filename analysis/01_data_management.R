@@ -52,7 +52,7 @@ study_population <- input %>%
 # check other variables 
 
 apply(study_population[c(vars)], 2, tabyl)
-apply(study_population[c("ethnicity_cat", "sex", "rural_urban", "region", "imd_cat", "care_home_cat")], 2, tabyl)
+apply(study_population[c("ethnicity", "sex", "rural_urban", "region", "imd_cat", "care_home_type")], 2, tabyl)
 
 
 study_population <- study_population %>%   
