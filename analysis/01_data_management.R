@@ -64,7 +64,8 @@ study_population <- study_population %>%
     ethnicity == 4 ~ "Black", 
     ethnicity == 5 ~ "Other", 
     TRUE ~ "Missing"))  %>% 
-  mutate(ethnicity_cat = fct_relevel(ethnicity_cat, c("White", "Asian or British Asian", "Black", "Mixed", "Other"))) %>%   mutate(sex = as.factor(sex))  %>% 
+  mutate(ethnicity_cat = fct_relevel(ethnicity_cat, c("White", "Asian or British Asian", "Black", "Mixed", "Other"))) %>%  
+  mutate(sex = as.factor(sex))  %>% 
   mutate(sex = fct_recode(sex, "Male" = "M", "Female" = "F")) %>% 
   mutate(urban = case_when(
     rural_urban == 5 ~ 1, 
@@ -76,7 +77,7 @@ study_population <- study_population %>%
     care_home_type == "PN" ~ "Nursing Home", 
     care_home_type == "PS" ~ "Care or Nursing Home", 
     TRUE ~ "Private Home"))  %>% 
-  mutate(imd = replace(imd, is.na(imd) & imd < 0)) %>% 
+  mutate(imd = replace(imd, imd <= 0, NA)) %>% 
   mutate(imd_cat = ntile(imd,5))
 
 # check categorisations worked as expected 

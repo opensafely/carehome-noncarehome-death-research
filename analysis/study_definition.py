@@ -146,7 +146,7 @@ study = StudyDefinition(
         returning="rural_urban_classification",
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"rural": 0.1, "urban": 0.9}},
+            "category": {"ratios": {"5": 0.1, "8": 0.3, "1": 0.6}},
         },
     ),
     ## index of multiple deprivation, estimate of SES based on patient post code 
@@ -158,7 +158,7 @@ study = StudyDefinition(
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "100": 0.1,
+                    "-1": 0.1,
                     "200": 0.1,
                     "300": 0.1,
                     "400": 0.1,
