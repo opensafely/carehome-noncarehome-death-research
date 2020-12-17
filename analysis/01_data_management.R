@@ -41,11 +41,21 @@ vars = c("lung_cancer", "haem_cancer", "other_cancer", "esrf",
          "chronic_cardiac_disease", "chronic_respiratory_disease", "stroke", 
          "dementia")
 
+
+
 # recode variables to indicators 
 # recode categorical variables where needed 
 
 study_population <- input %>% 
-  mutate_at((c(vars)), ~if_else(!is.na(.), 1, 0)) %>%   
+  mutate_at((c(vars)), ~if_else(!is.na(.), 1, 0)) 
+
+# check other variables 
+
+apply(study_population[c(vars)], 2, tabyl)
+apply(study_population[c("ethnicity", "sex", "rural_urban", "region", "imd", "care_home_type")], 2, tabyl)
+
+
+study_population <- study_population %>%   
   mutate(flu_vaccine = replace_na(flu_vaccine, 0)) %>% 
   mutate(ethnicity_cat = case_when(
     ethnicity == 1 ~ "White", 
@@ -54,15 +64,20 @@ study_population <- input %>%
     ethnicity == 4 ~ "Black", 
     ethnicity == 5 ~ "Other", 
     TRUE ~ "Missing"))  %>% 
-  mutate(ethnicity_cat = fct_relevel(ethnicity_cat, c("White", "Asian or British Asian", "Black", "Mixed", "Other"))) %>%   mutate(sex = as.factor(sex))  %>% 
+  mutate(ethnicity_cat = fct_relevel(ethnicity_cat, c("White", "Asian or British Asian", "Black", "Mixed", "Other"))) %>%  
+  mutate(sex = as.factor(sex))  %>% 
   mutate(sex = fct_recode(sex, "Male" = "M", "Female" = "F")) %>% 
-  mutate(rural_urban = as.factor(rural_urban))  %>% 
-  mutate(rural_urban = fct_recode(rural_urban, "Rural" = "rural", "Urban" = "urban")) %>% 
+  mutate(urban = case_when(
+    rural_urban == 5 ~ 1, 
+    rural_urban == 8 ~ 1, 
+    TRUE ~ 0
+  )) %>% 
   mutate(care_home_cat = case_when(
     care_home_type == "PC" ~ "Care Home", 
     care_home_type == "PN" ~ "Nursing Home", 
     care_home_type == "PS" ~ "Care or Nursing Home", 
     TRUE ~ "Private Home"))  %>% 
+  mutate(imd = replace(imd, imd <= 0, NA)) %>% 
   mutate(imd_cat = ntile(imd,5))
 
 # check categorisations worked as expected 
@@ -122,6 +137,9 @@ study_population <- study_population %>%
 
 crosstab <- study_population %>% 
   tabyl(care_home_type, care_home)
+
+tabyl(study_population$care_home_type)
+tabyl(study_population$care_home)
 
 crosstab
 
