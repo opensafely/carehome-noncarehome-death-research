@@ -31,7 +31,8 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         (age >= 65) AND 
-        is_registered_with_tpp 
+        is_registered_with_tpp AND 
+        (sex = "M" OR sex = "F")
         """,
         is_registered_with_tpp=patients.registered_as_of(
           "index_date + 14 days"
