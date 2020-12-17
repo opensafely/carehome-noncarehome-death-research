@@ -56,6 +56,8 @@ summary <- study_population %>%
 summary <- summary %>% 
   mutate(total = 1)
 
+tabyl(summary$care_home_group)
+
 # Define Functions --------------------------------------------------------
 # these are not particularly generalised at the moment 
 # the idea was to have small discrete functions that can then be applied many times to build a table one
