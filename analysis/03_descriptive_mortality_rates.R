@@ -77,58 +77,22 @@ measure_covid_sex_age <- measure_covid_sex_age %>%
 
 # Confidence Intervals ----------------------------------------------------
 
-# debugging code 
+measure_any_all <- as.tibble(cbind(measure_any_all,((binconf(measure_any_all$ons_any_death, measure_any_all$population, alpha = 0.05, method = "wilson")))))
+measure_any_sex <- as.tibble(cbind(measure_any_sex,((binconf(measure_any_sex$ons_any_death, measure_any_sex$population, alpha = 0.05, method = "wilson")))))
+measure_any_age <- as.tibble(cbind(measure_any_age,((binconf(measure_any_age$ons_any_death, measure_any_age$population, alpha = 0.05, method = "wilson")))))
+measure_any_sex_age <- as.tibble(cbind(measure_any_sex_age,((binconf(measure_any_sex_age$ons_any_death, measure_any_sex_age$population, alpha = 0.05, method = "wilson")))))
 
-print(colnames(measure_any_all))
-print(colnames(measure_covid_all))
-print(colnames(measure_noncovid_all))
+measure_covid_all <- as.tibble(cbind(measure_covid_all,((binconf(measure_covid_all$ons_any_death, measure_covid_all$population, alpha = 0.05, method = "wilson")))))
+measure_covid_sex <- as.tibble(cbind(measure_covid_sex,((binconf(measure_covid_sex$ons_any_death, measure_covid_sex$population, alpha = 0.05, method = "wilson")))))
+measure_covid_age <- as.tibble(cbind(measure_covid_age,((binconf(measure_covid_age$ons_any_death, measure_covid_age$population, alpha = 0.05, method = "wilson")))))
+measure_covid_sex_age <- as.tibble(cbind(measure_any_sex_age,((binconf(measure_covid_sex_age$ons_any_death, measure_covid_sex_age$population, alpha = 0.05, method = "wilson")))))
 
-tabyl(measure_any_all$care_home_type)
-tabyl(measure_any_age$ageband)
-tabyl(measure_any_sex$sex)
+measure_noncovid_all <- as.tibble(cbind(measure_noncovid_all,((binconf(measure_noncovid_all$ons_noncovid_death, measure_noncovid_all$population, alpha = 0.05, method = "wilson")))))
+measure_noncovid_sex <- as.tibble(cbind(measure_noncovid_sex,((binconf(measure_noncovid_sex$ons_noncovid_death, measure_noncovid_sex$population, alpha = 0.05, method = "wilson")))))
+measure_noncovid_age <- as.tibble(cbind(measure_noncovid_age,((binconf(measure_noncovid_age$ons_noncovid_death, measure_noncovid_age$population, alpha = 0.05, method = "wilson")))))
+measure_noncovid_sex_age <- as.tibble(cbind(measure_noncovid_sex_age,((binconf(measure_noncovid_sex_age$ons_noncovid_death, measure_noncovid_sex_age$population, alpha = 0.05, method = "wilson")))))
 
-tabyl(measure_covid_all$care_home_type)
-tabyl(measure_covid_age$ageband)
-tabyl(measure_covid_sex$sex)
-
-tabyl(measure_noncovid_all$care_home_type)
-tabyl(measure_noncovid_age$ageband)
-tabyl(measure_noncovid_sex$sex)
-
-# function for calculating CIs (from Hmisc)
-# I'm a little unsure how best to save the output from this function to the dataset
-# fairly sure this is not how you're meant to do it, but it seems to work... 
-
-confidence <- function(input, outcome) {
-  
-  temp <- Hmisc::binconf(x = input[,outcome], n = input$population, method = c("wilson"))
-  temp <- as_tibble(temp)
-
-  input <- bind_cols(input, temp) 
-
-  input <- input %>% 
-    mutate(PointEst = round((PointEst * 100),2)) %>% 
-    mutate(Lower = round((Lower * 100),2)) %>% 
-    mutate(Upper = round((Upper * 100),2)) 
-
-} 
-
-# Apply confidence intervals 
-measure_any_all <- confidence(input = measure_any_all, outcome = "ons_any_death")
-measure_any_sex <- confidence(input = measure_any_sex, outcome = "ons_any_death")
-measure_any_age <- confidence(input = measure_any_age, outcome = "ons_any_death")
-measure_any_sex_age <- confidence(input = measure_any_sex_age, outcome = "ons_any_death")
-
-measure_covid_all <- confidence(input = measure_covid_all, outcome = "ons_covid_death")
-measure_covid_sex <- confidence(input = measure_covid_sex, outcome = "ons_covid_death")
-measure_covid_age <- confidence(input = measure_covid_sex_age, outcome = "ons_covid_death")
-measure_covid_sex_age <- confidence(input = measure_covid_sex_age, outcome = "ons_covid_death")
-
-measure_noncovid_all <- confidence(input = measure_noncovid_all, outcome = "ons_noncovid_death")
-measure_noncovid_sex <- confidence(input = measure_noncovid_sex, outcome = "ons_noncovid_death")
-measure_noncovid_age <- confidence(input = measure_noncovid_sex_age, outcome = "ons_noncovid_death")
-measure_noncovid_sex_age <- confidence(input = measure_noncovid_sex_age, outcome = "ons_noncovid_death")
-
+                                
 # Make and print tables 
 
 # Tables ------------------------------------------------------------------
