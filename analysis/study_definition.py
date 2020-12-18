@@ -28,10 +28,10 @@ study = StudyDefinition(
     index_date="2019-02-01",
     population=patients.satisfying(
         """
-        (age >= 65) AND 
+        (age >= 65 AND age < 120) AND 
         is_registered_with_tpp AND 
         (sex = "M" OR sex = "F") AND 
-        (care_home_type = "PC" OR care_home_type = "PN" OR care_home_type = "PS" OR care_home_type = "U")
+        (care_home_type = "PC" OR care_home_type = "PN" OR care_home_type = "PS" OR care_home_type = "U") 
         """,
         is_registered_with_tpp=patients.registered_with_one_practice_between(
             "index_date", "index_date"

@@ -30,7 +30,7 @@ study = StudyDefinition(
     # define denominator for rates (mid point of time interval of interest - month initially)
     population=patients.satisfying(
         """
-        (age >= 65) AND 
+        (age >= 65 AND age < 120) AND 
         is_registered_with_tpp AND 
         (sex = "M" OR sex = "F") AND 
         (care_home_type = "Y" OR care_home_type = "N")
