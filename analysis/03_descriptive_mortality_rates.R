@@ -85,7 +85,7 @@ measure_any_sex_age <- as_tibble(cbind(measure_any_sex_age,((binconf(measure_any
 measure_covid_all <- as_tibble(cbind(measure_covid_all,((binconf(measure_covid_all$ons_covid_death, measure_covid_all$population, alpha = 0.05, method = "wilson")))))
 measure_covid_sex <- as_tibble(cbind(measure_covid_sex,((binconf(measure_covid_sex$ons_covid_death, measure_covid_sex$population, alpha = 0.05, method = "wilson")))))
 measure_covid_age <- as_tibble(cbind(measure_covid_age,((binconf(measure_covid_age$ons_covid_death, measure_covid_age$population, alpha = 0.05, method = "wilson")))))
-measure_covid_sex_age <- as_tibble(cbind(measure_any_sex_age,((binconf(measure_covid_sex_age$ons_covid_death, measure_covid_sex_age$population, alpha = 0.05, method = "wilson")))))
+measure_covid_sex_age <- as_tibble(cbind(measure_covid_sex_age,((binconf(measure_covid_sex_age$ons_covid_death, measure_covid_sex_age$population, alpha = 0.05, method = "wilson")))))
 
 measure_noncovid_all <- as_tibble(cbind(measure_noncovid_all,((binconf(measure_noncovid_all$ons_noncovid_death, measure_noncovid_all$population, alpha = 0.05, method = "wilson")))))
 measure_noncovid_sex <- as_tibble(cbind(measure_noncovid_sex,((binconf(measure_noncovid_sex$ons_noncovid_death, measure_noncovid_sex$population, alpha = 0.05, method = "wilson")))))
