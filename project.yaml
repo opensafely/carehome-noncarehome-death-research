@@ -91,6 +91,6 @@ actions:
         plot_2a: analysis/outfiles/plot_2a.png
         plot_2b: analysis/outfiles/plot_2b.png
         plot_2c: analysis/outfiles/plot_2c.png
-        plot_3a: analysis/outfiles/plot_2a.png
-        plot_3b: analysis/outfiles/plot_2b.png
-        plot_3c: analysis/outfiles/plot_2c.png
+        plot_3a: analysis/outfiles/plot_3a.png
+        plot_3b: analysis/outfiles/plot_3b.png
+        plot_3c: analysis/outfiles/plot_3c.png
