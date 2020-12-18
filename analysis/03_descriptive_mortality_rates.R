@@ -71,6 +71,14 @@ measure_covid_sex_age <- measure_covid_sex_age %>%
 
 # Confidence Intervals ----------------------------------------------------
 
+# debugging code 
+
+print(colnames(measure_any_all))
+print(colnames(measure_covid_all))
+
+tabyl(measure_any_all$care_home_type)
+tabyl(measure_covid_all$care_home_type)
+
 # function for calculating CIs (from Hmisc)
 # I'm a little unsure how best to save the output from this function to the dataset
 # fairly sure this is not how you're meant to do it, but it seems to work... 
