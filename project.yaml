@@ -49,6 +49,10 @@ actions:
         measure6: output/measure_allcause_death_sex.csv
         measure7: output/measure_allcause_death_age.csv
         measure8: output/measure_allcause_death_sex_age.csv
+        measure9: output/measure_noncovid_death_all.csv
+        measure10: output/measure_noncovid_death_sex.csv
+        measure11: output/measure_noncovid_death_age.csv
+        measure12: output/measure_noncovid_death_sex_age.csv
 
   01_data_management: 
     run: r:latest analysis/01_data_management.R 
@@ -77,9 +81,16 @@ actions:
         table_3b: analysis/outfiles/table_3b.txt
         table_3c: analysis/outfiles/table_3c.txt
         table_3d: analysis/outfiles/table_3d.txt
+        table_4a: analysis/outfiles/table_4a.txt
+        table_4b: analysis/outfiles/table_4b.txt
+        table_4c: analysis/outfiles/table_4c.txt
+        table_4d: analysis/outfiles/table_4d.txt
         plot_1a: analysis/outfiles/plot_1a.png
         plot_1b: analysis/outfiles/plot_1b.png
         plot_1c: analysis/outfiles/plot_1c.png
         plot_2a: analysis/outfiles/plot_2a.png
         plot_2b: analysis/outfiles/plot_2b.png
         plot_2c: analysis/outfiles/plot_2c.png
+        plot_3a: analysis/outfiles/plot_3a.png
+        plot_3b: analysis/outfiles/plot_3b.png
+        plot_3c: analysis/outfiles/plot_3c.png
