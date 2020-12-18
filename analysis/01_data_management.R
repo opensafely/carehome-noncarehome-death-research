@@ -41,10 +41,7 @@ vars = c("lung_cancer", "haem_cancer", "other_cancer", "esrf",
          "chronic_cardiac_disease", "chronic_respiratory_disease", "stroke", 
          "dementia")
 
-
-
-# recode variables to indicators 
-# recode categorical variables where needed 
+# recode categorical as indicator variables 
 
 study_population <- input %>% 
   mutate_at((c(vars)), ~if_else(!is.na(.), 1, 0)) 
@@ -133,7 +130,7 @@ study_population <- study_population %>%
     care_home_type == "PC" ~ 1, 
     care_home_type == "PS" ~ 1, 
     care_home_type == "PN" ~ 1, 
-    care_home_type == "U" ~ 0)) 
+    TRUE ~ 0)) 
 
 crosstab <- study_population %>% 
   tabyl(care_home_type, care_home)

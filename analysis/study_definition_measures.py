@@ -32,7 +32,8 @@ study = StudyDefinition(
         """
         (age >= 65) AND 
         is_registered_with_tpp AND 
-        (sex = "M" OR sex = "F")
+        (sex = "M" OR sex = "F") AND 
+        (care_home_type = "Y" OR care_home_type = "N")
         """,
         is_registered_with_tpp=patients.registered_as_of(
           "index_date + 14 days"
