@@ -53,6 +53,10 @@ study = StudyDefinition(
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
     ), 
+    ons_noncovid_death=patients.satisfying(
+        """(NOT ons_covid_death) AND ons_any_death""",
+        return_expectations={"incidence": 0.15},
+    ),
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(
@@ -116,7 +120,8 @@ study = StudyDefinition(
 
 
 measures = [
-    
+
+    # covid death
     Measure(
         id="covid_death_all",
         numerator="ons_covid_death",
@@ -141,6 +146,8 @@ measures = [
         denominator="population",
         group_by = ["sex", "ageband", "care_home_type"],  
     ),
+
+    # all-cause death
     Measure(
         id="allcause_death_all",
         numerator="ons_any_death",
@@ -162,6 +169,32 @@ measures = [
     Measure(
         id="allcause_death_sex_age",
         numerator="ons_any_death",
+        denominator="population",
+        group_by = ["sex", "ageband", "care_home_type"],    
+    ),
+
+    # Non covid death
+    Measure(
+        id="noncovid_death_all",
+        numerator="ons_noncovid_death",
+        denominator="population",
+        group_by = ["allpatients", "care_home_type"], 
+    ),
+    Measure(
+        id="noncovid_death_sex",
+        numerator="ons_noncovid_death",
+        denominator="population",
+        group_by = ["sex", "care_home_type"],  
+    ),
+    Measure(
+        id="noncovid_death_age",
+        numerator="ons_noncovid_death",
+        denominator="population",
+        group_by = ["ageband", "care_home_type"],
+    ),
+    Measure(
+        id="noncovid_death_sex_age",
+        numerator="ons_noncovid_death",
         denominator="population",
         group_by = ["sex", "ageband", "care_home_type"],    
     ),

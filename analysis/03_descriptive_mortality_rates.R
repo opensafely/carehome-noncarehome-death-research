@@ -51,6 +51,12 @@ measure_covid_sex <- fread("./output/measure_covid_death_sex.csv", data.table = 
 measure_covid_age <- fread("./output/measure_covid_death_age.csv", data.table = FALSE, na.strings = "")
 measure_covid_sex_age <- fread("./output/measure_covid_death_sex_age.csv", data.table = FALSE, na.strings = "")
 
+# non covid death 
+measure_noncovid_all <- fread("./output/measure_noncovid_death_all.csv", data.table = FALSE, na.strings = "")
+measure_noncovid_sex <- fread("./output/measure_noncovid_death_sex.csv", data.table = FALSE, na.strings = "")
+measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.table = FALSE, na.strings = "")
+measure_noncovid_sex_age <- fread("./output/measure_noncovid_death_sex_age.csv", data.table = FALSE, na.strings = "")
+
 # Remove empty COVID rows--------------------------------------------------
 
 measure_covid_all <- measure_covid_all %>% 
@@ -75,9 +81,19 @@ measure_covid_sex_age <- measure_covid_sex_age %>%
 
 print(colnames(measure_any_all))
 print(colnames(measure_covid_all))
+print(colnames(measure_noncovid_all))
 
 tabyl(measure_any_all$care_home_type)
+tabyl(measure_any_age$ageband)
+tabyl(measure_any_sex$sex)
+
 tabyl(measure_covid_all$care_home_type)
+tabyl(measure_covid_age$ageband)
+tabyl(measure_covid_sex$sex)
+
+tabyl(measure_noncovid_all$care_home_type)
+tabyl(measure_noncovid_age$ageband)
+tabyl(measure_noncovid_sex$sex)
 
 # function for calculating CIs (from Hmisc)
 # I'm a little unsure how best to save the output from this function to the dataset
@@ -108,12 +124,17 @@ measure_covid_sex <- confidence(input = measure_covid_sex, outcome = "ons_covid_
 measure_covid_age <- confidence(input = measure_covid_sex_age, outcome = "ons_covid_death")
 measure_covid_sex_age <- confidence(input = measure_covid_sex_age, outcome = "ons_covid_death")
 
+measure_noncovid_all <- confidence(input = measure_noncovid_all, outcome = "ons_noncovid_death")
+measure_noncovid_sex <- confidence(input = measure_noncovid_sex, outcome = "ons_noncovid_death")
+measure_noncovid_age <- confidence(input = measure_noncovid_sex_age, outcome = "ons_noncovid_death")
+measure_noncovid_sex_age <- confidence(input = measure_noncovid_sex_age, outcome = "ons_noncovid_death")
+
 # Make and print tables 
 
 # Tables ------------------------------------------------------------------
 # long term aim to automate to have cleaner code, but each block is only used twice at the moment (if similar)
 
-# All cause mortality 
+# Tabels: All Cause -------------------------------------------------------
 
 table_2a <- measure_any_all %>% 
   # create a labelled variable for outputting in table formats 
@@ -230,7 +251,7 @@ table_2d <- measure_any_sex_age %>%
 
 write.table(table_2d, file = "./analysis/outfiles/table_2d.txt", sep = "\t", na = "", row.names=FALSE)
 
-# Covid mortality 
+# Tables: COVID mortality -------------------------------------------------
 
 table_3a <- measure_covid_all %>% 
   # create a labelled variable for outputting in table formats 
@@ -347,11 +368,131 @@ table_3d <-  measure_covid_sex_age %>%
 
 write.table(table_3d, file = "./analysis/outfiles/table_3d.txt", sep = "\t", na = "", row.names=FALSE)
 
-# Line Plots  -------------------------------------------------------------
+# Tables: Non-COVID mortality ---------------------------------------------
+
+table_4a <- measure_noncovid_all %>% 
+  # create a labelled variable for outputting in table formats 
+  mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+  # rename key variables to how you want them displayed in tables and select the relevant ones
+  rename(Mortality_Rate = PointEst) %>% 
+  rename(n = ons_noncovid_death) %>% 
+  rename(N = population) %>% 
+  mutate(Confidence_Interval = paste(Lower, Upper, sep = "-")) %>% 
+  select(c(care_home_group, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
+  # need to create a unique ID for reshaping the data
+  group_by(care_home_group) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide 
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_group, 
+    values_from = c(date, n, N, Mortality_Rate, Confidence_Interval), 
+    names_glue = "{care_home_group}_{.value}") %>% 
+  # tidy up, remove unnecessary variables 
+  rename(Date= Private_Home_date) %>% 
+  select(-c(Care_or_Nursing_Home_date)) %>% 
+  select(Date, (matches("Care*")), (matches("Priv*"))) 
+
+write.table(table_4a, file = "./analysis/outfiles/table_4a.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_4b <- measure_noncovid_sex %>% 
+  # create a labelled variable for outputting in table formats 
+  mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+  # rename key variables to how you want them displayed in tables and select the relevant ones
+  rename(Mortality_Rate = PointEst) %>% 
+  rename(n = ons_noncovid_death) %>% 
+  rename(N = population) %>% 
+  rename(Gender = sex) %>% 
+  mutate(Confidence_Interval = paste(Lower, Upper, sep = "-")) %>% 
+  select(c(care_home_group, Gender, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
+  # need to create a unique ID for reshaping the data
+  group_by(care_home_group) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_group, 
+    values_from = c(date, Gender, n, N, Mortality_Rate, Confidence_Interval), 
+    names_glue = "{care_home_group}_{.value}") %>% 
+  # tidy up, remove unnecessary variables and sort by the grouping vars 
+  rename(Date = Private_Home_date) %>% 
+  rename(Gender = Private_Home_Gender) %>% 
+  select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Gender)) %>% 
+  select(Gender, Date, (matches("Care*")), (matches("Priv*"))) %>% 
+  arrange(Gender, Date)
+
+write.table(table_4b, file = "./analysis/outfiles/table_4b.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_4c <- measure_noncovid_age %>% 
+  # create a labelled variable for outputting in table formats 
+  mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+  # rename key variables to how you want them displayed in tables and select the relevant ones
+  rename(Mortality_Rate = PointEst) %>% 
+  rename(n = ons_noncovid_death) %>% 
+  rename(N = population) %>% 
+  rename(Age = ageband) %>% 
+  mutate(Confidence_Interval = paste(Lower, Upper, sep = "-")) %>% 
+  select(c(care_home_group, Age, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
+  # need to create a unique ID for reshaping the data
+  group_by(care_home_group) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_group, 
+    values_from = c(date, Age, n, N, Mortality_Rate, Confidence_Interval), 
+    names_glue = "{care_home_group}_{.value}") %>% 
+  # tidy up, remove unnecessary variables and sort by the grouping vars 
+  rename(Date = Private_Home_date) %>% 
+  rename(Age = Private_Home_Age) %>% 
+  select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age)) %>% 
+  select(Age, Date, (matches("Care*")), (matches("Priv*"))) %>% 
+  arrange(Age, Date)
+
+write.table(table_4c, file = "./analysis/outfiles/table_4c.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_4d <-  measure_noncovid_sex_age %>% 
+  # create a labelled variable for outputting in table formats 
+  mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+  # rename key variables to how you want them displayed in tables and select the relevant ones
+  rename(Mortality_Rate = PointEst) %>% 
+  rename(n = ons_noncovid_death) %>% 
+  rename(N = population) %>% 
+  rename(Age = ageband) %>% 
+  rename(Gender = sex) %>% 
+  mutate(Confidence_Interval = paste(Lower, Upper, sep = "-")) %>% 
+  select(c(care_home_group, Age, Gender, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
+  # need to create a unique ID for reshaping the data
+  group_by(care_home_group) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_group, 
+    values_from = c(date, Age, Gender, n, N, Mortality_Rate, Confidence_Interval), 
+    names_glue = "{care_home_group}_{.value}") %>% 
+  # tidy up, remove unnecessary variables and sort by the grouping vars 
+  rename(Date = Private_Home_date) %>% 
+  rename(Age = Private_Home_Age) %>% 
+  rename(Gender = Private_Home_Gender) %>% 
+  select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age, Care_or_Nursing_Home_Gender)) %>% 
+  select(Age, Gender, Date, (matches("Care*")), (matches("Priv*"))) %>% 
+  arrange(Age, Gender, Date)
+
+write.table(table_4d, file = "./analysis/outfiles/table_4d.txt", sep = "\t", na = "", row.names=FALSE)
+
+
+# Figures  -------------------------------------------------------------
 # currently automatically puts an y axis value, but aim is to amend these to be neater once I know the rates
 
 # all-cause mortality 
 y_value <- (max(measure_any_all$value) + (max(measure_any_all$value)/5)) * 100
+
+# Figures: All-cause Mortality --------------------------------------------
 
 plot_1a <- ggplot(measure_any_all, aes (x = date, y = value*100, group = care_home_type, colour = care_home_type)) + 
   geom_line() + 
@@ -418,7 +559,7 @@ png(filename = "./analysis/outfiles/plot_1c.png")
 plot_1c
 dev.off()
 
-# covid mortality 
+# Figures: COVID mortality ------------------------------------------------
 y_value <- (max(measure_covid_all$value) + (max(measure_covid_all$value)/5)) * 100
 
 plot_2a <- ggplot(measure_covid_all, aes (x = date, y = value*100, group = care_home_type, colour = care_home_type)) + 
@@ -446,8 +587,8 @@ y_value <- (max(measure_covid_sex$value) + (max(measure_covid_sex$value)/5)) * 1
 plot_2b <- ggplot(measure_covid_sex, aes (x = date, y = value*100, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
   geom_line() + geom_point() + 
   labs(x = "Time Period", 
-       y = "All-cause Mortality Rate", 
-       title = "Crude All-cause Mortality Rate by Sex", 
+       y = "COVID-19 Mortality Rate", 
+       title = "Crude COVID-19 Mortality Rate by Sex", 
        shape = "Care Home", 
        colour = "Gender") + 
   scale_y_continuous(limits = c(0,y_value)) +
@@ -484,4 +625,72 @@ plot_2c <- ggplot(measure_covid_age, aes (x = date, y = value*100, colour = ageb
 
 png(filename = "./analysis/outfiles/plot_2c.png")
 plot_2c
+dev.off()
+
+# Figures: Non-COVID mortality ------------------------------------------------
+y_value <- (max(measure_noncovid_all$value) + (max(measure_noncovid_all$value)/5)) * 100
+
+plot_3a <- ggplot(measure_noncovid_all, aes (x = date, y = value*100, group = care_home_type, colour = care_home_type)) + 
+  geom_line() + 
+  labs(x = "Time Period", 
+       y = "Non COVID-19 Mortality Rate", 
+       title = "Crude Non-COVID-19 Mortality Rate") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  scale_color_discrete(name="Care Home",
+                       labels=c("No", "Yes")) + 
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_3a.png")
+plot_3a
+dev.off()
+
+y_value <- (max(measure_noncovid_sex$value) + (max(measure_noncovid_sex$value)/5)) * 100
+
+plot_3b <- ggplot(measure_noncovid_sex, aes (x = date, y = value*100, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+  geom_line() + geom_point() + 
+  labs(x = "Time Period", 
+       y = "Non-COVID-19 Mortality Rate", 
+       title = "Crude Non-COVID-19 Mortality Rate by Sex", 
+       shape = "Care Home", 
+       colour = "Gender") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_3b.png")
+plot_3b
+dev.off()
+
+y_value <- (max(measure_noncovid_age$value) + (max(measure_noncovid_age$value)/5)) * 100
+
+plot_3c <- ggplot(measure_covid_age, aes (x = date, y = value*100, colour = ageband, shape = care_home_type, group = interaction(ageband, care_home_type))) + 
+  geom_line() + geom_point() + 
+  labs(x = "Time Period", 
+       y = "Non-COVID-19 Mortality Rate", 
+       title = "Crude Non-COVID-19 Mortality Rate by Age", 
+       shape = "Care Home", 
+       colour = "Age") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  scale_colour_viridis_d(option = "plasma") + 
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_3c.png")
+plot_3c
 dev.off()
