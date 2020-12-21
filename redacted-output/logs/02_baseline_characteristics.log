@@ -1,0 +1,153 @@
+2020-12-18T14:37:49.238313200Z [1] "/workspace"
+2020-12-18T14:37:51.415761500Z -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+2020-12-18T14:37:51.424725200Z v ggplot2 3.3.2     v purrr   0.3.4
+2020-12-18T14:37:51.424746400Z v tibble  3.0.3     v dplyr   1.0.2
+2020-12-18T14:37:51.424754600Z v tidyr   1.1.2     v stringr 1.4.0
+2020-12-18T14:37:51.424761500Z v readr   1.3.1     v forcats 0.5.0
+2020-12-18T14:37:51.591619500Z -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+2020-12-18T14:37:51.591638100Z x dplyr::filter() masks stats::filter()
+2020-12-18T14:37:51.591645800Z x dplyr::lag()    masks stats::lag()
+2020-12-18T14:37:51.722927600Z 
+2020-12-18T14:37:51.722946200Z Attaching package: 'data.table'
+2020-12-18T14:37:51.722954100Z 
+2020-12-18T14:37:51.724461900Z The following objects are masked from 'package:dplyr':
+2020-12-18T14:37:51.724481100Z 
+2020-12-18T14:37:51.724489400Z     between, first, last
+2020-12-18T14:37:51.724496500Z 
+2020-12-18T14:37:51.724964000Z The following object is masked from 'package:purrr':
+2020-12-18T14:37:51.724985200Z 
+2020-12-18T14:37:51.724993700Z     transpose
+2020-12-18T14:37:51.725000700Z 
+2020-12-18T14:37:51.749693100Z 
+2020-12-18T14:37:51.749710900Z Attaching package: 'janitor'
+2020-12-18T14:37:51.749718600Z 
+2020-12-18T14:37:51.750228400Z The following objects are masked from 'package:stats':
+2020-12-18T14:37:51.750244500Z 
+2020-12-18T14:37:51.750251900Z     chisq.test, fisher.test
+2020-12-18T14:37:51.750258600Z 
+2020-12-18T14:37:51.761508000Z 
+2020-12-18T14:37:51.761524200Z Attaching package: 'lubridate'
+2020-12-18T14:37:51.761531800Z 
+2020-12-18T14:37:51.762055400Z The following objects are masked from 'package:data.table':
+2020-12-18T14:37:51.762070300Z 
+2020-12-18T14:37:51.762081000Z     hour, isoweek, mday, minute, month, quarter, second, wday, week,
+2020-12-18T14:37:51.762088200Z     yday, year
+2020-12-18T14:37:51.762095100Z 
+2020-12-18T14:37:51.762633600Z The following objects are masked from 'package:base':
+2020-12-18T14:37:51.762649800Z 
+2020-12-18T14:37:51.762657400Z     date, intersect, setdiff, union
+2020-12-18T14:37:51.762664400Z 
+2020-12-18T14:37:51.763368500Z [1] "Out directory didn't exist, but I created it"
+2020-12-18T14:38:22.298543900Z  summary$care_home_group       n    percent
+2020-12-18T14:38:22.298591900Z     Care_or_Nursing_Home   95308 0.01107113
+2020-12-18T14:38:22.298600800Z                  Overall 4304348 0.50000000
+2020-12-18T14:38:22.298608400Z             Private_Home 4209040 0.48892887
+2020-12-18T14:38:22.910394600Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:23.048569200Z # A tibble: 1 x 8
+2020-12-18T14:38:23.048620900Z   varname varlevel Overall_Count Overall_Percent~ Care_or_Nursing~
+2020-12-18T14:38:23.048629600Z   <chr>   <chr>            <int>            <dbl>            <int>
+2020-12-18T14:38:23.048641300Z 1 Total   1              4304348              100            95308
+2020-12-18T14:38:23.048648500Z # ... with 3 more variables: Care_or_Nursing_Home_Percentage <dbl>,
+2020-12-18T14:38:23.048655700Z #   Private_Home_Count <int>, Private_Home_Percentage <dbl>
+2020-12-18T14:38:23.634345300Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:23.745910900Z # A tibble: 5 x 8
+2020-12-18T14:38:23.745930400Z   varname varlevel Overall_Count Overall_Percent~ Care_or_Nursing~
+2020-12-18T14:38:23.745938900Z   <chr>   <chr>            <int>            <dbl>            <int>
+2020-12-18T14:38:23.745946900Z 1 Total   1              4304348           100               95308
+2020-12-18T14:38:23.745953900Z 2 Care_H~ Care Ho~         49227             1.14            49227
+2020-12-18T14:38:23.745960700Z 3 <NA>    Care or~          2324             0.05             2324
+2020-12-18T14:38:23.745967900Z 4 <NA>    Nursing~         43757             1.02            43757
+2020-12-18T14:38:23.745974900Z 5 <NA>    Private~       4209040            97.8                NA
+2020-12-18T14:38:23.745982000Z # ... with 3 more variables: Care_or_Nursing_Home_Percentage <dbl>,
+2020-12-18T14:38:23.745989000Z #   Private_Home_Count <int>, Private_Home_Percentage <dbl>
+2020-12-18T14:38:24.619885300Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:24.717160200Z # A tibble: 7 x 8
+2020-12-18T14:38:24.717179100Z   varname varlevel Overall_Count Overall_Percent~ Care_or_Nursing~
+2020-12-18T14:38:24.717187100Z   <chr>   <chr>            <int>            <dbl>            <int>
+2020-12-18T14:38:24.717195000Z 1 Total   1              4304348           100               95308
+2020-12-18T14:38:24.717202000Z 2 Care_H~ Care Ho~         49227             1.14            49227
+2020-12-18T14:38:24.717209000Z 3 <NA>    Care or~          2324             0.05             2324
+2020-12-18T14:38:24.717216000Z 4 <NA>    Nursing~         43757             1.02            43757
+2020-12-18T14:38:24.717223000Z 5 <NA>    Private~       4209040            97.8                NA
+2020-12-18T14:38:24.717230000Z 6 Gender  Female         2318733            53.9             66590
+2020-12-18T14:38:24.717236900Z 7 <NA>    Male           1985615            46.1             28718
+2020-12-18T14:38:24.717271700Z # ... with 3 more variables: Care_or_Nursing_Home_Percentage <dbl>,
+2020-12-18T14:38:24.717280000Z #   Private_Home_Count <int>, Private_Home_Percentage <dbl>
+2020-12-18T14:38:25.449252600Z `summarise()` ungrouping output (override with `.groups` argument)
+2020-12-18T14:38:25.449322300Z [1] "These are the column names I started with"
+2020-12-18T14:38:25.449382600Z  [1] "patient_id"                  "dereg_date"                 
+2020-12-18T14:38:25.449397000Z  [3] "care_home_type"              "age"                        
+2020-12-18T14:38:25.449405100Z  [5] "ageband"                     "sex"                        
+2020-12-18T14:38:25.449412300Z  [7] "ethnicity"                   "ethnicity_date"             
+2020-12-18T14:38:25.449419500Z  [9] "region"                      "msoa"                       
+2020-12-18T14:38:25.449426700Z [11] "rural_urban"                 "imd"                        
+2020-12-18T14:38:25.449433800Z [13] "lung_cancer"                 "haem_cancer"                
+2020-12-18T14:38:25.449440900Z [15] "other_cancer"                "creatinine"                 
+2020-12-18T14:38:25.449450900Z [17] "creatinine_date"             "esrf"                       
+2020-12-18T14:38:25.449458500Z [19] "diabetes"                    "chronic_liver_disease"      
+2020-12-18T14:38:25.449465900Z [21] "chronic_cardiac_disease"     "chronic_respiratory_disease"
+2020-12-18T14:38:25.449473000Z [23] "stroke"                      "dementia"                   
+2020-12-18T14:38:25.449480100Z [25] "flu_vaccine_tpp_table"       "flu_vaccine_med"            
+2020-12-18T14:38:25.449487200Z [27] "flu_vaccine_clinical"        "flu_vaccine"                
+2020-12-18T14:38:25.449494200Z [29] "tpp_death_date"              "ons_covid_death_date"       
+2020-12-18T14:38:25.449502600Z [31] "ethnicity_cat"               "urban"                      
+2020-12-18T14:38:25.449510400Z [33] "care_home_cat"               "imd_cat"                    
+2020-12-18T14:38:25.449517600Z [35] "SCR_adj"                     "min1"                       
+2020-12-18T14:38:25.449524700Z [37] "min2"                        "max1"                       
+2020-12-18T14:38:25.449531800Z [39] "max2"                        "egfr"                       
+2020-12-18T14:38:25.449538800Z [41] "ckd_egfr"                    "ckd"                        
+2020-12-18T14:38:25.449546100Z [43] "care_home"                   "care_home_group"            
+2020-12-18T14:38:25.449554300Z [45] "total"                      
+2020-12-18T14:38:25.449656000Z [1] "I calculated the mean"
+2020-12-18T14:38:25.470552600Z [1] 75.12172
+2020-12-18T14:38:25.856391600Z  summary$care_home_group       n    percent
+2020-12-18T14:38:25.856410200Z     Care_or_Nursing_Home   95308 0.01107113
+2020-12-18T14:38:25.856440500Z                  Overall 4304348 0.50000000
+2020-12-18T14:38:25.856448400Z             Private_Home 4209040 0.48892887
+2020-12-18T14:38:25.878212600Z [1] "I pivoted wider and renamed the overall columns"
+2020-12-18T14:38:25.878233100Z [1] "These are the column names I now can see"
+2020-12-18T14:38:25.878284000Z [1] "Care_or_Nursing_Home_Mean" "Overall_Count"            
+2020-12-18T14:38:25.878300700Z [3] "Private_Home_Mean"         "Care_or_Nursing_Home_SD"  
+2020-12-18T14:38:25.878308400Z [5] "Overall_Percentage"        "Private_Home_SD"          
+2020-12-18T14:38:26.162007300Z # A tibble: 8 x 8
+2020-12-18T14:38:26.162025200Z   varname varlevel Overall_Count Overall_Percent~ Care_or_Nursing~
+2020-12-18T14:38:26.162033300Z   <chr>   <chr>            <dbl>            <dbl>            <dbl>
+2020-12-18T14:38:26.162041200Z 1 Total   1              4304348           100               95308
+2020-12-18T14:38:26.162048200Z 2 Care_H~ Care Ho~         49227             1.14            49227
+2020-12-18T14:38:26.162054900Z 3 <NA>    Care or~          2324             0.05             2324
+2020-12-18T14:38:26.162062000Z 4 <NA>    Nursing~         43757             1.02            43757
+2020-12-18T14:38:26.162068900Z 5 <NA>    Private~       4209040            97.8                NA
+2020-12-18T14:38:26.162075800Z 6 Gender  Female         2318733            53.9             66590
+2020-12-18T14:38:26.162082600Z 7 <NA>    Male           1985615            46.1             28718
+2020-12-18T14:38:26.162089600Z 8 Age_in~ Mean, SD            75             8                  86
+2020-12-18T14:38:26.162096400Z # ... with 3 more variables: Care_or_Nursing_Home_Percentage <dbl>,
+2020-12-18T14:38:26.162103400Z #   Private_Home_Count <dbl>, Private_Home_Percentage <dbl>
+2020-12-18T14:38:26.701472000Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:27.371886800Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:27.968167300Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:28.637380500Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:31.176703000Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:31.754887400Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:32.337532400Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:32.923461800Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:33.703630500Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:34.281673400Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:34.863101200Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:35.450804000Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:36.237650000Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+2020-12-18T14:38:36.822867700Z `summarise()` regrouping output by 'care_home_group' (override with `.groups` argument)
+
+
+state: succeeded
+commit: 01ad90f4d7745ed5ad2c2cf684b0148a04d2e04f
+docker_image_id: sha256:84d831955a5d7fbf5bd842a00968fc34cf0f409be9bec52e024d7de003b4e137
+job_id: ineyai3qjeqvzwwf
+run_by_user: annaschultze
+created_at: 2020-12-18T13:29:28Z
+started_at: 2020-12-18T14:37:48Z
+completed_at: 2020-12-18T14:38:41Z
+
+Completed successfully
+
+outputs:
+  analysis/outfiles/table_1.txt  - moderately_sensitive

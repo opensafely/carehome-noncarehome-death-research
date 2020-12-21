@@ -1,0 +1,119 @@
+2020-12-18T20:21:52.285758500Z [1] "/workspace"
+2020-12-18T20:21:54.317023100Z -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+2020-12-18T20:21:54.325357500Z v ggplot2 3.3.2     v purrr   0.3.4
+2020-12-18T20:21:54.325377600Z v tibble  3.0.3     v dplyr   1.0.2
+2020-12-18T20:21:54.325385900Z v tidyr   1.1.2     v stringr 1.4.0
+2020-12-18T20:21:54.325393100Z v readr   1.3.1     v forcats 0.5.0
+2020-12-18T20:21:54.478176900Z -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+2020-12-18T20:21:54.478195600Z x dplyr::filter() masks stats::filter()
+2020-12-18T20:21:54.478203600Z x dplyr::lag()    masks stats::lag()
+2020-12-18T20:21:54.592256700Z 
+2020-12-18T20:21:54.592276200Z Attaching package: 'data.table'
+2020-12-18T20:21:54.592284900Z 
+2020-12-18T20:21:54.593598200Z The following objects are masked from 'package:dplyr':
+2020-12-18T20:21:54.593614300Z 
+2020-12-18T20:21:54.593621900Z     between, first, last
+2020-12-18T20:21:54.593628900Z 
+2020-12-18T20:21:54.594062400Z The following object is masked from 'package:purrr':
+2020-12-18T20:21:54.594076400Z 
+2020-12-18T20:21:54.594083900Z     transpose
+2020-12-18T20:21:54.594090800Z 
+2020-12-18T20:21:54.616663000Z 
+2020-12-18T20:21:54.616678400Z Attaching package: 'janitor'
+2020-12-18T20:21:54.616685800Z 
+2020-12-18T20:21:54.617120400Z The following objects are masked from 'package:stats':
+2020-12-18T20:21:54.617136200Z 
+2020-12-18T20:21:54.617143500Z     chisq.test, fisher.test
+2020-12-18T20:21:54.617150500Z 
+2020-12-18T20:21:54.628112900Z 
+2020-12-18T20:21:54.628128300Z Attaching package: 'lubridate'
+2020-12-18T20:21:54.628135400Z 
+2020-12-18T20:21:54.628710400Z The following objects are masked from 'package:data.table':
+2020-12-18T20:21:54.628728200Z 
+2020-12-18T20:21:54.628735700Z     hour, isoweek, mday, minute, month, quarter, second, wday, week,
+2020-12-18T20:21:54.628742800Z     yday, year
+2020-12-18T20:21:54.628749500Z 
+2020-12-18T20:21:54.629166400Z The following objects are masked from 'package:base':
+2020-12-18T20:21:54.629181000Z 
+2020-12-18T20:21:54.629188400Z     date, intersect, setdiff, union
+2020-12-18T20:21:54.629195200Z 
+2020-12-18T20:21:54.632725700Z Loading required package: lattice
+2020-12-18T20:21:54.660267300Z Loading required package: survival
+2020-12-18T20:21:56.146628700Z Loading required package: Formula
+2020-12-18T20:21:56.420751300Z 
+2020-12-18T20:21:56.420821700Z Attaching package: 'Hmisc'
+2020-12-18T20:21:56.420830200Z 
+2020-12-18T20:21:56.421145700Z The following objects are masked from 'package:dplyr':
+2020-12-18T20:21:56.421168600Z 
+2020-12-18T20:21:56.421177000Z     src, summarize
+2020-12-18T20:21:56.421184100Z 
+2020-12-18T20:21:56.421906200Z The following objects are masked from 'package:base':
+2020-12-18T20:21:56.421922200Z 
+2020-12-18T20:21:56.421929700Z     format.pval, units
+2020-12-18T20:21:56.421936500Z 
+2020-12-18T20:21:56.422597900Z [1] "Out directory didn't exist, but I created it"
+2020-12-18T20:21:56.538907500Z [1] "I finished measure_any_all"
+2020-12-18T20:21:56.545592700Z [1] "I finished measure_any_sex"
+2020-12-18T20:21:56.555095200Z [1] "I finished measure_any_age"
+2020-12-18T20:21:56.572975200Z [1] "I finished measure_any_sex_age"
+2020-12-18T20:21:56.575149600Z [1] "I finished measure_covid_all"
+2020-12-18T20:21:56.578233600Z [1] "I finished measure_covid_sex"
+2020-12-18T20:21:56.582416700Z [1] "I finished measure_covid_age"
+2020-12-18T20:21:56.603644600Z [1] "I finished measure_covid_sex_age"
+2020-12-18T20:21:56.607734400Z [1] "I finished measure_noncovid_all"
+2020-12-18T20:21:56.614267300Z [1] "I finished measure_noncovid_sex"
+2020-12-18T20:21:56.623733800Z [1] "I finished measure_noncovid_age"
+2020-12-18T20:21:56.641510800Z [1] "I finished measure_noncovid_sex_age"
+2020-12-18T20:21:58.582519200Z null device 
+2020-12-18T20:21:58.582578200Z           1 
+2020-12-18T20:21:59.018187400Z null device 
+2020-12-18T20:21:59.018210300Z           1 
+2020-12-18T20:21:59.382980800Z null device 
+2020-12-18T20:21:59.383002500Z           1 
+2020-12-18T20:21:59.622804400Z null device 
+2020-12-18T20:21:59.622824300Z           1 
+2020-12-18T20:21:59.959364400Z null device 
+2020-12-18T20:21:59.959416700Z           1 
+2020-12-18T20:22:00.327381100Z null device 
+2020-12-18T20:22:00.327403800Z           1 
+2020-12-18T20:22:00.579462400Z null device 
+2020-12-18T20:22:00.579482000Z           1 
+2020-12-18T20:22:00.910340300Z null device 
+2020-12-18T20:22:00.910363400Z           1 
+2020-12-18T20:22:01.281661500Z null device 
+2020-12-18T20:22:01.281681000Z           1 
+
+
+state: succeeded
+commit: e0396c3b58793f33c8c02de2a5796ea5b8d8ab60
+docker_image_id: sha256:84d831955a5d7fbf5bd842a00968fc34cf0f409be9bec52e024d7de003b4e137
+job_id: 74t3nn3ramaocnko
+run_by_user: annaschultze
+created_at: 2020-12-18T19:16:39Z
+started_at: 2020-12-18T20:21:52Z
+completed_at: 2020-12-18T20:22:03Z
+
+Completed successfully
+
+outputs:
+  analysis/outfiles/plot_1a.png   - moderately_sensitive
+  analysis/outfiles/plot_1b.png   - moderately_sensitive
+  analysis/outfiles/plot_1c.png   - moderately_sensitive
+  analysis/outfiles/plot_2a.png   - moderately_sensitive
+  analysis/outfiles/plot_2b.png   - moderately_sensitive
+  analysis/outfiles/plot_2c.png   - moderately_sensitive
+  analysis/outfiles/plot_3a.png   - moderately_sensitive
+  analysis/outfiles/plot_3b.png   - moderately_sensitive
+  analysis/outfiles/plot_3c.png   - moderately_sensitive
+  analysis/outfiles/table_2a.txt  - moderately_sensitive
+  analysis/outfiles/table_2b.txt  - moderately_sensitive
+  analysis/outfiles/table_2c.txt  - moderately_sensitive
+  analysis/outfiles/table_2d.txt  - moderately_sensitive
+  analysis/outfiles/table_3a.txt  - moderately_sensitive
+  analysis/outfiles/table_3b.txt  - moderately_sensitive
+  analysis/outfiles/table_3c.txt  - moderately_sensitive
+  analysis/outfiles/table_3d.txt  - moderately_sensitive
+  analysis/outfiles/table_4a.txt  - moderately_sensitive
+  analysis/outfiles/table_4b.txt  - moderately_sensitive
+  analysis/outfiles/table_4c.txt  - moderately_sensitive
+  analysis/outfiles/table_4d.txt  - moderately_sensitive
