@@ -1,4 +1,6 @@
 
+# STUDY DEFINITION FOR BASELINE CHARACTERISTICS IN 2019 (start of follow-up)
+
 # Import necessary functions
 
 from cohortextractor import (
@@ -79,18 +81,30 @@ study = StudyDefinition(
         },
     ),
     ## age groups 
-    ageband = patients.categorised_as(
-        {
+    ageband_narrow = patients.categorised_as(
+        {   
             "0": "DEFAULT",
-            "18-49": """ age >= 18 AND age < 50""",
-            "50-59": """ age >=  50 AND age < 60""",
-            "60-69": """ age >=  60 AND age < 70""",
-            "70-79": """ age >=  70 AND age < 80""",
-            "80+": """ age >=  80 AND age < 120""",
+            "65-74": """ age >=  65 AND age < 75""",
+            "75-79": """ age >=  75 AND age < 80""",
+            "80-84": """ age >=  80 AND age < 85""",
+            "85-89": """ age >=  85 AND age < 90""",
+            "90+": """ age >=  90 AND age < 120""",
         },
         return_expectations={
             "rate":"universal",
-            "category": {"ratios": {"18-49": 0.5, "50-59": 0.2, "60-69": 0.1, "70-79":0.1, "80+":0.1 }}
+            "category": {"ratios": {"65-74": 0.4, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
+        },
+    ),
+    ageband_broad = patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "65-74": """ age >=  65 AND age < 75""",
+            "75-84": """ age >=  75 AND age < 85""",
+            "85+": """ age >=  85 AND age < 120""",
+        },
+        return_expectations={
+            "rate":"universal",
+            "category": {"ratios": {"65-74": 0.5, "75-84": 0.2, "85+": 0.3 }}
         },
     ),
     ## sex 
