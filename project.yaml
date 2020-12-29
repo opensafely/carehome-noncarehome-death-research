@@ -4,37 +4,23 @@ expectations:
   population_size: 1000
 
 actions:
-  generate_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition
+  generate_cohort_2019:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_2019
     outputs:
       highly_sensitive:
-        cohort: output/input.csv
+        cohort: output/input_2019.csv
+
+  generate_cohort_2020:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_2020
+    outputs:
+      highly_sensitive:
+        cohort: output/input_2020.csv
 
   generate_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-10-01 by month"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-11-30 by week"
     outputs:
       highly_sensitive:
-        cohort1: output/input_measures_2019-02-01.csv
-        cohort2: output/input_measures_2019-03-01.csv
-        cohort3: output/input_measures_2019-04-01.csv
-        cohort4: output/input_measures_2019-05-01.csv
-        cohort5: output/input_measures_2019-06-01.csv
-        cohort6: output/input_measures_2019-07-01.csv
-        cohort7: output/input_measures_2019-08-01.csv
-        cohort8: output/input_measures_2019-09-01.csv
-        cohort9: output/input_measures_2019-10-01.csv
-        cohort10: output/input_measures_2019-11-01.csv
-        cohort11: output/input_measures_2019-12-01.csv
-        cohort12: output/input_measures_2020-01-01.csv
-        cohort13: output/input_measures_2020-02-01.csv
-        cohort14: output/input_measures_2020-03-01.csv
-        cohort15: output/input_measures_2020-04-01.csv
-        cohort16: output/input_measures_2020-05-01.csv
-        cohort17: output/input_measures_2020-06-01.csv
-        cohort18: output/input_measures_2020-07-01.csv
-        cohort19: output/input_measures_2020-08-01.csv
-        cohort20: output/input_measures_2020-09-01.csv
-        cohort21: output/input_measures_2020-10-01.csv
+        cohort1: output/input_measures_*.csv
 
   generate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition_measures
@@ -54,25 +40,46 @@ actions:
         measure11: output/measure_noncovid_death_age.csv
         measure12: output/measure_noncovid_death_sex_age.csv
 
-  01_data_management: 
-    run: r:latest analysis/01_data_management.R 
-    needs: [generate_cohort]
+  010_data_management_2019:
+    run: r:latest analysis/010_data_management.R ./output/input_2019.csv 20190201 ./data/study_population_2019.csv
+    needs: [generate_cohort_2019]
     outputs: 
       highly_sensitive:
-        data: data/study_population.csv 
-        
-  02_baseline_characteristics: 
-    run: r:latest analysis/02_baseline_characteristics.R
-    needs: [generate_cohort, 01_data_management]
-    outputs: 
-      moderately_sensitive: 
-        table_1: analysis/outfiles/table_1.txt
+        data1: data/study_population_2019.csv
 
-  03_descriptive_mortality_rates: 
-    run: r:latest analysis/03_descriptive_mortality_rates.R 
-    needs: [generate_measures]
+  010_data_management_2020:
+    run: r:latest analysis/010_data_management.R ./output/input_2020.csv 20200201 ./data/study_population_2020.csv
+    needs: [generate_cohort_2020]
     outputs: 
-      moderately_sensitive: 
+      highly_sensitive:
+        data2: data/study_population_2020.csv
+
+  020_baseline_characteristics_2019:
+    run: r:latest analysis/010_data_management.R ./data/study_population_2019.csv ./analysis/outfiles/table_1a.txt
+    needs: [generate_cohort_2019, 010_data_management_2019]
+    outputs: 
+      moderately_sensitive:
+        table1a: analysis/outfiles/table_1a.txt
+
+  020_baseline_characteristics_2020:
+    run: r:latest analysis/010_data_management.R ./data/study_population_2020.csv ./analysis/outfiles/table_1b.txt
+    needs: [generate_cohort_2020, 010_data_management_2020]
+    outputs: 
+      moderately_sensitive:
+        table1b: analysis/outfiles/table_1b.txt
+
+  025_carehome_characteristics:
+    run: r:latest analysis/025_carehome_characteristics.R ./data/study_population_2020.csv 
+    needs: [010_data_management_2020]
+    outputs: 
+      moderately_sensitive:
+        log: analysis/outfiles/carehome_characteristics.txt
+
+  030_descriptive_mortality_rates.R:
+    run: r:latest analysis/030_descriptive_mortality_rates.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
+      moderately_sensitive:
         table_2a: analysis/outfiles/table_2a.txt
         table_2b: analysis/outfiles/table_2b.txt
         table_2c: analysis/outfiles/table_2c.txt
