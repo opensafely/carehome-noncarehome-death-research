@@ -57,6 +57,14 @@ study = StudyDefinition(
         """(NOT ons_covid_death) AND ons_any_death""",
         return_expectations={"incidence": 0.15},
     ),
+    tpp_death_date=patients.with_death_recorded_in_primary_care(
+        on_or_after="index_date",
+        returning="date_of_death",
+        date_format="YYYY-MM-DD",
+        return_expectations={"date": {"earliest": "2020-02-01"},
+                             "rate" : "exponential_increase"
+                            }, 
+    ), 
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(

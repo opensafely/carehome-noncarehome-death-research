@@ -326,20 +326,30 @@ study = StudyDefinition(
         on_or_after="index_date",
         returning="date_of_death",
         date_format="YYYY-MM-DD",
-        return_expectations={"date": {"earliest": "2020-02-01"},
+        return_expectations={"date": {"earliest": "2019-02-01"},
                              "rate" : "exponential_increase"
                             }, 
     ), 
 
-    ## ons death 
+    ## ons covid death 
     ons_covid_death_date=patients.with_these_codes_on_death_certificate(
        covid_codelist,
        on_or_after="index_date",
        match_only_underlying_cause=False,
        returning="date_of_death",
        date_format="YYYY-MM-DD",
-       return_expectations={"date": {"earliest": "2020-02-01"},
+       return_expectations={"date": {"earliest": "2019-02-01"},
                             "rate" : "exponential_increase"
                             }, 
     ),  
+
+    ## ons death 
+    ons_any_death_date=patients.died_from_any_cause(
+       on_or_after="index_date",
+       returning="date_of_death",
+       date_format="YYYY-MM-DD",
+       return_expectations={"date": {"earliest": "2019-02-01"},
+                            "rate" : "exponential_increase"
+                            }, 
+    ),
 ) 
