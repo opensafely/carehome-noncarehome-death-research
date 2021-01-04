@@ -329,7 +329,7 @@ study_population <- study_population  %>%
   mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
 
 print("Difference in days between death date in TPP and ONS, where this exists")
-summary(date_check$date_difference)
+summary(study_population$date_difference)
 
 # Save Dataset as CSV -----------------------------------------------------
 
