@@ -114,7 +114,8 @@ tabulate_me <- function(x, y) {
 summarise_me <- function(x, y) { 
   
     table <- summary %>% 
-    group_by(care_home_group) %>%  
+    group_by(care_home_group) %>% 
+    summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) %>% 
     pivot_wider(names_from = c(care_home_group), values_from=c(Mean, SD), 
                 names_glue = "{care_home_group}_{.value}") %>% 
     rename(Overall_Count = Overall_Mean) %>% 
