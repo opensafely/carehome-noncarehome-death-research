@@ -325,8 +325,8 @@ crosstab
 
 study_population <- study_population  %>%    
   mutate(tpp_death_date = as.numeric(ymd(tpp_death_date)))  %>% 
-  mutate(ons_any_death_date = as.numeric(ymd(ons_covid_death_date)))  %>% 
-  mutate(date_difference = tpp_death_date - ons_covid_death_date, na.rm = TRUE) 
+  mutate(ons_any_death_date = as.numeric(ymd(ons_any_death_date)))  %>% 
+  mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
 
 print("Difference in days between death date in TPP and ONS, where this exists")
 summary(date_check$date_difference)
