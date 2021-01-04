@@ -101,3 +101,30 @@ actions:
         plot_3a: analysis/outfiles/plot_3a.png
         plot_3b: analysis/outfiles/plot_3b.png
         plot_3c: analysis/outfiles/plot_3c.png
+
+  035_comparative_mortality_rates.R:
+    run: r:latest analysis/035_comparative_mortality_rates.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
+      moderately_sensitive:
+        table_2a: analysis/outfiles/table_5a.txt
+        table_2b: analysis/outfiles/table_5b.txt
+        table_2c: analysis/outfiles/table_5c.txt
+        table_2d: analysis/outfiles/table_5d.txt
+        table_3a: analysis/outfiles/table_6a.txt
+        table_3b: analysis/outfiles/table_6b.txt
+        table_3c: analysis/outfiles/table_6c.txt
+        table_3d: analysis/outfiles/table_6d.txt
+        table_4a: analysis/outfiles/table_7a.txt
+        table_4b: analysis/outfiles/table_7b.txt
+        table_4c: analysis/outfiles/table_7c.txt
+        table_4d: analysis/outfiles/table_7d.txt
+        plot_1a: analysis/outfiles/plot_4a.png
+        plot_1b: analysis/outfiles/plot_4b.png
+        plot_1c: analysis/outfiles/plot_4c.png
+        plot_2a: analysis/outfiles/plot_5a.png
+        plot_2b: analysis/outfiles/plot_5b.png
+        plot_2c: analysis/outfiles/plot_5c.png
+        plot_3a: analysis/outfiles/plot_6a.png
+        plot_3b: analysis/outfiles/plot_6b.png
+        plot_3c: analysis/outfiles/plot_6c.png
