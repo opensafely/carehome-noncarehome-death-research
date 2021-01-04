@@ -55,14 +55,14 @@ actions:
         data2: data/study_population_2020.csv
 
   020_baseline_characteristics_2019:
-    run: r:latest analysis/010_data_management.R ./data/study_population_2019.csv ./analysis/outfiles/table_1a.txt
+    run: r:latest analysis/020_baseline_characteristics.R ./data/study_population_2019.csv ./analysis/outfiles/table_1a.txt
     needs: [generate_cohort_2019, 010_data_management_2019]
     outputs: 
       moderately_sensitive:
         table1a: analysis/outfiles/table_1a.txt
 
   020_baseline_characteristics_2020:
-    run: r:latest analysis/010_data_management.R ./data/study_population_2020.csv ./analysis/outfiles/table_1b.txt
+    run: r:latest analysis/020_baseline_characteristics.R ./data/study_population_2020.csv ./analysis/outfiles/table_1b.txt
     needs: [generate_cohort_2020, 010_data_management_2020]
     outputs: 
       moderately_sensitive:

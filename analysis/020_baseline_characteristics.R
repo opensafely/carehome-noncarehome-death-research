@@ -72,7 +72,6 @@ tabyl(summary$care_home_group)
 
 # Define Functions --------------------------------------------------------
 # these are not particularly generalised at the moment 
-# the idea was that I need to reformat the standard output from summarise quite a bit to make it fit a table 1 
 # I wanted to write small discrete functions that summarised and then reformatted a single variable, which can then be applied many times to build a table one
 # suggestions for improvements v welcome, particularly around how to get these to save what they are doing to the dataset, current solution a little hacky
 
@@ -166,11 +165,3 @@ table_1 <- tabulate_me(x = dementia, y = Dementia)
 
 # export tbe table as a nice text file 
 write.table(table_1, file = outputdata, sep = "\t", na = "", row.names=FALSE)
-
-# To do 
-# Fix the evaluation of presentation names so you can use spaces rather than underscores 
-# Fix the renaming of pivot outpout so that this is numbered and doesnt require annoying renaming step 
-# Alternatively simplify the renaming step 
-# Display factors in "correct" order 
-
-
