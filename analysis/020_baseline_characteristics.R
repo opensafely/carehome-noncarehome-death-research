@@ -1,11 +1,11 @@
 # Program Information  ----------------------------------------------------
 
-# Program:     02_baseline_characteristics 
+# Program:     020_baseline_characteristics 
 # Author:      Anna Schultze 
 # Description: Summarise cleaned study_population file into a table one of 
 #              baseline characteristics 
-# Input:       study_population.csv 
-# Output:      table1.txt 
+# Input:       study_population_[year].csv 
+# Output:      table1_[year].txt 
 # Edits:      
 
 # Housekeeping  -----------------------------------------------------------
@@ -35,9 +35,21 @@ if (file.exists(subDir)){
   print("Out directory didn't exist, but I created it")
 }
 
+# Read in arguments supplied through project.yaml 
+# this allows the script to be run for several study populations at different times 
+
+args = commandArgs(trailingOnly=TRUE)
+
+print("These are my input arguments")
+print(args[1])
+print(args[2])
+
+inputdata <- toString(args[1]) 
+outputdata <- toString(args[2]) 
+
 # Read in Data ------------------------------------------------------------
 
-study_population <- fread("./data/study_population.csv", data.table = FALSE, na.strings = "")
+study_population <- fread(inputdata, data.table = FALSE, na.strings = "")
 
 # Data Management ----------------------------------------------------------
 # table of baseline characteristics by care home vs. not care home and overall 
@@ -60,8 +72,8 @@ tabyl(summary$care_home_group)
 
 # Define Functions --------------------------------------------------------
 # these are not particularly generalised at the moment 
-# the idea was to have small discrete functions that can then be applied many times to build a table one
-# honestly I can't quite get my head around R functions but these broadly seem to do the thing
+# I wanted to write small discrete functions that summarised and then reformatted a single variable, which can then be applied many times to build a table one
+# suggestions for improvements v welcome, particularly around how to get these to save what they are doing to the dataset, current solution a little hacky
 
 # function for summarising categorical variable in table format
 #-- the input values are: 
@@ -103,29 +115,15 @@ summarise_me <- function(x, y) {
   
     table <- summary %>% 
     group_by(care_home_group) %>% 
-    summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) 
-    
-    print("These are the column names I started with")
-    print(colnames(summary))
-    print("I calculated the mean")
-    print(mean(summary$age))
-    print(tabyl(summary$care_home_group))
-    
-    table <- table %>% 
+    summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) %>% 
     pivot_wider(names_from = c(care_home_group), values_from=c(Mean, SD), 
                 names_glue = "{care_home_group}_{.value}") %>% 
-      dplyr::rename(Overall_Count = Overall_Mean) %>% 
-      dplyr::rename(Overall_Percentage = Overall_SD) 
-    
-    print("I pivoted wider and renamed the overall columns")
-    print("These are the column names I now can see")
-    print(colnames(table))
-    
-    table <- table %>% 
-      dplyr::rename(Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean) %>% 
-      dplyr::rename(Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD) %>% 
-      dplyr::rename(Private_Home_Count = Private_Home_Mean) %>% 
-      dplyr::rename(Private_Home_Percentage = Private_Home_SD) %>% 
+    rename(Overall_Count = Overall_Mean) %>% 
+    rename(Overall_Percentage = Overall_SD) %>% 
+    rename(Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean) %>% 
+    rename(Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD) %>% 
+    rename(Private_Home_Count = Private_Home_Mean) %>% 
+    rename(Private_Home_Percentage = Private_Home_SD) %>% 
     mutate(varlevel = "Mean, SD") %>% 
     mutate(varlevel = as.character(varlevel)) %>% 
     select(varlevel, (matches("Over*")), (matches("Care*")), (matches("Priv*"))) %>% 
@@ -148,13 +146,9 @@ table_1 <- NULL
 # tabulate and summarise the variables I want 
 
 table_1 <- tabulate_me(x = total, y = Total)
-print(table_1)
 table_1 <- tabulate_me(x = care_home_cat, y = Care_Home_Type)
-print(table_1)
 table_1 <- tabulate_me(x = sex, y = Gender) 
-print(table_1)
 table_1 <- summarise_me(x = age, y = Age_in_Years)
-print(table_1)
 table_1 <- tabulate_me(x = ethnicity_cat, y = Self-reported_Ethnicity)
 table_1 <- tabulate_me(x = region, y = Geographical_Region)
 table_1 <- tabulate_me(x = rural_urban, y = Rural_or_Urban_Area)
@@ -171,12 +165,4 @@ table_1 <- tabulate_me(x = stroke, y = History_of_Stroke)
 table_1 <- tabulate_me(x = dementia, y = Dementia)
 
 # export tbe table as a nice text file 
-write.table(table_1, file = "./analysis/outfiles/table_1.txt", sep = "\t", na = "", row.names=FALSE)
-
-# To do 
-# Fix the evaluation of presentation names so you can use spaces rather than underscores 
-# Fix the renaming of pivot outpout so that this is numbered and doesnt require annoying renaming step 
-# Alternatively simplify the renaming step 
-# I can't get my factor variables to display in the order I want. I give up. 
-
-
+write.table(table_1, file = outputdata, sep = "\t", na = "", row.names=FALSE)

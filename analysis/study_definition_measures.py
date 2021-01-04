@@ -57,6 +57,14 @@ study = StudyDefinition(
         """(NOT ons_covid_death) AND ons_any_death""",
         return_expectations={"incidence": 0.15},
     ),
+    tpp_death_date=patients.with_death_recorded_in_primary_care(
+        on_or_after="index_date",
+        returning="date_of_death",
+        date_format="YYYY-MM-DD",
+        return_expectations={"date": {"earliest": "2020-02-01"},
+                             "rate" : "exponential_increase"
+                            }, 
+    ), 
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(
@@ -73,18 +81,30 @@ study = StudyDefinition(
     allpatients=patients.satisfying("""age>=0""", return_expectations={"incidence": 1}
     ),
     # age groups 
-    ageband = patients.categorised_as(
-        {
+    ageband_narrow = patients.categorised_as(
+        {   
             "0": "DEFAULT",
-            "18-49": """ age >= 18 AND age < 50""",
-            "50-59": """ age >=  50 AND age < 60""",
-            "60-69": """ age >=  60 AND age < 70""",
-            "70-79": """ age >=  70 AND age < 80""",
-            "80+": """ age >=  80 AND age < 120""",
+            "65-74": """ age >=  65 AND age < 75""",
+            "75-79": """ age >=  75 AND age < 80""",
+            "80-84": """ age >=  80 AND age < 85""",
+            "85-89": """ age >=  85 AND age < 90""",
+            "90+": """ age >=  90 AND age < 120""",
         },
         return_expectations={
             "rate":"universal",
-            "category": {"ratios": {"18-49": 0.5, "50-59": 0.2, "60-69": 0.1, "70-79":0.1, "80+":0.1 }}
+            "category": {"ratios": {"65-74": 0.4, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
+        },
+    ),
+    ageband_broad = patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "65-74": """ age >=  65 AND age < 75""",
+            "75-84": """ age >=  75 AND age < 85""",
+            "85+": """ age >=  85 AND age < 120""",
+        },
+        return_expectations={
+            "rate":"universal",
+            "category": {"ratios": {"65-74": 0.5, "75-84": 0.2, "85+": 0.3 }}
         },
     ),
     #gender groups 
@@ -138,13 +158,13 @@ measures = [
         id="covid_death_age",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = ["ageband", "care_home_type"],
+        group_by = ["ageband_narrow", "care_home_type"],
     ),
     Measure(
         id="covid_death_sex_age",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = ["sex", "ageband", "care_home_type"],  
+        group_by = ["sex", "ageband_narrow", "care_home_type"],  
     ),
 
     # all-cause death
@@ -164,13 +184,13 @@ measures = [
         id="allcause_death_age",
         numerator="ons_any_death",
         denominator="population",
-        group_by = ["ageband", "care_home_type"],
+        group_by = ["ageband_narrow", "care_home_type"],
     ),
     Measure(
         id="allcause_death_sex_age",
         numerator="ons_any_death",
         denominator="population",
-        group_by = ["sex", "ageband", "care_home_type"],    
+        group_by = ["sex", "ageband_narrow", "care_home_type"],    
     ),
 
     # Non covid death
@@ -190,12 +210,12 @@ measures = [
         id="noncovid_death_age",
         numerator="ons_noncovid_death",
         denominator="population",
-        group_by = ["ageband", "care_home_type"],
+        group_by = ["ageband_narrow", "care_home_type"],
     ),
     Measure(
         id="noncovid_death_sex_age",
         numerator="ons_noncovid_death",
         denominator="population",
-        group_by = ["sex", "ageband", "care_home_type"],    
+        group_by = ["sex", "ageband_narrow", "care_home_type"],    
     ),
 ]
