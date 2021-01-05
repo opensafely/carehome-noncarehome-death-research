@@ -17,7 +17,7 @@ actions:
         cohort: output/input_2020.csv
 
   generate_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2020-02-01 to 2020-04-01 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-11-30 by week"
     outputs:
       highly_sensitive:
         cohort1: output/input_measures_*.csv
