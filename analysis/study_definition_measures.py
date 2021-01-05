@@ -53,6 +53,10 @@ study = StudyDefinition(
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
     ), 
+    ons_noncovid_death=patients.satisfying(
+        """(NOT ons_covid_death) AND ons_any_death""",
+        return_expectations={"incidence": 0.15},
+    ),
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(
