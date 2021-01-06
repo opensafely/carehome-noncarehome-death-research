@@ -36,11 +36,9 @@ args = commandArgs(trailingOnly=TRUE)
 print("These are my input arguments")
 print(args[1])
 print(args[2])
-print(args[3])
 
 inputdata <- toString(args[1]) 
-indexdate <- toString(args[2])
-outputdata <- toString(args[3])
+outputdata <- toString(args[2])
 
 # Read in Data -----------------------------------------------------------
 input <- fread(inputdata, data.table = FALSE, na.strings = "")
@@ -58,49 +56,9 @@ apply(input[c("ethnicity", "sex", "rural_urban", "region", "care_home_type")], 2
 
 # list of variables to change from date to indicator 
 vars = c("lung_cancer", "haem_cancer", "other_cancer", "esrf", 
-         "creatinine_date", "diabetes", "chronic_liver_disease", 
+         "diabetes", "chronic_liver_disease", 
          "chronic_cardiac_disease", "chronic_respiratory_disease", "stroke", 
          "dementia")
-
-# check expectations 
-indexdate_test <- function(dataname, varname, index) {
-  
-  ifelse(length(which(!is.na(dataname$varname)) & (dataname$varname > ymd(deparse(substitute(index)))))>1, 
-            paste("at least one date in", deparse(substitute(varname)),"is later than expected"), 
-            paste("all dates in", deparse(substitute(varname)), "occured before index")) 
-} 
-
-indexdate_test(dataname = input, varname = lung_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = haem_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = other_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = esrf, index = indexdate)
-indexdate_test(dataname = input, varname = creatinine_date, index = indexdate)
-indexdate_test(dataname = input, varname = diabetes, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_liver_disease, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_cardiac_disease, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_respiratory_disease, index = aindexdate)
-indexdate_test(dataname = input, varname = stroke, index = indexdate)
-indexdate_test(dataname = input, varname = dementia, index = indexdate)
-
-earlydate_test <- function(dataname, varname, index) {
-
-ifelse(length(which(!is.na(dataname$varname)) & (dataname$varname < ymd("19000101")))>1, 
-       paste("at least one date in", deparse(substitute(varname)),"occured before 1900"), 
-       paste("all dates in", deparse(substitute(varname)), "occured after 1900")) 
-
-} 
-
-earlydate_test(dataname = input, varname = lung_cancer)
-earlydate_test(dataname = input, varname = haem_cancer)
-earlydate_test(dataname = input, varname = other_cancer)
-earlydate_test(dataname = input, varname = esrf)
-earlydate_test(dataname = input, varname = creatinine_date)
-earlydate_test(dataname = input, varname = diabetes)
-earlydate_test(dataname = input, varname = chronic_liver_disease)
-earlydate_test(dataname = input, varname = chronic_cardiac_disease)
-earlydate_test(dataname = input, varname = chronic_respiratory_disease)
-earlydate_test(dataname = input, varname = stroke)
-earlydate_test(dataname = input, varname = dementia)
 
 # create categories 
 study_population <- input %>% 
@@ -120,7 +78,6 @@ missing_test(dataname = study_population, varname = lung_cancer)
 missing_test(dataname = study_population, varname = haem_cancer)
 missing_test(dataname = study_population, varname = other_cancer)
 missing_test(dataname = study_population, varname = esrf)
-missing_test(dataname = study_population, varname = creatinine_date)
 missing_test(dataname = study_population, varname = diabetes)
 missing_test(dataname = study_population, varname = chronic_liver_disease)
 missing_test(dataname = study_population, varname = chronic_cardiac_disease)
@@ -129,10 +86,6 @@ missing_test(dataname = study_population, varname = stroke)
 missing_test(dataname = study_population, varname = dementia)
 
 # Demographics ------------------------------------------------------------
-
-##-- Age 
-print("Age")
-summary(input$age)
 
 ##-- Ethnicity 
 print("Ethnicity")
@@ -326,7 +279,14 @@ crosstab
 study_population <- study_population  %>%    
   mutate(tpp_death_date = as.numeric(ymd(tpp_death_date)))  %>% 
   mutate(ons_any_death_date = as.numeric(ymd(ons_any_death_date)))  %>% 
+  mutate(discrepancy = case_when(
+    tpp_death_date != ons_any_death_date ~ 1, 
+    TRUE ~ 0
+  )) %>% 
   mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
+
+print("Number and percentage of deaths that do not match in TPP and ONS")
+tabyl(study_population$discrepancy)
 
 print("Difference in days between death date in TPP and ONS, where this exists")
 summary(study_population$date_difference)
