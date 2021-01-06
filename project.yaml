@@ -17,7 +17,7 @@ actions:
         cohort: output/input_2020.csv
 
   generate_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-11-30 by week"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-11-30 by month"
     outputs:
       highly_sensitive:
         cohort1: output/input_measures_*.csv
@@ -40,15 +40,36 @@ actions:
         measure11: output/measure_noncovid_death_age.csv
         measure12: output/measure_noncovid_death_sex_age.csv
 
+  generate_measures_sensitivity_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures_tppdeath --index-date-range "2019-02-01 to 2020-11-30 by month"
+    needs: [generate_measures]
+    outputs:
+      highly_sensitive:
+        cohort_sensitivity: output/input_measures_tppdeath_*.csv
+
+  generate_measures_sensitivity:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_measures_tppdeath
+    needs: [generate_measures_sensitivity_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_sensitivity: output/measure_allcause_tppdeath_all.csv
+
+  generate_cohort_cause_of_death:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_cause_of_death --index-date-range "2019-02-01 to 2020-11-30 by month"
+    needs: [generate_measures, generate_measures_sensitivity]
+    outputs:
+      highly_sensitive:
+        cohort: output/input_cause_of_death_*.csv
+
   010_data_management_2019:
-    run: r:latest analysis/010_data_management.R ./output/input_2019.csv 20190201 ./data/study_population_2019.csv
+    run: r:latest analysis/010_data_management.R ./output/input_2019.csv ./data/study_population_2019.csv
     needs: [generate_cohort_2019]
     outputs: 
       highly_sensitive:
         data1: data/study_population_2019.csv
 
   010_data_management_2020:
-    run: r:latest analysis/010_data_management.R ./output/input_2020.csv 20200201 ./data/study_population_2020.csv
+    run: r:latest analysis/010_data_management.R ./output/input_2020.csv ./data/study_population_2020.csv
     needs: [generate_cohort_2020]
     outputs: 
       highly_sensitive:
