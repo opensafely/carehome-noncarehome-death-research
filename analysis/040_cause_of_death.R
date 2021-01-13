@@ -1,15 +1,15 @@
 # Program Information  ----------------------------------------------------
 
-# Program:     035_comparative_mortality_rates
+# Program:     040_cause_of_death 
 # Author:      Anna Schultze 
 # Description: Look at most common causes of deaths among those who died, in and out of care homes 
-# Input:       measure_[outcome]_[group].csv
-# Output:      analysis/outfiles/table5.txt
-#              analysis/outfiles/figure4-5.png
+# Input:       input_measure_[date].csv
+# Output:      tables & figures into: analysis/outfiles
 # Edits:      
 
 # Housekeeping  -----------------------------------------------------------
 
+# 
 if (grepl("/analysis", getwd())) { 
   setwd("..") 
   getwd() 
@@ -105,27 +105,27 @@ table_part <- input %>%
 table <- NULL
 
 table <- cause_of_death_format(inputdata = "./output/input_cause_of_death_2019-02-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-03-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-04-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-05-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-06-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-07-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-08-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-09-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-10-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-11-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-12-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-01-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-02-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-03-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-04-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-05-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-06-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-07-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-08-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-09-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-10-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-11-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-11-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2019-12-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-01-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-02-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format("./output/input_measures_2020-11-01.csv", care_home_filter = "Y")
 
 # make it wide
 output <- table %>%

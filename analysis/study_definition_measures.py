@@ -27,7 +27,7 @@ study = StudyDefinition(
     # set an index date (as starting point)
     index_date="2019-02-01",
 
-    # define denominator for rates (mid point of time interval of interest - 3 days as need whole day for week, 14 days for month)
+    # define denominator for rates 
     population=patients.satisfying(
         """
         (age >= 65 AND age < 120) AND 
@@ -36,19 +36,19 @@ study = StudyDefinition(
         (care_home_type = "Y" OR care_home_type = "N")
         """,
         is_registered_with_tpp=patients.registered_as_of(
-          "index_date + 3 days"
+          "index_date"
         ),
     ),
 
     # define all outcomes (numerators)
     ons_any_death=patients.died_from_any_cause(
-       between=["index_date", "index_date + 7 days"], 
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
     ), 
     ons_covid_death=patients.with_these_codes_on_death_certificate(
        covid_codelist,
-       between=["index_date", "index_date + 7 days"], 
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
        match_only_underlying_cause=False,
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
@@ -56,6 +56,13 @@ study = StudyDefinition(
     ons_noncovid_death=patients.satisfying(
         """(NOT ons_covid_death) AND ons_any_death""",
         return_expectations={"incidence": 0.15},
+    ),
+
+    # define cause of death
+    # note - only described, not used in the actual measures 
+    died_cause_ons=patients.died_from_any_cause(
+        returning="underlying_cause_of_death",
+        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45":0.05 ,"G30":0.05, "A01":0.25}},},
     ),
 
     # define age (needed for population and stratification group)
