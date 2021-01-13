@@ -44,7 +44,7 @@ study = StudyDefinition(
     ons_any_death=patients.died_from_any_cause(
        between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
        returning="binary_flag",
-       return_expectations={"incidence" : 0.1},
+       return_expectations={"incidence" : 0.3},
     ), 
     ons_covid_death=patients.with_these_codes_on_death_certificate(
        covid_codelist,
@@ -62,7 +62,7 @@ study = StudyDefinition(
     # note - only described, not used in the actual measures 
     died_cause_ons=patients.died_from_any_cause(
         returning="underlying_cause_of_death",
-        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45":0.05 ,"G30":0.05, "A01":0.25}},},
+        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.2,"G30":0.2, "J45":0.2}},},
     ),
 
     # define age (needed for population and stratification group)

@@ -9,7 +9,7 @@
 
 # Housekeeping  -----------------------------------------------------------
 
-# 
+# change the working directory if needed
 if (grepl("/analysis", getwd())) { 
   setwd("..") 
   getwd() 
@@ -25,7 +25,6 @@ library(lubridate)
 library(Hmisc)
 
 # make sure my favoured output folder exists
-
 mainDir <- getwd() 
 subDir <- "./analysis/outfiles"
 
@@ -36,19 +35,26 @@ if (file.exists(subDir)){
   print("Out directory didn't exist, but I created it")
 }
 
-# Generic code for formatting each dataset before merging -----------------
 
+# Most common causes of death over time -----------------------------------
+
+# Generic code for formatting each dataset and stacking these together
 cause_of_death_format <- function(inputdata, care_home_filter) {
 
 input <- fread(inputdata, data.table = FALSE, na.strings = "")
 filtervar <- enquo(care_home_filter)
 
 table_part <- input %>% 
-  # classify causes of deaths into chapters 
+  # describe causes of death among those who died
+  filter(ons_any_death == 1) %>% 
+  # run this for a specific subset of care home residents as specified in input values
   filter(care_home_type == !!filtervar) %>% 
-  rename(Care_Home = care_home_type) %>% 
+  # rename for displaying in a table
+  rename(Care_Home = care_home_type) %>%
+  # extract relevant parts of the ICD-10 codes to classify deaths
   mutate(cause_chapter = str_sub(died_cause_ons,1,1)) %>% 
   mutate(cause_number = str_sub(died_cause_ons,2,3)) %>% 
+  # classify deaths into ICD-10 chapters 
   mutate(Cause_of_Death = case_when(
     cause_chapter == "A" | cause_chapter == "B" ~ "Certain infectious and parasitic diseases", 
     cause_chapter == "C" | (cause_chapter == "D" & cause_number < 50) ~ "Neoplasms", 
@@ -89,43 +95,45 @@ table_part <- input %>%
   slice(1:10)
 
   # add the time period 
-  time_period <- ymd(str_sub(inputdata, 31, 40))
+  time_period <- ymd(str_sub(inputdata, 25, 34))
   
   table_part <- table_part %>% 
   mutate(Year = time_period) %>% 
+  # select only relevant variables
   select(Year, Cause_of_Death, Percentage, Count)
   
+  # add these to a summary table called table 
   bind_rows(table, table_part)
   
 }
 
-
-# Care Homes --------------------------------------------------------------
+# Care Homes : Table -----------------------------------------------------------
+# apply the function to causes of deaths in care homes and output a summary table 
 
 table <- NULL
 
-table <- cause_of_death_format(inputdata = "./output/input_cause_of_death_2019-02-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-03-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-04-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-05-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-06-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-07-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-08-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-09-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-10-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-11-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2019-12-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-01-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-02-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-03-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-04-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-05-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-06-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-07-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-08-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-09-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-10-01.csv", care_home_filter = "Y")
-table <- cause_of_death_format("./output/input_measures_2020-11-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-02-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-11-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-12-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-01-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-02-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-11-01.csv", care_home_filter = "Y")
 
 # make it wide
 output <- table %>%
@@ -141,32 +149,33 @@ output <- table %>%
 write.table(output, file = "./analysis/outfiles/table_8a.txt", sep = "\t", na = "", row.names=FALSE)
 
 
-# Private Homes -----------------------------------------------------------
+# Private Homes: Table -----------------------------------------------------------
+# apply the function to causes of deaths in private homes and output a summary table 
 
 table <- NULL
 
-table <- cause_of_death_format(inputdata = "./output/input_cause_of_death_2019-02-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-03-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-04-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-05-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-06-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-07-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-08-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-09-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-10-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-11-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2019-12-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-01-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-02-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-03-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-04-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-05-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-06-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-07-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-08-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-09-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-10-01.csv", care_home_filter = "N")
-table <- cause_of_death_format("./output/input_cause_of_death_2020-11-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-02-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-03-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-04-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-05-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-06-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-07-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-08-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-09-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-10-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-11-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2019-12-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-01-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-02-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-03-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-04-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-05-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-06-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-07-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-08-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-09-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-10-01.csv", care_home_filter = "N")
+table <- cause_of_death_format(inputdata = "./output/input_measures_2020-11-01.csv", care_home_filter = "N")
 
 # make it wide
 output <- table %>%
@@ -181,3 +190,143 @@ output <- table %>%
 # save as text
 write.table(output, file = "./analysis/outfiles/table_8b.txt", sep = "\t", na = "", row.names=FALSE)
 
+# Specific Causes of Deaths Over Time -------------------------------------
+# display selected causes of deaths instead of most common deaths in a figure 
+
+cause_of_death_figure_format <- function(inputdata, care_home_filter) {
+  
+  input <- fread(inputdata, data.table = FALSE, na.strings = "")
+  filtervar <- enquo(care_home_filter)
+  
+  table_part <- input %>% 
+    # describe causes of death among those who died
+    filter(ons_any_death == 1) %>% 
+    # run this for a specific subset of care home residents as specified in input values
+   # filter(care_home_type == !!filtervar) %>% 
+    # rename for displaying in a table
+    rename(Care_Home = care_home_type) %>%
+    # extract relevant parts of the ICD-10 codes to classify deaths
+    mutate(cause_chapter = str_sub(died_cause_ons,1,1)) %>% 
+    mutate(cause_number = str_sub(died_cause_ons,2,3)) %>% 
+    # create specific causes of death to match K Baskharan's analysis
+    # assumes COVID-19 if more than one primary/underlying 
+    mutate(Cause_of_Death = case_when(
+      cause_chapter == "C" ~ "Cancer",
+      cause_chapter == "I" ~ "Cardiovascular Disease",
+      cause_chapter == "J" ~ "Respiratory Disease",
+      cause_chapter == "F" & (cause_number > 0 & cause_number < 3) ~ 'Dementia', 
+      cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
+      ons_covid_death == 1 ~ "COVID-19", 
+      TRUE ~ "Other"),
+      Cause_of_Death = factor(Cause_of_Death, levels = c("Other", "Cardiovascular Disease", "Cancer", "Respiratory Disease", "Dementia", "COVID-19"))) %>% 
+    # calculate frequency of each cod
+    group_by(Cause_of_Death) %>% 
+    summarise(Count = n()) %>% 
+    mutate(Percentage = round((Count/sum(Count)),4)*100) 
+
+  # add the time period 
+  time_period <- ymd(str_sub(inputdata, 25, 34))
+  
+  table_part <- table_part %>% 
+    mutate(Year = time_period) %>% 
+    # select only relevant variables
+    select(Year, Cause_of_Death, Percentage)
+  
+  # add these to a summary table called table 
+  bind_rows(table, table_part)
+  
+} 
+
+# Care Homes : Figure -----------------------------------------------------
+
+table <- NULL
+
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-02-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-11-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-12-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-01-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-02-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-03-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-04-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-05-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-06-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-07-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-08-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-09-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-10-01.csv", care_home_filter = "Y")
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-11-01.csv", care_home_filter = "Y")
+ 
+plot_7a <- ggplot(table, aes(x = Year, y = Percentage, fill = Cause_of_Death), position = "stack") + 
+  geom_area(alpha=0.6 , size=.5, colour="white") + 
+  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  scale_fill_viridis_d() + 
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) + 
+  labs(x = "Time Period", 
+       y = "% of all Deaths", 
+       title = "Cause of Death Over Time among Care Home Residents", 
+       fill = "Cause of Death") 
+
+png(filename = "./analysis/outfiles/plot_7a.png")
+plot_7a
+dev.off()
+  
+# PRivate Homes : Figure -----------------------------------------------------
+
+table <- NULL
+
+table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2019-02-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-03-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-04-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-05-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-06-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-07-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-08-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-09-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-10-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-11-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2019-12-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-01-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-02-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-03-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-04-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-05-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-06-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-07-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-08-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-09-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-10-01.csv", care_home_filter = "N")
+table <- cause_of_death_figure_format("./output/input_measures_2020-11-01.csv", care_home_filter = "N")
+
+plot_7b <- ggplot(table, aes(x = Year, y = Percentage, fill = Cause_of_Death), position = "stack") + 
+  geom_area(alpha=0.6 , size=.5, colour="white") + 
+  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  scale_fill_viridis_d() + 
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) + 
+  labs(x = "Time Period", 
+       y = "% of all Deaths", 
+       title = "Cause of Death Over Time among Private Home Residents", 
+       fill = "Cause of Death") 
+
+png(filename = "./analysis/outfiles/plot_7b.png")
+plot_7b
+dev.off()
