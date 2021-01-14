@@ -39,20 +39,21 @@ actions:
         measure10: output/measure_noncovid_death_sex.csv
         measure11: output/measure_noncovid_death_age.csv
         measure12: output/measure_noncovid_death_sex_age.csv
-
-  generate_measures_sensitivity_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures_tppdeath --index-date-range "2019-02-01 to 2020-11-30 by month"
-    needs: [generate_measures]
-    outputs:
-      highly_sensitive:
-        cohort_sensitivity: output/input_measures_tppdeath_*.csv
-
-  generate_measures_sensitivity:
-    run: cohortextractor:latest generate_measures --study-definition study_definition_measures_tppdeath
-    needs: [generate_measures_sensitivity_cohort]
-    outputs:
-      moderately_sensitive:
-        measure_sensitivity: output/measure_allcause_tppdeath_all.csv
+        measure13: output/measure_covid_death_sex_age_five.csv
+        measure14: output/measure_allcause_death_sex_age_five.csv
+        measure15: output/measure_noncovid_death_sex_age_five.csv
+        measure16: output/measure_covid_death_all_chdetail.csv
+        measure17: output/measure_covid_death_sex_chdetail.csv
+        measure18: output/measure_covid_death_age_chdetail.csv
+        measure19: output/measure_covid_death_sex_age_chdetail.csv
+        measure20: output/measure_allcause_death_all_chdetail.csv
+        measure21: output/measure_allcause_death_sex_chdetail.csv
+        measure22: output/measure_allcause_death_age_chdetail.csv
+        measure23: output/measure_allcause_death_sex_age_chdetail.csv
+        measure24: output/measure_noncovid_death_all_chdetail.csv
+        measure25: output/measure_noncovid_death_sex_chdetail.csv
+        measure26: output/measure_noncovid_death_age_chdetail.csv
+        measure27: output/measure_noncovid_death_sex_age_chdetail.csv
 
   010_data_management_2019:
     run: r:latest analysis/010_data_management.R ./output/input_2019.csv ./data/study_population_2019.csv
@@ -152,3 +153,29 @@ actions:
         table_8b: analysis/outfiles/table_8b.txt
         plot_7a: analysis/outfiles/plot_7a.png
         plot_7b: analysis/outfiles/plot_7b.png
+
+  050_standardisation.R:
+    run: r:latest analysis/050_standardisation.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
+      moderately_sensitive:
+        table_9a: analysis/outfiles/table_9a.txt
+        table_9b: analysis/outfiles/table_9b.txt     
+        table_9c: analysis/outfiles/table_9c.txt
+        plot_8a: analysis/outfiles/plot_8a.png
+        plot_8b: analysis/outfiles/plot_8b.png
+        plot_8c: analysis/outfiles/plot_8c.png
+
+  generate_measures_sensitivity_cohort:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures_tppdeath --index-date-range "2019-02-01 to 2020-11-30 by month"
+    needs: [generate_measures]
+    outputs:
+      highly_sensitive:
+        cohort_sensitivity: output/input_measures_tppdeath_*.csv
+
+  generate_measures_sensitivity:
+    run: cohortextractor:latest generate_measures --study-definition study_definition_measures_tppdeath
+    needs: [generate_measures_sensitivity_cohort]
+    outputs:
+      moderately_sensitive:
+        measure_sensitivity: output/measure_allcause_tppdeath_all.csv

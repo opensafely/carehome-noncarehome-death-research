@@ -10,13 +10,6 @@
 
 # Housekeeping  -----------------------------------------------------------
 
-if (grepl("/analysis", getwd())) { 
-  setwd("..") 
-  getwd() 
-} else {
-  getwd() 
-}
-
 # load packages 
 library(tidyverse)
 library(data.table)

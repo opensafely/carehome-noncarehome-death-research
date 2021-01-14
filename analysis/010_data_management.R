@@ -11,16 +11,6 @@
 
 # Housekeeping  -----------------------------------------------------------
 
-# change wd to be one step higher if the detected wd is /analysis 
-# needed for running through project.yaml if your Rproj like mine lives in /analysis
-# ensures script can be run both locally and on server without commenting out code 
-if (grepl("/analysis", getwd())) { 
-  setwd("..") 
-  getwd() 
-} else {
-    getwd() 
-}
-
 # load packages 
 library(tidyverse)
 library(data.table)
