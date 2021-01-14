@@ -179,7 +179,6 @@ study_population <- study_population %>%
   mutate(flu_vaccine = replace_na(flu_vaccine, 0))
 
 # check variable creation 
-missing_test(dataname = study_population, varname = flu_vaccine)
 tabyl(study_population$flu_vaccine) 
 
 ##-- CKD 

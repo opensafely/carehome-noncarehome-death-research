@@ -150,5 +150,5 @@ actions:
       moderately_sensitive:
         table_8a: analysis/outfiles/table_8a.txt
         table_8b: analysis/outfiles/table_8b.txt
-        plot_7a: analysis/outfiles/plot_4a.png
-        plot_7b: analysis/outfiles/plot_4b.png
+        plot_7a: analysis/outfiles/plot_7a.png
+        plot_7b: analysis/outfiles/plot_7b.png
