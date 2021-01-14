@@ -10,13 +10,6 @@
 
 # Housekeeping  -----------------------------------------------------------
 
-if (grepl("/analysis", getwd())) { 
-  setwd("..") 
-  getwd() 
-} else {
-  getwd() 
-}
-
 # load packages 
 library(tidyverse)
 library(data.table)
@@ -56,62 +49,6 @@ measure_noncovid_sex <- fread("./output/measure_noncovid_death_sex.csv", data.ta
 measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.table = FALSE, na.strings = "")
 measure_noncovid_sex_age <- fread("./output/measure_noncovid_death_sex_age.csv", data.table = FALSE, na.strings = "")
 
-# Data cleaning and checks-------------------------------------------------
-
-missing_test <- function(dataname, varname) {
-  
-  ifelse(length(which(is.na(dataname$varname)) > 1), paste(deparse(substitute(varname)),"in", deparse(substitute(dataname)), "has unexpected missing values"), paste(deparse(substitute(varname)),"in", deparse(substitute(dataname)),"is OK")) 
-  
-} 
-
-print("Missing data checks for all-cause mortality")
-missing_test(dataname = measure_any_all, varname = care_home_type)
-missing_test(dataname = measure_any_age, varname = care_home_type)
-missing_test(dataname = measure_any_sex, varname = care_home_type)
-missing_test(dataname = measure_any_sex_age, varname = care_home_type)
-
-missing_test(dataname = measure_any_age, varname = ageband_narrow)
-missing_test(dataname = measure_any_sex, varname = sex)
-missing_test(dataname = measure_any_sex_age, varname = ageband_narrow)
-missing_test(dataname = measure_any_sex_age, varname = sex)
-
-missing_test(dataname = measure_any_all, varname = ons_any_death)
-missing_test(dataname = measure_any_age, varname = ons_any_death)
-missing_test(dataname = measure_any_sex, varname = ons_any_death)
-missing_test(dataname = measure_any_sex_age, varname = ons_any_death)
-
-print("Missing data checks for covid mortality")
-missing_test(dataname = measure_covid_all, varname = care_home_type)
-missing_test(dataname = measure_covid_age, varname = care_home_type)
-missing_test(dataname = measure_covid_sex, varname = care_home_type)
-missing_test(dataname = measure_covid_sex_age, varname = care_home_type)
-
-missing_test(dataname = measure_covid_age, varname = ageband_narrow)
-missing_test(dataname = measure_covid_sex, varname = sex)
-missing_test(dataname = measure_covid_sex_age, varname = ageband_narrow)
-missing_test(dataname = measure_covid_sex_age, varname = sex)
-
-missing_test(dataname = measure_covid_all, varname = ons_covid_death)
-missing_test(dataname = measure_covid_age, varname = ons_covid_death)
-missing_test(dataname = measure_covid_sex, varname = ons_covid_death)
-missing_test(dataname = measure_covid_sex_age, varname = ons_covid_death)
-
-print("Missing data checks for non-covid mortality")
-missing_test(dataname = measure_noncovid_all, varname = care_home_type)
-missing_test(dataname = measure_noncovid_age, varname = care_home_type)
-missing_test(dataname = measure_noncovid_sex, varname = care_home_type)
-missing_test(dataname = measure_noncovid_sex_age, varname = care_home_type)
-
-missing_test(dataname = measure_noncovid_age, varname = ageband_narrow)
-missing_test(dataname = measure_noncovid_sex, varname = sex)
-missing_test(dataname = measure_noncovid_sex_age, varname = ageband_narrow)
-missing_test(dataname = measure_noncovid_sex_age, varname = sex)
-
-missing_test(dataname = measure_noncovid_all, varname = ons_noncovid_death)
-missing_test(dataname = measure_noncovid_age, varname = ons_noncovid_death)
-missing_test(dataname = measure_noncovid_sex, varname = ons_noncovid_death)
-missing_test(dataname = measure_noncovid_sex_age, varname = ons_noncovid_death)
-
 # Remove empty COVID rows--------------------------------------------------
 
 measure_covid_all <- measure_covid_all %>% 
@@ -150,7 +87,8 @@ measure_noncovid_sex_age <- as_tibble(cbind(measure_noncovid_sex_age,((binconf(m
 # Make and print tables 
 
 # Tables ------------------------------------------------------------------
-# long term aim to automate to have cleaner code 
+# long term aim to automate to have cleaner code - this needed to be expanded w. very little time
+# should be reasonably straight forward to write a more generalised function for this
 
 # Tabels: All Cause -------------------------------------------------------
 
