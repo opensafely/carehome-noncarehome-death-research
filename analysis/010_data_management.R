@@ -4,17 +4,16 @@
 # Author:      Anna Schultze 
 # Description: Conduct data management for presentation of baseline data 
 # Input:       input.csv 
-#              Arguments 1 = input data name, 2 = index date, 3 = output data name 
+#              Arguments 1 = input data name, 2 = output data name 
 #              Note: only runs through command line w. supplied arguments 
-# Output:      [output_name].csv
-# Edits:       22 Dec 2020: add checks of expectations to prevent issues on server (would really welcome suggested improvements)
-#                           make data management discrete (per variable) to help debugging
+# Output:      study_population.csv into output/
+# Edits:       22 Dec 2020: make data management discrete (per variable) to help debugging
 
 # Housekeeping  -----------------------------------------------------------
 
-# change wd if detected is /analysis 
+# change wd to be one step higher if the detected wd is /analysis 
 # needed for running through project.yaml if your Rproj like mine lives in /analysis
-# relies on your wd not having analysis anywhere else in the name... 
+# ensures script can be run both locally and on server without commenting out code 
 if (grepl("/analysis", getwd())) { 
   setwd("..") 
   getwd() 
@@ -28,19 +27,16 @@ library(data.table)
 library(janitor)
 library(lubridate)
 
-# Read in arguments supplied through project.yaml 
-# this allows the script to be run for several study populations at different times 
+# Read in arguments supplied through project.yaml and check what they are 
 
 args = commandArgs(trailingOnly=TRUE)
 
 print("These are my input arguments")
 print(args[1])
 print(args[2])
-print(args[3])
 
 inputdata <- toString(args[1]) 
-indexdate <- toString(args[2])
-outputdata <- toString(args[3])
+outputdata <- toString(args[2])
 
 # Read in Data -----------------------------------------------------------
 input <- fread(inputdata, data.table = FALSE, na.strings = "")
@@ -58,86 +54,24 @@ apply(input[c("ethnicity", "sex", "rural_urban", "region", "care_home_type")], 2
 
 # list of variables to change from date to indicator 
 vars = c("lung_cancer", "haem_cancer", "other_cancer", "esrf", 
-         "creatinine_date", "diabetes", "chronic_liver_disease", 
+         "diabetes", "chronic_liver_disease", 
          "chronic_cardiac_disease", "chronic_respiratory_disease", "stroke", 
          "dementia")
 
-# check expectations 
-indexdate_test <- function(dataname, varname, index) {
-  
-  ifelse(length(which(!is.na(dataname$varname)) & (dataname$varname > ymd(deparse(substitute(index)))))>1, 
-            paste("at least one date in", deparse(substitute(varname)),"is later than expected"), 
-            paste("all dates in", deparse(substitute(varname)), "occured before index")) 
-} 
-
-indexdate_test(dataname = input, varname = lung_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = haem_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = other_cancer, index = indexdate)
-indexdate_test(dataname = input, varname = esrf, index = indexdate)
-indexdate_test(dataname = input, varname = creatinine_date, index = indexdate)
-indexdate_test(dataname = input, varname = diabetes, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_liver_disease, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_cardiac_disease, index = indexdate)
-indexdate_test(dataname = input, varname = chronic_respiratory_disease, index = aindexdate)
-indexdate_test(dataname = input, varname = stroke, index = indexdate)
-indexdate_test(dataname = input, varname = dementia, index = indexdate)
-
-earlydate_test <- function(dataname, varname, index) {
-
-ifelse(length(which(!is.na(dataname$varname)) & (dataname$varname < ymd("19000101")))>1, 
-       paste("at least one date in", deparse(substitute(varname)),"occured before 1900"), 
-       paste("all dates in", deparse(substitute(varname)), "occured after 1900")) 
-
-} 
-
-earlydate_test(dataname = input, varname = lung_cancer)
-earlydate_test(dataname = input, varname = haem_cancer)
-earlydate_test(dataname = input, varname = other_cancer)
-earlydate_test(dataname = input, varname = esrf)
-earlydate_test(dataname = input, varname = creatinine_date)
-earlydate_test(dataname = input, varname = diabetes)
-earlydate_test(dataname = input, varname = chronic_liver_disease)
-earlydate_test(dataname = input, varname = chronic_cardiac_disease)
-earlydate_test(dataname = input, varname = chronic_respiratory_disease)
-earlydate_test(dataname = input, varname = stroke)
-earlydate_test(dataname = input, varname = dementia)
-
-# create categories 
+# if the date is not missing, change the variable to a binary indicator variable
 study_population <- input %>% 
   mutate_at((c(vars)), ~if_else(!is.na(.), 1, 0)) 
 
-# check variable creation 
+# tabulate each variable in the list to check that the creation of categories worked
 apply(study_population[c(vars)], 2, tabyl)
 
-# print error if unexpected missing 
-missing_test <- function(dataname, varname) {
-  
-  ifelse(length(which(is.na(dataname$varname)) > 1), paste(deparse(substitute(varname)),"has unexpected missing values"), paste(deparse(substitute(varname)), "has no unexpected missing values")) 
-
-} 
-
-missing_test(dataname = study_population, varname = lung_cancer)
-missing_test(dataname = study_population, varname = haem_cancer)
-missing_test(dataname = study_population, varname = other_cancer)
-missing_test(dataname = study_population, varname = esrf)
-missing_test(dataname = study_population, varname = creatinine_date)
-missing_test(dataname = study_population, varname = diabetes)
-missing_test(dataname = study_population, varname = chronic_liver_disease)
-missing_test(dataname = study_population, varname = chronic_cardiac_disease)
-missing_test(dataname = study_population, varname = chronic_respiratory_disease)
-missing_test(dataname = study_population, varname = stroke)
-missing_test(dataname = study_population, varname = dementia)
-
 # Demographics ------------------------------------------------------------
-
-##-- Age 
-print("Age")
-summary(input$age)
+# data management for demographic variables 
 
 ##-- Ethnicity 
 print("Ethnicity")
 
-# expectations tests 
+# data checks 
 ifelse(!is.integer(study_population$ethnicity), "ethnicity is not an integer", "ethnicity is an integer as expected")
 tabyl(study_population$ethnicity)
 
@@ -158,8 +92,7 @@ tabyl(study_population$ethnicity_cat)
 ##-- Sex
 print("Sex")
 
-# expectations tests
-missing_test(dataname = study_population, varname = sex)
+# data checks
 tabyl(study_population$sex)
 
 # create categories 
@@ -173,11 +106,12 @@ tabyl(study_population$sex)
 ##-- IMD 
 print("IMD")
 
-# check expectations 
+# data check
 ifelse(!is.numeric(study_population$imd), "imd is not numeric", "imd is numeric as expected")
 summary(study_population$imd)
 
-# create variable with quantiles (ideally, this should be done relative to external quartiles - ongoing to incorporate this)
+# create variable with quantiles 
+# ideally, this should be done relative to external quartiles - ongoing to incorporate this in wider OS work. In the meantime, create quartiles
 study_population <- study_population %>% 
   mutate(imd = replace(imd, imd <= 0, NA)) %>% 
   mutate(imd_cat = ntile(imd,5))
@@ -188,7 +122,7 @@ tabyl(study_population$imd_cat)
 ##-- Rural Urban 
 print("Rural Urban")
 
-# check expectations
+#  data check
 ifelse(!is.numeric(study_population$rural_urban), "rural_urban is not numeric", "rural_urban is numeric as expected")
 summary(study_population$rural_urban)
 
@@ -206,9 +140,8 @@ tabyl(study_population$urban)
 # Care Home Variables -----------------------------------------------------
 print("Care Home Variables")
 
-# check expectations
+# data check
 ifelse(!is.character(study_population$care_home_type), "care_home_type is not a string", "care_home_type is a string as expected")
-missing_test(dataname = study_population, varname = care_home_type)
 tabyl(study_population$care_home_type)
 
 # create categories
@@ -233,12 +166,12 @@ crosstab <- study_population %>%
 
 crosstab
 
-# Non-Date Covariates -----------------------------------------------------
+# Other Covariates -----------------------------------------------------
 
 ##-- Flu Vaccine 
 print("Flu Vaccine")
-# check expectations 
-missing_test(dataname = study_population, varname = flu_vaccine)
+
+# cata check
 tabyl(study_population$flu_vaccine) 
 
 # replace missing
@@ -246,19 +179,18 @@ study_population <- study_population %>%
   mutate(flu_vaccine = replace_na(flu_vaccine, 0))
 
 # check variable creation 
-missing_test(dataname = study_population, varname = flu_vaccine)
 tabyl(study_population$flu_vaccine) 
 
 ##-- CKD 
-print("CKD")
 # create ckd as function of esrd and creatinine status 
+print("CKD")
 
-# check expectations  
+# data check 
 summary(study_population$creatinine)
 
 # calculate egfr and categorise as ckd 
-# translated from Stata code. this needs checking by someone who knows ckd 
-
+# translated from Stata code. 
+# QC of this outstanding, however, not crucial variable for project 
 study_population <- study_population %>% 
   mutate(creatinine = replace(creatinine, creatinine <20 | creatinine >3000, NA)) %>% 
   mutate(SCR_adj = creatinine/88.4) %>% 
@@ -316,17 +248,24 @@ tabyl(study_population$tpp_death)
 tabyl(study_population$ons_covid_death)
 tabyl(study_population$ons_death)
 
+# check overlap between ONS and TPP deaths 
 crosstab <- study_population %>% 
   tabyl(tpp_death, ons_death)
 
 crosstab
 
 # check correlation between TPP and ONS deaths 
-
 study_population <- study_population  %>%    
   mutate(tpp_death_date = as.numeric(ymd(tpp_death_date)))  %>% 
   mutate(ons_any_death_date = as.numeric(ymd(ons_any_death_date)))  %>% 
+  mutate(discrepancy = case_when(
+    tpp_death_date != ons_any_death_date ~ 1, 
+    TRUE ~ 0
+  )) %>% 
   mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
+
+print("Number and percentage of deaths that do not match in TPP and ONS")
+tabyl(study_population$discrepancy)
 
 print("Difference in days between death date in TPP and ONS, where this exists")
 summary(study_population$date_difference)

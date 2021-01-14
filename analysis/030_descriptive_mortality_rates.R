@@ -514,7 +514,7 @@ y_value <- (max(measure_any_all$value) + (max(measure_any_all$value)/4)) * 1000
 
 
 plot_1a <- ggplot(measure_any_all, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, group = care_home_type, colour = care_home_type)) + 
-  geom_line(size = 1.3) +
+  geom_line(size = 1) +
   labs(x = "Time Period", 
        y = "All-cause Mortality Rate per 1,000 individuals", 
        title = "Crude All-cause Mortality Rate") + 
@@ -536,12 +536,12 @@ dev.off()
 
 y_value <- (max(measure_any_sex$value) + (max(measure_any_sex$value)/4)) * 1000
 
-plot_1b <- ggplot(measure_any_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
-  geom_line(size = 1.3) +
+plot_1b <- ggplot(measure_any_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+  geom_line(size = 1)  + geom_point() + 
   labs(x = "Time Period", 
        y = "All-cause Mortality Rateper 1,000 individuals", 
        title = "Crude All-cause Mortality Rate by Sex", 
-       linetype = "Care Home", 
+       sape = "Care Home", 
        colour = "Gender") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -559,12 +559,12 @@ dev.off()
 
 y_value <- (max(measure_any_age$value) + (max(measure_any_age$value)/4)) * 1000
 
-plot_1c <- ggplot(measure_any_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1.3) + 
+plot_1c <- ggplot(measure_any_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
+  geom_line(size = 1) + 
   labs(x = "Time Period", 
        y = "All-cause Mortality Rate per 1,000 individuals", 
        title = "Crude All-cause Mortality Rate by Age", 
-       linetype = "Care Home", 
+       shape = "Care Home", 
        colour = "Age") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -585,7 +585,7 @@ dev.off()
 y_value <- (max(measure_covid_all$value) + (max(measure_covid_all$value)/4)) * 1000
 
 plot_2a <- ggplot(measure_covid_all, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, group = care_home_type, colour = care_home_type)) + 
-  geom_line(size = 1.3) +
+  geom_line(size = 1) +
   labs(x = "Time Period", 
        y = "COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude COVID-19 Mortality Rate") + 
@@ -607,12 +607,12 @@ dev.off()
 
 y_value <- (max(measure_covid_sex$value) + (max(measure_covid_sex$value)/4)) * 1000
 
-plot_2b <- ggplot(measure_covid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
-  geom_line(size = 1.3) +
+plot_2b <- ggplot(measure_covid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+  geom_line(size = 1) + geom_point() 
   labs(x = "Time Period", 
        y = "COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude COVID-19 Mortality Rate by Sex", 
-       linetype = "Care Home", 
+       shape = "Care Home", 
        colour = "Gender") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -630,12 +630,12 @@ dev.off()
 
 y_value <- (max(measure_covid_age$value) + (max(measure_covid_age$value)/4)) * 1000
 
-plot_2c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1.3) + 
+plot_2c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
+  geom_line(size = 1) + 
   labs(x = "Time Period", 
        y = "COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude COVID-19 Mortality Rate by Age", 
-       linetype = "Care Home", 
+       shape = "Care Home", 
        colour = "Age") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -656,7 +656,7 @@ dev.off()
 y_value <- (max(measure_noncovid_all$value) + (max(measure_noncovid_all$value)/4)) * 1000
 
 plot_3a <- ggplot(measure_noncovid_all, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, group = care_home_type, colour = care_home_type)) + 
-  geom_line(size = 1.3) +
+  geom_line(size = 1) +
   labs(x = "Time Period", 
        y = "Non COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude Non-COVID-19 Mortality Rate") + 
@@ -678,12 +678,12 @@ dev.off()
 
 y_value <- (max(measure_noncovid_sex$value) + (max(measure_noncovid_sex$value)/4)) * 1000
 
-plot_3b <- ggplot(measure_noncovid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
-  geom_line(size = 1.3) +
+plot_3b <- ggplot(measure_noncovid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+  geom_line(size = 1) +
   labs(x = "Time Period", 
        y = "Non-COVID-19 Mortality Rate  per 1,000 individuals", 
        title = "Crude Non-COVID-19 Mortality Rate by Sex", 
-       linetype = "Care Home", 
+       shape = "Care Home", 
        colour = "Gender") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -701,12 +701,12 @@ dev.off()
 
 y_value <- (max(measure_noncovid_age$value) + (max(measure_noncovid_age$value)/4)) * 1000
 
-plot_3c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1.3) +
+plot_3c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
+  geom_line(size = 1) +
   labs(x = "Time Period", 
        y = "Non-COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude Non-COVID-19 Mortality Rate by Age", 
-       linetype = "Care Home", 
+       shape = "Care Home", 
        colour = "Age") + 
   scale_y_continuous(limits = c(0,y_value)) +
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +

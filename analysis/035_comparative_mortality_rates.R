@@ -160,7 +160,7 @@ table_6a <- measure_covid_all %>%
 tab6aout <- table_6a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
 
-write.table(table_6a, file = "./analysis/outfiles/table_6a.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(tab6aout, file = "./analysis/outfiles/table_6a.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_7a <- measure_noncovid_all %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
@@ -617,10 +617,10 @@ write.table(tab7dout, file = "./analysis/outfiles/table_7d.txt", sep = "\t", na 
 # Figures: Overall --------------------------------------------------------
 
 # all-cause 
-y_value <- (max(table_5a$Relative_Risk) + (max(table_5a$Relative_Risk)/4)) 
+y_value <- (max(table_5a$rr_ucl) + (max(table_5a$rr_ucl)/4)) 
 
 plot_4a <- ggplot(table_5a, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk)) + 
-  geom_line(size = 1.3) +
+  geom_line(size =1) +
   geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.3) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
@@ -640,10 +640,10 @@ plot_4a
 dev.off()
 
 # covid 
-y_value <- (max(table_6a$Relative_Risk) + (max(table_6a$Relative_Risk)/4)) 
+y_value <- (max(table_6a$rr_ucl) + (max(table_6a$rr_ucl)/4)) 
 
 plot_5a <- ggplot(table_6a, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk)) + 
-  geom_line(size = 1.3) +
+  geom_line(size =1) +
   geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.3) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
@@ -663,10 +663,10 @@ plot_5a
 dev.off()
 
 # non-covid death
-y_value <- (max(table_7a$Relative_Risk) + (max(table_7a$Relative_Risk)/4)) 
+y_value <- (max(table_7a$rr_ucl) + (max(table_7a$rr_ucl)/4)) 
 
 plot_6a <- ggplot(table_7a, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk)) + 
-  geom_line(size = 1.3) +
+  geom_line(size =1) +
   geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.3) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
@@ -690,9 +690,8 @@ dev.off()
 # all-cause 
 y_value <- (max(table_5b$Relative_Risk) + (max(table_5b$Relative_Risk)/4)) 
 
-plot_4b <- ggplot(table_5b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, fill = Gender)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_4b <- ggplot(table_5b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, )) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative All-cause Mortality Risk") + 
@@ -713,9 +712,8 @@ dev.off()
 # covid
 y_value <- (max(table_6b$Relative_Risk) + (max(table_6b$Relative_Risk)/4)) 
 
-plot_5b <- ggplot(table_6b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, fill = Gender)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_5b <- ggplot(table_6b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, )) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative Risk of COVID-19 mortality") + 
@@ -736,9 +734,8 @@ dev.off()
 # non-covid
 y_value <- (max(table_7b$Relative_Risk) + (max(table_7b$Relative_Risk)/4)) 
 
-plot_6b <- ggplot(table_7b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, fill = Gender)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_6b <- ggplot(table_7b, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Gender, colour = Gender, )) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative Risk of non COVID-19 mortality") + 
@@ -761,9 +758,8 @@ dev.off()
 # all-cause 
 y_value <- (max(table_5c$Relative_Risk) + (max(table_5c$Relative_Risk)/4)) 
 
-plot_4c <- ggplot(table_5c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, fill = Age)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_4c <- ggplot(table_5c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, )) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative All-cause Mortality Risk") + 
@@ -785,9 +781,8 @@ dev.off()
 # covid
 y_value <- (max(table_6c$Relative_Risk) + (max(table_6c$Relative_Risk)/4)) 
 
-plot_5c <- ggplot(table_6c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, fill = Age)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_5c <- ggplot(table_6c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, )) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative Risk of COVID-19 death") + 
@@ -809,9 +804,8 @@ dev.off()
 # non-covid
 y_value <- (max(table_7c$Relative_Risk) + (max(table_7c$Relative_Risk)/4)) 
 
-plot_6c <- ggplot(table_7c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, fill = Age)) + 
-  geom_line(size = 1.3) +
-  geom_ribbon(aes(ymin=rr_lcl, ymax=rr_ucl), alpha = 0.1) +
+plot_6c <- ggplot(table_7c, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age)) + 
+  geom_line(size =1) +
   labs(x = "Time Period", 
        y = "Relative Risk (care homes vs. private homes)", 
        title = "Crude Relative Risk of non COVID-19 death") + 
