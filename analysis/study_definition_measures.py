@@ -76,7 +76,7 @@ study = StudyDefinition(
 
     # define stratification groups 
         
-    # define an indicator variable for all patients (needed as input for measures framework )
+    # define an indicator variable for all patients within this cohort (needed as input for measures framework )
     allpatients=patients.satisfying("""age>=0""", return_expectations={"incidence": 1}
     ),
     # age groups 
@@ -94,16 +94,19 @@ study = StudyDefinition(
             "category": {"ratios": {"65-74": 0.4, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
         },
     ),
-    ageband_broad = patients.categorised_as(
-        {
+    ageband_five = patients.categorised_as(
+        {   
             "0": "DEFAULT",
-            "65-74": """ age >=  65 AND age < 75""",
-            "75-84": """ age >=  75 AND age < 85""",
-            "85+": """ age >=  85 AND age < 120""",
+            "65-69": """ age >=  65 AND age < 70""",
+            "70-74": """ age >=  70 AND age < 75""",
+            "75-79": """ age >=  75 AND age < 80""",
+            "80-84": """ age >=  80 AND age < 85""",
+            "85-89": """ age >=  85 AND age < 90""",
+            "90+": """ age >=  90 AND age < 120""",
         },
         return_expectations={
             "rate":"universal",
-            "category": {"ratios": {"65-74": 0.5, "75-84": 0.2, "85+": 0.3 }}
+            "category": {"ratios": {"65-69": 0.2,"70-74": 0.2, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
         },
     ),
     #gender groups 
@@ -242,7 +245,27 @@ measures = [
         group_by = ["sex", "ageband_narrow", "care_home_type"],    
     ),
 
-    ## SENSITIVITY: stratified by nursing home 
+    ## 5-YEAR AGE BANDS FOR STANDARDISATION 
+    Measure(
+        id="covid_death_sex_age_five",
+        numerator="ons_covid_death",
+        denominator="population",
+        group_by = ["sex", "ageband_five", "care_home_type"],  
+    ),
+    Measure(
+        id="allcause_death_sex_age_five",
+        numerator="ons_any_death",
+        denominator="population",
+        group_by = ["sex", "ageband_five", "care_home_type"],  
+    ),
+    Measure(
+        id="noncovid_death_sex_age_five",
+        numerator="ons_noncovid_death",
+        denominator="population",
+        group_by = ["sex", "ageband_five", "care_home_type"],  
+    ),
+
+    ## SENSITIVITY: stratified by care or nursing home for completion 
 
     # covid death
     Measure(
