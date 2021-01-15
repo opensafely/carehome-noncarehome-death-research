@@ -251,7 +251,7 @@ study_population <- study_population  %>%
   mutate(discrepancy = case_when(
     tpp_death_date != ons_any_death_date ~ 1, 
     TRUE ~ 0
-  )) %>% 
+  )) 
 
 print("Number of deaths that do not match in TPP and ONS")
 tabyl(study_population$discrepancy)
