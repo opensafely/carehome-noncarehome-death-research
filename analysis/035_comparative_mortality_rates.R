@@ -319,7 +319,7 @@ table_7b <- measure_noncovid_sex %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl,*10002), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Gender = Private_Home_Gender) %>% 
