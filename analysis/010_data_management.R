@@ -252,10 +252,13 @@ study_population <- study_population  %>%
     tpp_death_date != ons_any_death_date ~ 1, 
     TRUE ~ 0
   )) %>% 
-  mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
 
-print("Number and percentage of deaths that do not match in TPP and ONS")
+print("Number of deaths that do not match in TPP and ONS")
 tabyl(study_population$discrepancy)
+
+study_population <- study_population %>% 
+  filter(discrepancy == 1) %>% 
+  mutate(date_difference = tpp_death_date - ons_any_death_date, na.rm = TRUE) 
 
 print("Difference in days between death date in TPP and ONS, where this exists")
 summary(study_population$date_difference)

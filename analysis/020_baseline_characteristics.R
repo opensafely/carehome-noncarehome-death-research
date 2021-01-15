@@ -111,14 +111,14 @@ summarise_me <- function(x, y) {
     summarise(Mean = round(mean({{x}}),0), SD = round(sd({{x}}),0)) %>% 
     pivot_wider(names_from = c(care_home_group), values_from=c(Mean, SD), 
                 names_glue = "{care_home_group}_{.value}") %>% 
-    rename(Overall_Count = Overall_Mean) %>% 
-    rename(Overall_Percentage = Overall_SD) %>% 
-    rename(Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean) %>% 
-    rename(Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD) %>% 
-    rename(Private_Home_Count = Private_Home_Mean) %>% 
-    rename(Private_Home_Percentage = Private_Home_SD) %>% 
-    mutate(varlevel = "Mean, SD") %>% 
-    mutate(varlevel = as.character(varlevel)) %>% 
+    rename(Overall_Count = Overall_Mean, 
+           Overall_Percentage = Overall_SD,
+           Care_or_Nursing_Home_Count = Care_or_Nursing_Home_Mean,
+           Care_or_Nursing_Home_Percentage = Care_or_Nursing_Home_SD,
+           Private_Home_Count = Private_Home_Mean,
+           Private_Home_Percentage = Private_Home_SD) %>% 
+    mutate(varlevel = "Mean, SD",
+           varlevel = as.character(varlevel)) %>% 
     select(varlevel, (matches("Over*")), (matches("Care*")), (matches("Priv*"))) %>% 
     mutate(row = row_number()) %>% 
     mutate(varname = case_when(

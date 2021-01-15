@@ -70,45 +70,52 @@ table_carehomes <- study_population  %>%
   adorn_pct_formatting(digits = 2) %>% 
   adorn_totals() 
 
+print("number of care homes of each type")
 table_carehomes
 
 ##-- Geographical distribution of care homes 
 
 table_region <- study_population  %>% 
   distinct(household_id, .keep_all = TRUE)  %>% 
-  tabyl(region, care_home_cat)  %>% 
+  tabyl(care_home_cat, region)  %>% 
   adorn_totals() %>% 
   adorn_percentages("row") %>% 
   adorn_pct_formatting(digits = 2) %>% 
   adorn_ns()
 
+print("geographical distribution of care home by type")
 table_region
 
 ##-- size of care homes, per care home type 
 # note, this cannot just use the sum of individuals in a household as this is not an accurate summary
 # household size is adjusted based on updated addresses, and therefore a more accurate way of determining the household size
-missing_test <- function(dataname, varname) {
-  
-  ifelse(length(which(is.na(dataname$varname)) > 1), paste(deparse(substitute(varname)),"has unexpected missing values"), paste(deparse(substitute(varname)), "has no unexpected missing values")) 
-  
-} 
 
-missing_test(dataname = study_population, varname = household_size)
-
+print("household size in care homes")
 summary(study_population$household_size)
 
+hhsize <- study_population %>% 
+  mutate(has_size = case_when(
+    household_size == 0 ~ "Missing", 
+    household_size > 0 ~ "Has Information"
+  ))
+
+tabyl(hhsize$has_size)
+
+
+# care home size among those for whom it could be estimated
 table_size <- study_population  %>% 
+  filter(household_size > 0) %>% 
   group_by(care_home_cat) %>% 
-  summarise(mean_ch_size = mean(household_size), 
-            median_ch_size = median(household_size), 
+  summarise(median_ch_size = median(household_size), 
             min_ch_size = min(household_size), 
             max_ch_size = max(household_size), 
             q25_ch_size = quantile(household_size, 0.25), 
             q75_ch_size = quantile(household_size, 0.75)) 
+
+print("summary statistics on care home size")
 table_size
 
 ##-- Percentage of residents with dementia, per care home type
-
 table_dementia <- study_population  %>% 
   group_by(household_id) %>% 
   mutate(n_dementia_in_home = sum(dementia), 
@@ -116,6 +123,7 @@ table_dementia <- study_population  %>%
             p_dementia_in_home = round(n_dementia_in_home/N_dementia_in_home,2)*100) %>% 
   distinct(household_id, .keep_all = TRUE) 
 
+print("percentage of residents with dementia")
 summary(table_dementia$p_dementia_in_home)
 
 table_dementia <- table_dementia %>%  
@@ -127,7 +135,6 @@ table_dementia <- table_dementia %>%
 table_dementia 
 
 ##-- Average age of residents, per care home type 
-
 table_age <- study_population %>%  
   group_by(care_home_cat) %>% 
   summarise(median_age = median(age),           
@@ -137,6 +144,5 @@ table_age <- study_population %>%
 table_age 
 
 # send output back to screen
-
 sink() 
 sink(type="message")

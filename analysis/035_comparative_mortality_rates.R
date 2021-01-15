@@ -106,7 +106,7 @@ table_5a <- measure_any_all %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab5aout <- table_5a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -148,7 +148,7 @@ table_6a <- measure_covid_all %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab6aout <- table_6a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -190,7 +190,7 @@ table_7a <- measure_noncovid_all %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab7aout <- table_7a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -231,7 +231,7 @@ table_5b <- measure_any_sex %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Gender = Private_Home_Gender) %>% 
@@ -275,7 +275,7 @@ table_6b <- measure_covid_sex %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Gender = Private_Home_Gender) %>% 
@@ -319,7 +319,7 @@ table_7b <- measure_noncovid_sex %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl,*10002), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Gender = Private_Home_Gender) %>% 
@@ -365,7 +365,7 @@ table_5c <- measure_any_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 
@@ -409,7 +409,7 @@ table_6c <- measure_covid_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 
@@ -453,7 +453,7 @@ table_7c <- measure_noncovid_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 
@@ -500,7 +500,7 @@ table_5d <- measure_any_sex_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 
@@ -546,7 +546,7 @@ table_6d <- measure_covid_sex_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 
@@ -592,7 +592,7 @@ table_7d <- measure_noncovid_sex_age %>%
   mutate(rd_lcl = rd - 1.96*se_rd) %>% 
   mutate(rd_ucl = rd + 1.96*se_rd) %>% 
   mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl,2), round(rd_ucl,2), sep = "-")) %>% 
+  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables and rename as relevant
   rename(Date = Private_Home_date) %>% 
   rename(Age = Private_Home_Age) %>% 

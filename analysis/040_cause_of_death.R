@@ -135,7 +135,7 @@ output <- table %>%
   pivot_wider(
     id_cols = id, 
     names_from = Year,
-    values_from = (c("Cause_of_Death", "Percentage")))
+    values_from = (c("Cause_of_Death", "Percentage", "Count")))
 
 # save as text
 write.table(output, file = "./analysis/outfiles/table_8a.txt", sep = "\t", na = "", row.names=FALSE)
@@ -177,7 +177,7 @@ output <- table %>%
   pivot_wider(
     id_cols = id, 
     names_from = Year,
-    values_from = (c("Cause_of_Death", "Percentage")))
+    values_from = (c("Cause_of_Death", "Percentage", "Count")))
 
 # save as text
 write.table(output, file = "./analysis/outfiles/table_8b.txt", sep = "\t", na = "", row.names=FALSE)
@@ -194,7 +194,7 @@ cause_of_death_figure_format <- function(inputdata, care_home_filter) {
     # describe causes of death among those who died
     filter(ons_any_death == 1) %>% 
     # run this for a specific subset of care home residents as specified in input values
-   # filter(care_home_type == !!filtervar) %>% 
+    filter(care_home_type == !!filtervar) %>% 
     # rename for displaying in a table
     rename(Care_Home = care_home_type) %>%
     # extract relevant parts of the ICD-10 codes to classify deaths
@@ -222,7 +222,7 @@ cause_of_death_figure_format <- function(inputdata, care_home_filter) {
   table_part <- table_part %>% 
     mutate(Year = time_period) %>% 
     # select only relevant variables
-    select(Year, Cause_of_Death, Percentage)
+    select(Year, Cause_of_Death, Percentage, Count)
   
   # add these to a summary table called table 
   bind_rows(table, table_part)
@@ -255,6 +255,9 @@ table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-
 table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-09-01.csv", care_home_filter = "Y")
 table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-10-01.csv", care_home_filter = "Y")
 table <- cause_of_death_figure_format(inputdata = "./output/input_measures_2020-11-01.csv", care_home_filter = "Y")
+
+print("check for small values")
+tabyl(table$Count)
  
 plot_7a <- ggplot(table, aes(x = Year, y = Percentage, fill = Cause_of_Death), position = "stack") + 
   geom_area(alpha=0.6 , size=.5, colour="white") + 
@@ -275,6 +278,9 @@ plot_7a <- ggplot(table, aes(x = Year, y = Percentage, fill = Cause_of_Death), p
 png(filename = "./analysis/outfiles/plot_7a.png")
 plot_7a
 dev.off()
+
+print("check for small values")
+tabyl(table$Count)
   
 # PRivate Homes : Figure -----------------------------------------------------
 
