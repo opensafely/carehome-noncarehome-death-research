@@ -51,21 +51,29 @@ measure_noncovid_sex_age <- fread("./output/measure_noncovid_death_sex_age.csv",
 
 # Remove empty COVID rows--------------------------------------------------
 
-measure_covid_all <- measure_covid_all %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_covid_all <- measure_covid_all %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_sex <- measure_covid_sex %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_sex_age <- measure_covid_sex_age %>% filter(ymd(date) >= ymd("20200301"))
 
-measure_covid_sex <- measure_covid_sex %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+# Set rows with < 5 events to zero ----------------------------------------
+# this replaces only the value, meaning that plots will just plot zero for that month. 
+# the counts will still need manual redaction (but will also flag where this was redacted rather than zero)
 
-measure_covid_age <- measure_covid_age %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_any_all <- measure_any_all %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
+measure_any_sex <- measure_any_sex %>% mutate(value = ifelse(ons_any_death <= 5, 0, value))
+measure_any_age <- measure_any_age %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
+measure_any_sex_age <- measure_any_sex_age %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
 
-measure_covid_sex_age <- measure_covid_sex_age %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_covid_all <- measure_covid_all %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+measure_covid_sex <- measure_covid_sex %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value))
+measure_covid_age <- measure_covid_age %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+measure_covid_sex_age <- measure_covid_sex_age %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+
+measure_noncovid_all <- measure_noncovid_all %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
+measure_noncovid_sex <- measure_noncovid_sex %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value))
+measure_noncovid_age <- measure_noncovid_age %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
+measure_noncovid_sex_age <- measure_noncovid_sex_age %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
 
 # Confidence Intervals ----------------------------------------------------
 
@@ -498,7 +506,7 @@ dev.off()
 y_value <- (max(measure_any_age$value) + (max(measure_any_age$value)/4)) * 1000
 
 plot_1c <- ggplot(measure_any_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1) + 
+  geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "All-cause Mortality Rate per 1,000 individuals", 
        title = "Crude All-cause Mortality Rate by Age", 
@@ -546,7 +554,7 @@ dev.off()
 y_value <- (max(measure_covid_sex$value) + (max(measure_covid_sex$value)/4)) * 1000
 
 plot_2b <- ggplot(measure_covid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
-  geom_line(size = 1) + geom_point() 
+  geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude COVID-19 Mortality Rate by Sex", 
@@ -569,7 +577,7 @@ dev.off()
 y_value <- (max(measure_covid_age$value) + (max(measure_covid_age$value)/4)) * 1000
 
 plot_2c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1) + 
+  geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude COVID-19 Mortality Rate by Age", 
@@ -617,7 +625,7 @@ dev.off()
 y_value <- (max(measure_noncovid_sex$value) + (max(measure_noncovid_sex$value)/4)) * 1000
 
 plot_3b <- ggplot(measure_noncovid_sex, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
-  geom_line(size = 1) +
+  geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "Non-COVID-19 Mortality Rate  per 1,000 individuals", 
        title = "Crude Non-COVID-19 Mortality Rate by Sex", 
@@ -640,7 +648,7 @@ dev.off()
 y_value <- (max(measure_noncovid_age$value) + (max(measure_noncovid_age$value)/4)) * 1000
 
 plot_3c <- ggplot(measure_covid_age, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
-  geom_line(size = 1) +
+  geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "Non-COVID-19 Mortality Rate per 1,000 individuals", 
        title = "Crude Non-COVID-19 Mortality Rate by Age", 

@@ -36,6 +36,11 @@ allcause <- fread("./output/measure_allcause_death_sex_age_five.csv", data.table
 # covid death 
 covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 
+# drop empty covid rows  
+covid <- covid %>% 
+  mutate(dateform = ymd(date)) %>% 
+  filter(dateform >= ymd("20200301"))
+
 # non covid death 
 noncovid <- fread("./output/measure_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 
@@ -49,19 +54,19 @@ european_standard <- fread("./data/european_standard_population.csv", data.table
 
 european_standard <- european_standard %>% 
   # remove redundant age groups 
-  filter(AgeGroup != "0-4") %>% 
-  filter(AgeGroup != "5-9") %>% 
-  filter(AgeGroup != "10-14") %>% 
-  filter(AgeGroup != "15-19") %>% 
-  filter(AgeGroup != "20-24") %>% 
-  filter(AgeGroup != "25-29") %>% 
-  filter(AgeGroup != "30-34") %>% 
-  filter(AgeGroup != "35-39") %>% 
-  filter(AgeGroup != "40-44") %>% 
-  filter(AgeGroup != "45-49") %>% 
-  filter(AgeGroup != "50-54") %>% 
-  filter(AgeGroup != "55-59") %>% 
-  filter(AgeGroup != "60-64") %>% 
+  filter(AgeGroup != "0-4",
+         AgeGroup != "5-9", 
+         AgeGroup != "10-14", 
+         AgeGroup != "15-19", 
+         AgeGroup != "20-24", 
+         AgeGroup != "25-29", 
+         AgeGroup != "30-34", 
+         AgeGroup != "35-39", 
+         AgeGroup != "40-44", 
+         AgeGroup != "45-49", 
+         AgeGroup != "50-54", 
+         AgeGroup != "55-59", 
+         AgeGroup != "60-64") %>% 
   # calculate total pop size 
   mutate(total = sum(EuropeanStandardPopulation)) %>% 
   # rename the age band for merging 
@@ -298,9 +303,9 @@ plot_8b
 dev.off()
   
 # noncovid mortality 
-y_value <- (max(covid_standard$dsr) + (max(covid_standard$dsr)/4)) * 1000
+y_value <- (max(noncovid_standard$dsr) + (max(noncovid_standard$dsr)/4)) * 1000
 
-plot_8c <- ggplot(covid_standard, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+plot_8c <- ggplot(noncovid_standard, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
   geom_line(size = 1) + geom_point() + 
   labs(x = "Time Period", 
        y = "Standardised non COVID-19 Mortality Rate per 1,000 individuals", 
