@@ -14,7 +14,6 @@ library(tidyverse)
 library(data.table)
 library(janitor)
 library(lubridate)
-library(Hmisc)
 
 # make sure my favoured output folder exists
 
@@ -38,15 +37,13 @@ covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FAL
 
 # drop empty covid rows  
 covid <- covid %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+  filter(ymd(date) >= ymd("20200301"))
 
 # non covid death 
 noncovid <- fread("./output/measure_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 
 # standard population 
 european_standard <- fread("./data/european_standard_population.csv", data.table = FALSE, na.strings = "")
-
 
 # Standardisation  --------------------------------------------------
 
@@ -69,9 +66,9 @@ european_standard <- european_standard %>%
          AgeGroup != "60-64") %>% 
   # calculate total pop size 
   mutate(total = sum(EuropeanStandardPopulation)) %>% 
-  # rename the age band for merging 
-  rename(ageband_five = AgeGroup) %>% 
-  rename(groupsize = EuropeanStandardPopulation) %>% 
+  # rename the age band and group size variable for merging and ease of handling
+  rename(ageband_five = AgeGroup, 
+         groupsize = EuropeanStandardPopulation) %>% 
   # keep only relevant variables 
   select(ageband_five, groupsize, total)
 
@@ -88,15 +85,23 @@ all_cause_standard <- all_cause_standard %>%
   # sum by group 
   group_by(date, sex, care_home_type) %>% 
   mutate(total_expected = sum(expected_deaths)) %>% 
-  # standardised rates expected deaths over total, 
+  ungroup() %>%
+  # standardised rates are expected deaths over total, 
   mutate(dsr = total_expected/total) %>% 
-  ungroup() %>% 
   # calculate standard error 
   mutate(se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
   # sum standard error per category
   group_by(date, sex, care_home_type) %>% 
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
+  # CI for the ratio of two rates (to be completed as only partial formula provided) 
+  mutate(sdi = sqrt(ons_any_death)/population, 
+         sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
+  group_by(date, sex, care_home_type) %>% 
+  mutate(sd_sum = sum(sdiw_squared), 
+         sd = sqrt(sd_sum)) %>% 
+  ungroup() %>% 
+  mutate(log_sd = sd/dsr) %>% 
   # keep only one row per unique group 
   select(date, care_home_type, sex, dsr, se_dsr) %>% 
   distinct() %>% 
@@ -119,9 +124,9 @@ covid_standard <- covid_standard %>%
   # sum by group 
   group_by(date, sex, care_home_type) %>% 
   mutate(total_expected = sum(expected_deaths)) %>% 
+  ungroup() %>% 
   # standardised rates expected deaths over total, 
   mutate(dsr = total_expected/total) %>% 
-  ungroup() %>% 
   # calculate standard error 
   mutate(se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
   # sum standard error per category
@@ -150,9 +155,9 @@ noncovid_standard <- noncovid_standard %>%
   # sum by group 
   group_by(date, sex, care_home_type) %>% 
   mutate(total_expected = sum(expected_deaths)) %>% 
+  ungroup() %>% 
   # standardised rates expected deaths over total, 
   mutate(dsr = total_expected/total) %>% 
-  ungroup() %>% 
   # calculate standard error 
   mutate(se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
   # sum standard error per category
@@ -326,4 +331,128 @@ png(filename = "./analysis/outfiles/plot_8c.png")
 plot_8c
 dev.off()
 
-  
+# Calculate Comparative Mortality Figures ---------------------------------
+# only plots for now 
+
+# all cause mortality 
+all_cause_standard <- all_cause_standard %>% 
+  # make wide on care home status, which are the dsrs to be compared 
+  group_by(care_home_type) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide 
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_type, 
+    values_from = c(date, sex, dsr), 
+    names_glue = "{care_home_type}_{.value}") %>% 
+  rename(Date= Y_date, 
+         Gender = Y_sex) %>% 
+  select(-c(N_date, N_sex)) %>% 
+  mutate(cmr = Y_dsr/N_dsr)
+
+# output the figure
+y_value <- (max(all_cause_standard$cmr) + (max(all_cause_standard$cmr)/4)) 
+
+plot_9a <- ggplot(all_cause_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+  geom_line(size = 1) + 
+  labs(x = "Time Period", 
+       y = "Ratio of Standardised All-Cause Mortality Rate per 1,000 individuals", 
+       title = "Age-standardidised Ratio of All-Cause Mortality Rates",
+       colour = "Gender") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_9a.png")
+plot_9a
+dev.off()
+
+# covid mortality 
+covid_standard <- covid_standard %>% 
+  # make wide on care home status, which are the dsrs to be compared 
+  group_by(care_home_type) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide 
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_type, 
+    values_from = c(date, sex, dsr), 
+    names_glue = "{care_home_type}_{.value}") %>% 
+  rename(Date= Y_date, 
+         Gender = Y_sex) %>% 
+  select(-c(N_date, N_sex)) %>% 
+  mutate(cmr = Y_dsr/N_dsr)
+
+# output the figure
+y_value <- (max(covid_standard$cmr) + (max(covid_standard$cmr)/4)) 
+
+plot_9b <- ggplot(covid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+  geom_line(size = 1) + 
+  labs(x = "Time Period", 
+       y = "Ratio of Standardised COVID Mortality Rate per 1,000 individuals", 
+       title = "Age-standardidised Ratio of COVID Mortality Rates",
+       colour = "Gender") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_9b.png")
+plot_9b
+dev.off()
+
+# noncovid mortality 
+noncovid_standard <- noncovid_standard %>% 
+  # make wide on care home status, which are the dsrs to be compared 
+  group_by(care_home_type) %>% 
+  mutate(id = row_number()) %>% 
+  ungroup %>% 
+  # reshape wide 
+  pivot_wider(
+    id_cols = id, 
+    names_from = care_home_type, 
+    values_from = c(date, sex, dsr), 
+    names_glue = "{care_home_type}_{.value}") %>% 
+  rename(Date= Y_date, 
+         Gender = Y_sex) %>% 
+  select(-c(N_date, N_sex)) %>% 
+  mutate(cmr = Y_dsr/N_dsr)
+
+# output the figure
+y_value <- (max(noncovid_standard$cmr) + (max(noncovid_standard$cmr)/4)) 
+
+plot_9c <- ggplot(noncovid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+  geom_line(size = 1) + 
+  labs(x = "Time Period", 
+       y = "Ratio of Standardised non COVID Mortality Rate per 1,000 individuals", 
+       title = "Age-standardidised Ratio of non COVID Mortality Rates",
+       colour = "Gender") + 
+  scale_y_continuous(limits = c(0,y_value)) +
+  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
+        axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.text.x = element_text(angle = 75, vjust = 0.9, hjust=1), 
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "gray"), 
+        panel.grid.major.y = element_line(color = "gainsboro")) 
+
+png(filename = "./analysis/outfiles/plot_9c.png")
+plot_9c
+dev.off()
+
+
+
