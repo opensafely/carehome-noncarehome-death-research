@@ -94,7 +94,7 @@ all_cause_standard <- all_cause_standard %>%
   group_by(date, sex, care_home_type) %>% 
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
-  # CI for the ratio of two rates (to be completed as only partial formula provided) 
+  # CI for the ratio of two rates 
   mutate(sdi = sqrt(ons_any_death)/population, 
          sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
   group_by(date, sex, care_home_type) %>% 
@@ -103,7 +103,7 @@ all_cause_standard <- all_cause_standard %>%
   ungroup() %>% 
   mutate(log_sd = sd/dsr) %>% 
   # keep only one row per unique group 
-  select(date, care_home_type, sex, dsr, se_dsr) %>% 
+  select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
   distinct() %>% 
   # confidence interval 
   mutate(lcl = dsr - 1.96 * se_dsr, 
@@ -133,8 +133,16 @@ covid_standard <- covid_standard %>%
   group_by(date, sex, care_home_type) %>% 
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
+  # CI for the ratio of two rates 
+  mutate(sdi = sqrt(ons_any_death)/population, 
+         sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
+  group_by(date, sex, care_home_type) %>% 
+  mutate(sd_sum = sum(sdiw_squared), 
+         sd = sqrt(sd_sum)) %>% 
+  ungroup() %>% 
+  mutate(log_sd = sd/dsr) %>% 
   # keep only one row per unique group 
-  select(date, care_home_type, sex, dsr, se_dsr) %>% 
+  select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
   distinct() %>% 
   # confidence interval 
   mutate(lcl = dsr - 1.96 * se_dsr, 
@@ -164,8 +172,16 @@ noncovid_standard <- noncovid_standard %>%
   group_by(date, sex, care_home_type) %>% 
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
+  # CI for the ratio of two rates 
+  mutate(sdi = sqrt(ons_any_death)/population, 
+         sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
+  group_by(date, sex, care_home_type) %>% 
+  mutate(sd_sum = sum(sdiw_squared), 
+         sd = sqrt(sd_sum)) %>% 
+  ungroup() %>% 
+  mutate(log_sd = sd/dsr) %>% 
   # keep only one row per unique group 
-  select(date, care_home_type, sex, dsr, se_dsr) %>% 
+  select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
   distinct() %>% 
   # confidence interval 
   mutate(lcl = dsr - 1.96 * se_dsr, 
@@ -344,18 +360,23 @@ all_cause_standard <- all_cause_standard %>%
   pivot_wider(
     id_cols = id, 
     names_from = care_home_type, 
-    values_from = c(date, sex, dsr), 
+    values_from = c(date, sex, dsr, log_sd), 
     names_glue = "{care_home_type}_{.value}") %>% 
   rename(Date= Y_date, 
          Gender = Y_sex) %>% 
   select(-c(N_date, N_sex)) %>% 
-  mutate(cmr = Y_dsr/N_dsr)
+  mutate(cmr = Y_dsr/N_dsr, 
+         sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+         ef_cmr = exp(1.96 * sd_log_cmr), 
+         lcl_cmr = cmr/ef_cmr, 
+         ucl_cmr = cmr*ef_cmr) 
 
 # output the figure
-y_value <- (max(all_cause_standard$cmr) + (max(all_cause_standard$cmr)/4)) 
+y_value <- (max(all_cause_standard$ucl_cmr) + (max(all_cause_standard$ucl_cmr)/4)) 
 
-plot_9a <- ggplot(all_cause_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+plot_9a <- ggplot(all_cause_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender, fill = Gender)) + 
   geom_line(size = 1) + 
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised All-Cause Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of All-Cause Mortality Rates",
@@ -389,13 +410,18 @@ covid_standard <- covid_standard %>%
   rename(Date= Y_date, 
          Gender = Y_sex) %>% 
   select(-c(N_date, N_sex)) %>% 
-  mutate(cmr = Y_dsr/N_dsr)
+  mutate(cmr = Y_dsr/N_dsr, 
+         sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+         ef_cmr = exp(1.96 * sd_log_cmr), 
+         lcl_cmr = cmr/ef_cmr, 
+         ucl_cmr = cmr*ef_cmr) 
 
 # output the figure
-y_value <- (max(covid_standard$cmr) + (max(covid_standard$cmr)/4)) 
+y_value <- (max(covid_standard$ucl_cmr) + (max(covid_standard$ucl_cmr)/4)) 
 
 plot_9b <- ggplot(covid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
   geom_line(size = 1) + 
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised COVID Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of COVID Mortality Rates",
@@ -429,13 +455,18 @@ noncovid_standard <- noncovid_standard %>%
   rename(Date= Y_date, 
          Gender = Y_sex) %>% 
   select(-c(N_date, N_sex)) %>% 
-  mutate(cmr = Y_dsr/N_dsr)
+  mutate(cmr = Y_dsr/N_dsr, 
+         sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+         ef_cmr = exp(1.96 * sd_log_cmr), 
+         lcl_cmr = cmr/ef_cmr, 
+         ucl_cmr = cmr*ef_cmr) 
 
 # output the figure
-y_value <- (max(noncovid_standard$cmr) + (max(noncovid_standard$cmr)/4)) 
+y_value <- (max(noncovid_standard$ucl_cmr) + (max(noncovid_standard$ucl_cmr)/4)) 
 
 plot_9c <- ggplot(noncovid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
   geom_line(size = 1) + 
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised non COVID Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of non COVID Mortality Rates",
