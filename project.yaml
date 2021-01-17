@@ -165,6 +165,9 @@ actions:
         plot_8a: analysis/outfiles/plot_8a.png
         plot_8b: analysis/outfiles/plot_8b.png
         plot_8c: analysis/outfiles/plot_8c.png
+        plot_9a: analysis/outfiles/plot_9a.png
+        plot_9b: analysis/outfiles/plot_9b.png
+        plot_9c: analysis/outfiles/plot_9c.png
 
   generate_measures_sensitivity_cohort:
     run: cohortextractor:latest generate_cohort --study-definition study_definition_measures_tppdeath --index-date-range "2016-02-01 to 2020-11-30 by month"
