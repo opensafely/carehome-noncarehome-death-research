@@ -134,7 +134,7 @@ covid_standard <- covid_standard %>%
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
   # CI for the ratio of two rates 
-  mutate(sdi = sqrt(ons_any_death)/population, 
+  mutate(sdi = sqrt(ons_covid_death)/population, 
          sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
   group_by(date, sex, care_home_type) %>% 
   mutate(sd_sum = sum(sdiw_squared), 
@@ -173,7 +173,7 @@ noncovid_standard <- noncovid_standard %>%
   mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
   ungroup() %>% 
   # CI for the ratio of two rates 
-  mutate(sdi = sqrt(ons_any_death)/population, 
+  mutate(sdi = sqrt(ons_noncovid_death)/population, 
          sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
   group_by(date, sex, care_home_type) %>% 
   mutate(sd_sum = sum(sdiw_squared), 
@@ -405,7 +405,7 @@ covid_standard <- covid_standard %>%
   pivot_wider(
     id_cols = id, 
     names_from = care_home_type, 
-    values_from = c(date, sex, dsr), 
+    values_from = c(date, sex, dsr, log_sd), 
     names_glue = "{care_home_type}_{.value}") %>% 
   rename(Date= Y_date, 
          Gender = Y_sex) %>% 
@@ -450,7 +450,7 @@ noncovid_standard <- noncovid_standard %>%
   pivot_wider(
     id_cols = id, 
     names_from = care_home_type, 
-    values_from = c(date, sex, dsr), 
+    values_from = c(date, sex, dsr, log_sd), 
     names_glue = "{care_home_type}_{.value}") %>% 
   rename(Date= Y_date, 
          Gender = Y_sex) %>% 
