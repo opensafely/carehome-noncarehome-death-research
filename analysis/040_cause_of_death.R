@@ -279,9 +279,6 @@ png(filename = "./analysis/outfiles/plot_7a.png")
 plot_7a
 dev.off()
 
-print("check for small values")
-tabyl(table$Count)
-  
 # PRivate Homes : Figure -----------------------------------------------------
 
 table <- NULL
@@ -328,3 +325,7 @@ plot_7b <- ggplot(table, aes(x = Year, y = Percentage, fill = Cause_of_Death), p
 png(filename = "./analysis/outfiles/plot_7b.png")
 plot_7b
 dev.off()
+
+print("check for small values")
+tabyl(table$Count)
+
