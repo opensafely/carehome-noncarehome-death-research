@@ -376,7 +376,7 @@ y_value <- (max(all_cause_standard$ucl_cmr) + (max(all_cause_standard$ucl_cmr)/4
 
 plot_9a <- ggplot(all_cause_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender, fill = Gender)) + 
   geom_line(size = 1) + 
-  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised All-Cause Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of All-Cause Mortality Rates",
@@ -419,9 +419,9 @@ covid_standard <- covid_standard %>%
 # output the figure
 y_value <- (max(covid_standard$ucl_cmr) + (max(covid_standard$ucl_cmr)/4)) 
 
-plot_9b <- ggplot(covid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+plot_9b <- ggplot(covid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender, fill = Gender)) + 
   geom_line(size = 1) + 
-  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised COVID Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of COVID Mortality Rates",
@@ -464,9 +464,9 @@ noncovid_standard <- noncovid_standard %>%
 # output the figure
 y_value <- (max(noncovid_standard$ucl_cmr) + (max(noncovid_standard$ucl_cmr)/4)) 
 
-plot_9c <- ggplot(noncovid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender)) + 
+plot_9c <- ggplot(noncovid_standard, aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = Gender, fill = Gender)) + 
   geom_line(size = 1) + 
-  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1) +
+  geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA) +
   labs(x = "Time Period", 
        y = "Ratio of Standardised non COVID Mortality Rate per 1,000 individuals", 
        title = "Age-standardidised Ratio of non COVID Mortality Rates",
