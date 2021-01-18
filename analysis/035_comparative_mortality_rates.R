@@ -51,21 +51,29 @@ measure_noncovid_sex_age <- fread("./output/measure_noncovid_death_sex_age.csv",
 
 # Remove empty COVID rows--------------------------------------------------
 
-measure_covid_all <- measure_covid_all %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_covid_all <- measure_covid_all %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_sex <- measure_covid_sex %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
+measure_covid_sex_age <- measure_covid_sex_age %>% filter(ymd(date) >= ymd("20200301"))
 
-measure_covid_sex <- measure_covid_sex %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+# Set rows with < 5 events to zero ----------------------------------------
+# this replaces only the value, meaning that plots will just plot zero for that month. 
+# the counts will still need manual redaction (but will also flag where this was redacted rather than zero)
 
-measure_covid_age <- measure_covid_age %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_any_all <- measure_any_all %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
+measure_any_sex <- measure_any_sex %>% mutate(value = ifelse(ons_any_death <= 5, 0, value))
+measure_any_age <- measure_any_age %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
+measure_any_sex_age <- measure_any_sex_age %>% mutate(value = ifelse(ons_any_death <= 5, 0, value)) 
 
-measure_covid_sex_age <- measure_covid_sex_age %>% 
-  mutate(dateform = ymd(date)) %>% 
-  filter(dateform >= ymd("20200301"))
+measure_covid_all <- measure_covid_all %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+measure_covid_sex <- measure_covid_sex %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value))
+measure_covid_age <- measure_covid_age %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+measure_covid_sex_age <- measure_covid_sex_age %>% mutate(value = ifelse(ons_covid_death <= 5, 0, value)) 
+
+measure_noncovid_all <- measure_noncovid_all %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
+measure_noncovid_sex <- measure_noncovid_sex %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value))
+measure_noncovid_age <- measure_noncovid_age %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
+measure_noncovid_sex_age <- measure_noncovid_sex_age %>% mutate(value = ifelse(ons_noncovid_death <= 5, 0, value)) 
 
 # Create Comparative Measures  --------------------------------------------
 
@@ -74,8 +82,8 @@ measure_covid_sex_age <- measure_covid_sex_age %>%
 table_5a <- measure_any_all %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_any_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_any_death, 
+         N = population) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
@@ -92,21 +100,21 @@ table_5a <- measure_any_all %>%
   select(-c(Care_or_Nursing_Home_date)) %>% 
   select(Date, (matches("Care*")), (matches("Priv*"))) %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2),  
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab5aout <- table_5a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -116,8 +124,8 @@ write.table(tab5aout, file = "./analysis/outfiles/table_5a.txt", sep = "\t", na 
 table_6a <- measure_covid_all %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_covid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_covid_death, 
+         N = population) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
@@ -134,21 +142,21 @@ table_6a <- measure_covid_all %>%
   select(-c(Care_or_Nursing_Home_date)) %>% 
   select(Date, (matches("Care*")), (matches("Priv*"))) %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value),
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab6aout <- table_6a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -176,21 +184,21 @@ table_7a <- measure_noncovid_all %>%
   select(-c(Care_or_Nursing_Home_date)) %>% 
   select(Date, (matches("Care*")), (matches("Priv*"))) %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)),
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) 
 
 tab7aout <- table_7a %>% 
   select(Date, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI)  
@@ -217,24 +225,24 @@ table_5b <- measure_any_sex %>%
     values_from = c(date, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date, 
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Gender)) 
 
 tab5bout <- table_5b %>% 
@@ -246,10 +254,10 @@ write.table(tab5bout, file = "./analysis/outfiles/table_5b.txt", sep = "\t", na 
 table_6b <- measure_covid_sex %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_covid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_covid_death, 
+         N = population, 
+         Gender = sex) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Gender = sex) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -261,24 +269,24 @@ table_6b <- measure_covid_sex %>%
     values_from = c(date, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date, 
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Gender)) 
 
 tab6bout <- table_6b %>% 
@@ -290,10 +298,10 @@ write.table(tab6bout, file = "./analysis/outfiles/table_6b.txt", sep = "\t", na 
 table_7b <- measure_noncovid_sex %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_noncovid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_noncovid_death, 
+         N = population, 
+         Gender = sex) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Gender = sex) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -305,24 +313,24 @@ table_7b <- measure_noncovid_sex %>%
     values_from = c(date, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date, 
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Gender)) 
 
 tab7bout <- table_7b %>% 
@@ -336,10 +344,10 @@ write.table(tab7bout, file = "./analysis/outfiles/table_7b.txt", sep = "\t", na 
 table_5c <- measure_any_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_any_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_any_death, 
+         N = population, 
+         Age = ageband_narrow) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -351,24 +359,24 @@ table_5c <- measure_any_age %>%
     values_from = c(date, Age, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
+  rename(Date = Private_Home_date, 
+         Age = Private_Home_Age) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age)) 
 
 tab5cout <- table_5c %>% 
@@ -380,10 +388,10 @@ write.table(tab5cout, file = "./analysis/outfiles/table_5c.txt", sep = "\t", na 
 table_6c <- measure_covid_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_covid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_covid_death, 
+         N = population, 
+         Age = ageband_narrow) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -395,24 +403,24 @@ table_6c <- measure_covid_age %>%
     values_from = c(date, Age, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
+  rename(Date = Private_Home_date, 
+         Age = Private_Home_Age) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age))
 
 tab6cout <- table_6c %>% 
@@ -424,10 +432,10 @@ write.table(tab6cout, file = "./analysis/outfiles/table_6c.txt", sep = "\t", na 
 table_7c <- measure_noncovid_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_noncovid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_noncovid_death, 
+         N = population, 
+         Age = ageband_narrow) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -439,24 +447,24 @@ table_7c <- measure_noncovid_age %>%
     values_from = c(date, Age, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
+  rename(Date = Private_Home_date, 
+         Age = Private_Home_Age) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age)) 
 
 tab7cout <- table_7c %>% 
@@ -470,11 +478,11 @@ write.table(tab7cout, file = "./analysis/outfiles/table_7c.txt", sep = "\t", na 
 table_5d <- measure_any_sex_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_any_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_any_death, 
+         N = population, 
+         Age = ageband_narrow, 
+         Gender = sex) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
-  rename(Gender = sex) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -486,25 +494,25 @@ table_5d <- measure_any_sex_age %>%
     values_from = c(date, Age, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date, 
+         Age = Private_Home_Age, 
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age, Care_or_Nursing_Home_Gender)) 
 
 tab5dout <- table_5d %>% 
@@ -516,11 +524,11 @@ write.table(tab5dout, file = "./analysis/outfiles/table_5d.txt", sep = "\t", na 
 table_6d <- measure_covid_sex_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_covid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_covid_death, 
+         N = population, 
+         Age = ageband_narrow, 
+         Gender = sex) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
-  rename(Gender = sex) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -532,25 +540,25 @@ table_6d <- measure_covid_sex_age %>%
     values_from = c(date, Age, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
+         rd = (Care_or_Nursing_Home_value - Private_Home_value), 
+         Relative_Risk = round(rr,2), 
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef, 
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables 
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date,
+         Age = Private_Home_Age,
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age, Care_or_Nursing_Home_Gender)) 
 
 tab6dout <- table_6d %>% 
@@ -562,11 +570,11 @@ write.table(tab6dout, file = "./analysis/outfiles/table_6d.txt", sep = "\t", na 
 table_7d <- measure_noncovid_sex_age %>% 
   mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
   # rename variabels to easier names 
-  rename(n = ons_noncovid_death) %>% 
-  rename(N = population) %>% 
+  rename(n = ons_noncovid_death, 
+         N = population,
+         Age = ageband_narrow,
+         Gender = sex) %>% 
   mutate(Mortality_Rate = round((value*1000),2)) %>% 
-  rename(Age = ageband_narrow) %>% 
-  rename(Gender = sex) %>% 
   # need to create a unique ID for reshaping the data
   group_by(care_home_group) %>% 
   mutate(id = row_number()) %>% 
@@ -578,25 +586,25 @@ table_7d <- measure_noncovid_sex_age %>%
     values_from = c(date, Age, Gender, n, N, value, Mortality_Rate), 
     names_glue = "{care_home_group}_{.value}") %>% 
   # create comparative measures 
-  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value)) %>% 
-  mutate(rd = (Care_or_Nursing_Home_value - Private_Home_value)) %>% 
-  mutate(Relative_Risk = round(rr,2)) %>% 
-  mutate(Risk_Difference = round(rd*1000,2)) %>% 
+  mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value),
+         rd = (Care_or_Nursing_Home_value - Private_Home_value),
+         Relative_Risk = round(rr,2),
+         Risk_Difference = round(rd*1000,2)) %>% 
   # calculate confidence intervals for relative risk
-  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N))) %>% 
-  mutate(ef = exp(1.96 * se_log_rr)) %>% 
-  mutate(rr_lcl = rr/ef) %>% 
-  mutate(rr_ucl = rr*ef) %>% 
+  mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)),
+         ef = exp(1.96 * se_log_rr), 
+         rr_lcl = rr/ef,
+         rr_ucl = rr*ef) %>% 
   # calculate confidence interval for risk difference 
-  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N)) %>%  
-  mutate(rd_lcl = rd - 1.96*se_rd) %>% 
-  mutate(rd_ucl = rd + 1.96*se_rd) %>% 
-  mutate(Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-")) %>% 
-  mutate(Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
+  mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
+         rd_lcl = rd - 1.96*se_rd, 
+         rd_ucl = rd + 1.96*se_rd, 
+         Relative_Risk_CI = paste(round(rr_lcl,2), round(rr_ucl,2), sep = "-"), 
+         Risk_Difference_CI = paste(round(rd_lcl*1000,2), round(rd_ucl*1000,2), sep = "-")) %>% 
   # select variables to present in tables and rename as relevant
-  rename(Date = Private_Home_date) %>% 
-  rename(Age = Private_Home_Age) %>% 
-  rename(Gender = Private_Home_Gender) %>% 
+  rename(Date = Private_Home_date, 
+         Age = Private_Home_Age, 
+         Gender = Private_Home_Gender) %>% 
   select(-c(Care_or_Nursing_Home_date, Care_or_Nursing_Home_Age, Care_or_Nursing_Home_Gender)) 
 
 tab7dout <- table_7d %>% 
