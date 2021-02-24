@@ -17,7 +17,7 @@ ethnicity_codes = codelist_from_csv(
 )
 
 dementia = codelist_from_csv(
-    "codelists/opensafely-dementia.csv", system="ctv3", column="CTV3ID"
+    "codelists/opensafely-dementia-complete.csv", system="ctv3", column="code"
 )
 
 chronic_respiratory_disease_codes = codelist_from_csv(
@@ -77,4 +77,10 @@ flu_clinical_not_given_codes = codelist_from_csv(
     "codelists/opensafely-influenza-vaccination-clinical-codes-not-given.csv",
     system="ctv3",
     column="CTV3ID",
+)
+
+primis_codes = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-longres.csv", 
+    system="snomed", 
+    column="code",
 )
