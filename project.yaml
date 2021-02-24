@@ -123,27 +123,4 @@ actions:
         plot_cmr_covid: output/plots/plot_cmr_covid.png
         plot_cmr_noncovid: output/plots/plot_cmr_noncovid.png
 
-  055_standardisation_smaller_age.R:
-    run: r:latest analysis/055_standardisation_smaller_age.R 
-    needs: [generate_measures_cohorts, generate_measures]
-    outputs: 
-      moderately_sensitive:
-        table_standardised_allcause_age: output/tables/table_standardised_allcause_age.txt
-        table_standardised_covid_age: output/tables/table_standardised_covid_age.txt
-        table_standardised_noncovid_age: output/tables/table_standardised_noncovid_age.txt     
-        plot_standardised_allcause_age_m: output/plots/plot_standardised_allcause_age_m.png
-        plot_standardised_covid_age_m: output/plots/plot_standardised_covid_age_m.png
-        plot_standardised_noncovid_age_m: output/plots/plot_standardised_noncovid_age_m.png
-        plot_standardised_allcause_age_f: output/plots/plot_standardised_allcause_age_f.png
-        plot_standardised_covid_age_f: output/plots/plot_standardised_covid_age_f.png
-        plot_standardised_noncovid_age_f: output/plots/plot_standardised_noncovid_age_f.png
-        table_cmr_allcause_age: output/tables/table_cmr_allcause_age.txt
-        table_cmr_covid_age: output/tables/table_cmr_covid_age.txt
-        table_cmr_noncovid_age: output/tables/table_cmr_noncovid_age.txt
-        plot_cmr_allcause_age_m: output/plots/plot_cmr_allcause_age_m.png
-        plot_cmr_covid_age_m: output/plots/plot_cmr_covid_age_m.png
-        plot_cmr_noncovid_age_m: output/plots/plot_cmr_noncovid_age_m.png
-        plot_cmr_allcause_age_f: output/plots/plot_cmr_allcause_age_f.png
-        plot_cmr_covid_age_f: output/plots/plot_cmr_covid_age_f.png
-        plot_cmr_noncovid_age_f: output/plots/plot_cmr_noncovid_age_f.png
 
