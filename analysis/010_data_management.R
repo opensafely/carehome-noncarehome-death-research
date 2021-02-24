@@ -43,8 +43,7 @@ apply(input[c("ethnicity", "sex", "rural_urban", "region", "care_home_type")], 2
 # Date Covariates ---------------------------------------------------------
 
 # list of variables to change from date to indicator 
-vars = c("lung_cancer", "haem_cancer", "other_cancer", "esrf", 
-         "diabetes", "chronic_liver_disease", 
+vars = c("esrf", "diabetes", "chronic_liver_disease", "esrf",
          "chronic_cardiac_disease", "chronic_respiratory_disease", "stroke", 
          "dementia")
 
@@ -100,11 +99,17 @@ print("IMD")
 ifelse(!is.numeric(study_population$imd), "imd is not numeric", "imd is numeric as expected")
 summary(study_population$imd)
 
-# create variable with quantiles 
-# ideally, this should be done relative to external quartiles - ongoing to incorporate this in wider OS work. In the meantime, create quartiles
+# put missing to missing 
 study_population <- study_population %>% 
-  mutate(imd = replace(imd, imd <= 0, NA)) %>% 
-  mutate(imd_cat = ntile(imd,5))
+  mutate(imd = replace(imd, imd <= 0, NA), 
+         imd_cat = case_when(imd == 1 ~ "1 - Least Deprived", 
+                             imd == 2 ~ "2", 
+                             imd == 3 ~ "3", 
+                             imd == 4 ~ "4", 
+                             imd == 5 ~ "5 - Most Deprived", 
+                             TRUE ~ "Missing"), 
+         imd_cat = as_factor(imd_cat), 
+         imd_cat = fct_relevel(imd_cat, c("1 - Least Deprived", "2", "3", "4", "5 - Most Deprived", "Missing")))  
 
 # check variable creation 
 tabyl(study_population$imd_cat)
@@ -127,6 +132,11 @@ study_population <- study_population %>%
 # check variable creation 
 tabyl(study_population$urban)
 
+##-- Region 
+
+study_population <- study_population %>% 
+  mutate(region = as_factor(region))
+
 # Care Home Variables -----------------------------------------------------
 print("Care Home Variables")
 
@@ -140,7 +150,8 @@ study_population <- study_population %>%
     care_home_type == "PC" ~ "Care Home", 
     care_home_type == "PN" ~ "Nursing Home", 
     care_home_type == "PS" ~ "Care or Nursing Home", 
-    TRUE ~ "Private Home")) %>% 
+    TRUE ~ "Private Home"), 
+    care_home_cat = as_factor(care_home_cat)) %>% 
   mutate(care_home = case_when(
     care_home_type == "PC" ~ 1, 
     care_home_type == "PS" ~ 1, 

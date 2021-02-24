@@ -5,179 +5,145 @@ expectations:
 
 actions:
   generate_cohort_2019:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_2019
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2019-02-01" 
     outputs:
       highly_sensitive:
-        cohort: output/input_2019.csv
+        cohort: output/input_2019-02-01.csv
 
   generate_cohort_2020:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_2020
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2020-02-01" 
     outputs:
       highly_sensitive:
-        cohort: output/input_2020.csv
+        cohort: output/input_2020-02-01.csv
 
   generate_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2020-11-30 by month"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2021-02-01 by month"
     outputs:
       highly_sensitive:
-        cohort1: output/input_measures_*.csv
+        cohort_measures: output/input_measures_*.csv
 
   generate_measures:
     run: cohortextractor:latest generate_measures --study-definition study_definition_measures
     needs: [generate_measures_cohorts]
     outputs:
       moderately_sensitive:
-        measure1: output/measure_covid_death_all.csv
-        measure2: output/measure_covid_death_sex.csv
-        measure3: output/measure_covid_death_age.csv
-        measure4: output/measure_covid_death_sex_age.csv
-        measure5: output/measure_allcause_death_all.csv
-        measure6: output/measure_allcause_death_sex.csv
-        measure7: output/measure_allcause_death_age.csv
-        measure8: output/measure_allcause_death_sex_age.csv
-        measure9: output/measure_noncovid_death_all.csv
-        measure10: output/measure_noncovid_death_sex.csv
-        measure11: output/measure_noncovid_death_age.csv
-        measure12: output/measure_noncovid_death_sex_age.csv
-        measure13: output/measure_covid_death_sex_age_five.csv
-        measure14: output/measure_allcause_death_sex_age_five.csv
-        measure15: output/measure_noncovid_death_sex_age_five.csv
-        measure16: output/measure_covid_death_all_chdetail.csv
-        measure17: output/measure_covid_death_sex_chdetail.csv
-        measure18: output/measure_covid_death_age_chdetail.csv
-        measure19: output/measure_covid_death_sex_age_chdetail.csv
-        measure20: output/measure_allcause_death_all_chdetail.csv
-        measure21: output/measure_allcause_death_sex_chdetail.csv
-        measure22: output/measure_allcause_death_age_chdetail.csv
-        measure23: output/measure_allcause_death_sex_age_chdetail.csv
-        measure24: output/measure_noncovid_death_all_chdetail.csv
-        measure25: output/measure_noncovid_death_sex_chdetail.csv
-        measure26: output/measure_noncovid_death_age_chdetail.csv
-        measure27: output/measure_noncovid_death_sex_age_chdetail.csv
+        measure1: output/measure_covid_death_age.csv
+        measure2: output/measure_allcause_death_age.csv
+        measure3: output/measure_noncovid_death_age.csv
+        measure4: output/measure_covid_death_sex_age_five.csv
+        measure5: output/measure_allcause_death_sex_age_five.csv
+        measure6: output/measure_noncovid_death_sex_age_five.csv
+        measure7: output/measure_covid_death_age_chdetail.csv
+        measure8: output/measure_allcause_death_age_chdetail.csv
+        measure9: output/measure_noncovid_death_age_chdetail.csv
+        measure10: output/measure_tpp_death_age.csv
 
   010_data_management_2019:
-    run: r:latest analysis/010_data_management.R ./output/input_2019.csv ./data/study_population_2019.csv
+    run: r:latest analysis/010_data_management.R ./output/input_2019-02-01.csv ./output/study_population_2019.csv
     needs: [generate_cohort_2019]
     outputs: 
       highly_sensitive:
-        data1: data/study_population_2019.csv
+        data1: output/study_population_2019.csv
 
   010_data_management_2020:
-    run: r:latest analysis/010_data_management.R ./output/input_2020.csv ./data/study_population_2020.csv
+    run: r:latest analysis/010_data_management.R ./output/input_2020-02-01.csv ./output/study_population_2020.csv
     needs: [generate_cohort_2020]
     outputs: 
       highly_sensitive:
-        data2: data/study_population_2020.csv
+        data2: output/study_population_2020.csv
 
   020_baseline_characteristics_2019:
-    run: r:latest analysis/020_baseline_characteristics.R ./data/study_population_2019.csv ./analysis/outfiles/table_1a.txt
+    run: r:latest analysis/020_baseline_characteristics.R ./output/study_population_2019.csv ./output/tables/table_1_2019.txt
     needs: [generate_cohort_2019, 010_data_management_2019]
     outputs: 
       moderately_sensitive:
-        table1a: analysis/outfiles/table_1a.txt
+        table1a: output/tables/table_1_2019.txt
 
   020_baseline_characteristics_2020:
-    run: r:latest analysis/020_baseline_characteristics.R ./data/study_population_2020.csv ./analysis/outfiles/table_1b.txt
+    run: r:latest analysis/020_baseline_characteristics.R ./data/study_population_2020.csv ./output/tables/table_one_2020.txt
     needs: [generate_cohort_2020, 010_data_management_2020]
     outputs: 
       moderately_sensitive:
-        table1b: analysis/outfiles/table_1b.txt
-
-  025_carehome_characteristics:
-    run: r:latest analysis/025_carehome_characteristics.R ./data/study_population_2020.csv 
-    needs: [010_data_management_2020]
-    outputs: 
-      moderately_sensitive:
-        log: analysis/outfiles/carehome_characteristics.txt
+        table1b: output/tables/table_one_2020.txt
 
   030_descriptive_mortality_rates.R:
     run: r:latest analysis/030_descriptive_mortality_rates.R 
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        table_2a: analysis/outfiles/table_2a.txt
-        table_2b: analysis/outfiles/table_2b.txt
-        table_2c: analysis/outfiles/table_2c.txt
-        table_2d: analysis/outfiles/table_2d.txt
-        table_3a: analysis/outfiles/table_3a.txt
-        table_3b: analysis/outfiles/table_3b.txt
-        table_3c: analysis/outfiles/table_3c.txt
-        table_3d: analysis/outfiles/table_3d.txt
-        table_4a: analysis/outfiles/table_4a.txt
-        table_4b: analysis/outfiles/table_4b.txt
-        table_4c: analysis/outfiles/table_4c.txt
-        table_4d: analysis/outfiles/table_4d.txt
-        plot_1a: analysis/outfiles/plot_1a.png
-        plot_1b: analysis/outfiles/plot_1b.png
-        plot_1c: analysis/outfiles/plot_1c.png
-        plot_2a: analysis/outfiles/plot_2a.png
-        plot_2b: analysis/outfiles/plot_2b.png
-        plot_2c: analysis/outfiles/plot_2c.png
-        plot_3a: analysis/outfiles/plot_3a.png
-        plot_3b: analysis/outfiles/plot_3b.png
-        plot_3c: analysis/outfiles/plot_3c.png
+        table_descriptive_allcause: output/tables/table_descriptive_allcause.txt
+        table_descriptive_covid: output/tables/table_descriptive_covid.txt
+        table_descriptive_noncovid: output/tables/table_descriptive_noncovid.txt
+        plot_descriptive_allcause: output/plots/plot_descriptive_allcause.png
+        plot_descriptive_covid: output/plots/plot_descriptive_covid.png
+        plot_descriptive_noncovid: output/plots/plot_descriptive_noncovid.png
+
 
   035_comparative_mortality_rates.R:
     run: r:latest analysis/035_comparative_mortality_rates.R 
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        table_5a: analysis/outfiles/table_5a.txt
-        table_5b: analysis/outfiles/table_5b.txt
-        table_5c: analysis/outfiles/table_5c.txt
-        table_5d: analysis/outfiles/table_5d.txt
-        table_6a: analysis/outfiles/table_6a.txt
-        table_6b: analysis/outfiles/table_6b.txt
-        table_6c: analysis/outfiles/table_6c.txt
-        table_6d: analysis/outfiles/table_6d.txt
-        table_7a: analysis/outfiles/table_7a.txt
-        table_7b: analysis/outfiles/table_7b.txt
-        table_7c: analysis/outfiles/table_7c.txt
-        table_7d: analysis/outfiles/table_7d.txt
-        plot_8a: analysis/outfiles/plot_4a.png
-        plot_8b: analysis/outfiles/plot_4b.png
-        plot_8c: analysis/outfiles/plot_4c.png
-        plot_5a: analysis/outfiles/plot_5a.png
-        plot_5b: analysis/outfiles/plot_5b.png
-        plot_5c: analysis/outfiles/plot_5c.png
-        plot_6a: analysis/outfiles/plot_6a.png
-        plot_6b: analysis/outfiles/plot_6b.png
-        plot_6c: analysis/outfiles/plot_6c.png
+        table_comparative_allcause: output/tables/table_comparative_allcause.txt
+        table_comparative_covid: output/tables/table_comparative_covid.txt
+        table_noncomparative_covid: output/tables/table_noncomparative_covid.txt
+        plot_comparative_allcause: output/plots/plot_comparative_allcause.png
+        plot_comparative_covid: output/plots/plot_comparative_covid.png
+        plot_comparative_noncovid: output/plots/plot_comparative_noncovid.png
 
   040_cause_of_death.R:
     run: r:latest analysis/040_cause_of_death.R 
     needs: [generate_measures_cohorts]
     outputs: 
       moderately_sensitive:
-        table_8a: analysis/outfiles/table_8a.txt
-        table_8b: analysis/outfiles/table_8b.txt
-        plot_7a: analysis/outfiles/plot_7a.png
-        plot_7b: analysis/outfiles/plot_7b.png
+        table_allcauses_ch: output/tables/table_allcauses_ch.txt
+        table_allcauses_ph: output/tables/table_allcauses_ph.txt
+        table_nccauses_ch: output/tables/table_nccauses_ch.txt
+        table_nccauses_ph: output/tables/table_nccauses_ph.txt
+        plot_allcauses_ch: output/plots/plot_allcauses_ch.png
+        plot_allcauses_ph: output/plots/plot_allcauses_ph.png
+        plot_nccauses_ch: output/plots/plot_nccauses_ch.png
+        plot_nccauses_ph: output/plots/plot_nccauses_ph.png
 
   050_standardisation.R:
     run: r:latest analysis/050_standardisation.R 
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        table_9a: analysis/outfiles/table_9a.txt
-        table_9b: analysis/outfiles/table_9b.txt     
-        table_9c: analysis/outfiles/table_9c.txt
-        plot_8a: analysis/outfiles/plot_8a.png
-        plot_8b: analysis/outfiles/plot_8b.png
-        plot_8c: analysis/outfiles/plot_8c.png
-        plot_9a: analysis/outfiles/plot_9a.png
-        plot_9b: analysis/outfiles/plot_9b.png
-        plot_9c: analysis/outfiles/plot_9c.png
+        table_standardised_allcause: output/tables/table_standardised_allcause.txt
+        table_standardised_covid: output/tables/table_standardised_covid.txt
+        table_standardised_noncovid: output/tables/table_standardised_noncovid.txt     
+        plot_standardised_allcause: output/plots/plot_standardised_allcause.png
+        plot_standardised_covid: output/plots/plot_standardised_covid.png
+        plot_standardised_noncovid: output/plots/plot_standardised_noncovid.png
+        table_cmr_allcause: output/tables/table_cmr_allcause.txt
+        table_cmr_covid: output/tables/table_cmr_covid.txt
+        table_cmr_noncovid: output/tables/table_cmr_noncovid.txt
+        plot_cmr_allcause: output/plots/plot_cmr_allcause.png
+        plot_cmr_covid: output/plots/plot_cmr_covid.png
+        plot_cmr_noncovid: output/plots/plot_cmr_noncovid.png
 
-  generate_measures_sensitivity_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures_tppdeath --index-date-range "2016-02-01 to 2020-11-30 by month"
-    outputs:
-      highly_sensitive:
-        cohort_sensitivity: output/input_measures_tppdeath_*.csv
-
-  generate_measures_sensitivity:
-    run: cohortextractor:latest generate_measures --study-definition study_definition_measures_tppdeath
-    needs: [generate_measures_sensitivity_cohort]
-    outputs:
+  055_standardisation_smaller_age.R:
+    run: r:latest analysis/055_standardisation_smaller_age.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
       moderately_sensitive:
-        measure_sensitivity: output/measure_allcause_tppdeath_all.csv
+        table_standardised_allcause_age: output/tables/table_standardised_allcause_age.txt
+        table_standardised_covid_age: output/tables/table_standardised_covid_age.txt
+        table_standardised_noncovid_age: output/tables/table_standardised_noncovid_age.txt     
+        plot_standardised_allcause_age_m: output/plots/plot_standardised_allcause_age_m.png
+        plot_standardised_covid_age_m: output/plots/plot_standardised_covid_age_m.png
+        plot_standardised_noncovid_age_m: output/plots/plot_standardised_noncovid_age_m.png
+        plot_standardised_allcause_age_f: output/plots/plot_standardised_allcause_age_f.png
+        plot_standardised_covid_age_f: output/plots/plot_standardised_covid_age_f.png
+        plot_standardised_noncovid_age_f: output/plots/plot_standardised_noncovid_age_f.png
+        table_cmr_allcause_age: output/tables/table_cmr_allcause_age.txt
+        table_cmr_covid_age: output/tables/table_cmr_covid_age.txt
+        table_cmr_noncovid_age: output/tables/table_cmr_noncovid_age.txt
+        plot_cmr_allcause_age_m: output/plots/plot_cmr_allcause_age_m.png
+        plot_cmr_covid_age_m: output/plots/plot_cmr_covid_age_m.png
+        plot_cmr_noncovid_age_m: output/plots/plot_cmr_noncovid_age_m.png
+        plot_cmr_allcause_age_f: output/plots/plot_cmr_allcause_age_f.png
+        plot_cmr_covid_age_f: output/plots/plot_cmr_covid_age_f.png
+        plot_cmr_noncovid_age_f: output/plots/plot_cmr_noncovid_age_f.png
+
