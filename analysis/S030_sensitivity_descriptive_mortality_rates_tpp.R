@@ -111,7 +111,7 @@ measure_any_age <- measure_any_age %>%
 # Tables ------------------------------------------------------------------
 
 S_table_descriptive_allcause_tpp <- format_table(measure_any_age, tpp_death)
-write.table(S_table_descriptive_allcause_tpp, file = "./output/tables/S_table_descriptive_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(S_table_descriptive_allcause_tpp, file = "./output/tables/S_table_descriptive_allcause_tpp.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  -------------------------------------------------------------
 
