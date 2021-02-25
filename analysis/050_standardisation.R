@@ -30,7 +30,8 @@ standardise <- function(data, outcome) {
     {{data}} %>% 
     left_join(european_standard, by = c("ageband_five")) %>% 
     # expected deaths is mortality rate times the standard groupsize 
-    mutate(expected_deaths = value * groupsize) %>% 
+    mutate(value = ifelse({{outcome}}<= 5, NA, value), 
+           expected_deaths = value * groupsize) %>% 
     # sum by group 
     group_by(date, sex, care_home_type) %>% 
     mutate(total_expected = sum(expected_deaths)) %>% 

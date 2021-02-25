@@ -162,7 +162,7 @@ study = StudyDefinition(
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"Care_Home": 0.10, "Nursing_Home": 0.10, "Care_Or_Nursing_Home": 0.20, "Private_Home": 0.60},},
+            "category": {"ratios": {"Care_Home": 0.10, "Nursing_Home": 0.10, "Care_Or_Nursing": 0.20, "Private_Home": 0.60},},
         },
     ),
 )
@@ -221,21 +221,21 @@ measures = [
         id="covid_death_age_chdetail",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # all-cause death
     Measure(
         id="allcause_death_age_chdetail",
         numerator="ons_any_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # Non covid death
     Measure(
         id="noncovid_death_age_chdetail",
         numerator="ons_noncovid_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
 
     ## SENSITIVITY 2: tpp death as the outcome for comparison (all cause only)
