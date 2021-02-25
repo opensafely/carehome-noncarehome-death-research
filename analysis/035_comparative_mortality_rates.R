@@ -132,7 +132,7 @@ table_comparative_allcause <- comparative_allcause %>%
   select(Date, Age, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI) %>% 
   arrange(Age, Date)
 
-write.table(table_comparative_allcause, file = "./output/tables/table_comparative_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_comparative_allcause, file = "./output/tables/3a_table_comparative_allcause.txt", sep = "\t", na = "", row.names=FALSE)
 
 ##-- Covid 
 comparative_covid <- format_comparative_table(measure_covid_age, ons_covid_death)
@@ -142,17 +142,17 @@ table_comparative_covid <- comparative_covid %>%
   select(Date, Age, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI) %>% 
   arrange(Age, Date)
 
-write.table(table_comparative_covid, file = "./output/tables/table_comparative_covid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_comparative_covid, file = "./output/tables/3b_table_comparative_covid.txt", sep = "\t", na = "", row.names=FALSE)
 
 ##-- Non Covid 
 comparative_noncovid <- format_comparative_table(measure_noncovid_age, ons_noncovid_death)
 comparative_noncovid <- calculate_measures(comparative_noncovid)
 
-table_noncomparative_covid <- comparative_noncovid %>% 
+table_comparative_noncovid <- comparative_noncovid %>% 
   select(Date, Age, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI) %>% 
   arrange(Age, Date)
 
-write.table(table_noncomparative_covid, file = "./output/tables/table_noncomparative_covid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_comparative_noncovid, file = "./output/tables/3c_table_comparative_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  ----------------------------------------------------------------
 
@@ -160,7 +160,7 @@ write.table(table_noncomparative_covid, file = "./output/tables/table_noncompara
 
 plot_comparative_allcause <- plot_comparative_figure(comparative_allcause, Allcause)
 
-png(filename = "./output/plots/plot_comparative_allcause.png")
+png(filename = "./output/plots/3a_plot_comparative_allcause.png")
 plot_comparative_allcause
 dev.off()
 
@@ -168,7 +168,7 @@ dev.off()
 
 plot_comparative_covid <- plot_comparative_figure(comparative_covid, Covid)
 
-png(filename = "./output/plots/plot_comparative_covid.png")
+png(filename = "./output/plots/3b_plot_comparative_covid.png")
 plot_comparative_covid
 dev.off()
 
@@ -176,6 +176,6 @@ dev.off()
 
 plot_comparative_noncovid <- plot_comparative_figure(comparative_noncovid, Noncovid)
 
-png(filename = "./output/plots/plot_comparative_noncovid.png")
+png(filename = "./output/plots/3c_plot_comparative_noncovid.png")
 plot_comparative_noncovid
 dev.off()

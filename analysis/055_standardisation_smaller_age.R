@@ -94,7 +94,7 @@ format_standardised_table <- function(data) {
 # 3. Plot standardised rates 
 # function to plot the standardised rates w. CIs. 
 
-plot_standardised_rates <- function(data, sex, titletext, grouptext) {
+plot_standardised_rates <- function(data, titletext, sex, grouptext) {
   
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   sexfilter <- enquo(sex)
@@ -102,15 +102,14 @@ plot_standardised_rates <- function(data, sex, titletext, grouptext) {
 
   {{data}} %>% 
     filter(if (!!sexfilter == "F") (sex == "F") else TRUE) %>% 
-    filter(if (!!sexfilter == "M") (sex == "M") else TRUE)
-  
-  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = over80, shape = care_home_type, group = interaction(over80, care_home_type))) + 
+    filter(if (!!sexfilter == "M") (sex == "M") else TRUE) %>% 
+    ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = over80, shape = care_home_type, group = interaction(over80, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
          shape = "Carehome", 
-         colour = "Agegroup") + 
+         colour = "Over 80") + 
     scale_y_continuous(limits = c(0,y_value)) +
     scale_colour_manual(values = c("#FF934F", "#2E4052")) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
@@ -145,21 +144,20 @@ calculate_cmr <- function(data) {
            sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
            ef_cmr = exp(1.96 * sd_log_cmr), 
            lcl_cmr = cmr/ef_cmr, 
-           ucl_cmr = cmr*ef_cmr) 
+           ucl_cmr = cmr*ef_cmr) %>% 
+    rename(Date = Y_date, 
+           Gender = Y_sex, 
+           over80 = Y_over80) 
 }
 
- 
 # 5. Format table of CMRs 
 # function to format and output table of CMRs
 
 format_cmr_table <- function(data) {
   
   {{data}} %>% 
-    rename(Date = Y_date, 
-           Gender = Y_sex, 
-           over80 = Y_over80) %>% 
-    mutate(Confidence_Interval = paste(round(lcl_cmr*1000,2), round(ucl_cmr*1000,2), sep = "-"), 
-           Comparative_Mortality_Rate = round(cmr*1000,2)) %>% 
+    mutate(Confidence_Interval = paste(round(lcl_cmr,2), round(ucl_cmr,2), sep = "-"), 
+           Comparative_Mortality_Rate = round(cmr,2)) %>% 
     select(Gender, over80, Date, Comparative_Mortality_Rate, Confidence_Interval) %>% 
     arrange(Gender, over80, Date)
 }
@@ -171,21 +169,21 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
   
   y_value <- (max({{data}}$ucl_cmr) + (max({{data}}$ucl_cmr)/4)) 
   sexfilter <- enquo(sex)
-  titlestring <- paste("Age-standardised", titletext, "Comparative Mortality Ratio by Agegroup", grouptext)
+  titlestring <- paste(titletext, "CMR by Agegroup", grouptext)
   
   {{data}} %>% 
-    filter(if (!!sexfilter == "F") (sex == "F") else TRUE) %>% 
-    filter(if (!!sexfilter == "M") (sex == "M") else TRUE)
-  
-  ggplot({{data}}, aes (x = as.Date(Y_date, "%Y-%m-%d"), y = cmr, colour = Y_sex, fill = Y_sex)) + 
+    filter(if (!!sexfilter == "F") (Gender == "F") else TRUE) %>% 
+    filter(if (!!sexfilter == "M") (Gender == "M") else TRUE) %>% 
+    ggplot(aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = over80, fill = over80)) + 
     geom_line(size = 1) + 
-    geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA) +
+    geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     labs(x = "Time Period", 
          y = "Ratio of Standardised Rates per 1,000 individuals", 
          title = titlestring,
-         colour = "Gender") + 
+         colour = "Over 80") + 
     scale_y_continuous(limits = c(0,y_value)) +
     scale_colour_manual(values = c("#FF934F", "#2E4052")) +
+    scale_fill_manual(values = c("#FF934F", "#2E4052")) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
@@ -194,8 +192,7 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
           panel.background = element_blank(), 
           axis.line = element_line(colour = "gray"), 
           panel.grid.major.y = element_line(color = "gainsboro")) 
-  
-  }
+}
 
 # Read in Data ------------------------------------------------------------
 
@@ -285,49 +282,49 @@ noncovid_standard <- standardise(noncovid, ons_noncovid_death)
 # DSR tables  ----------------------------------------------------------------
 
 table_standardised_allcause_age <- format_standardised_table(all_cause_standard)
-write.table(table_standardised_allcause_age, file = "./output/tables/table_standardised_allcause_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_allcause_age, file = "./output/tables/7a_table_standardised_allcause_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_standardised_covid_age <- format_standardised_table(covid_standard)
-write.table(table_standardised_covid_age, file = "./output/tables/table_standardised_covid_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_covid_age, file = "./output/tables/7b_table_standardised_covid_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_standardised_noncovid_age <- format_standardised_table(noncovid_standard)
-write.table(table_standardised_noncovid_age, file = "./output/tables/table_standardised_noncovid_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_noncovid_age, file = "./output/tables/7c_table_standardised_noncovid_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 # DSR figures --------------------------------------------------------------
 
 # All cause 
-plot_standardised_allcause_age_m <- plot_standardised_rates(all_cause_standard, "M", "All-Cause", "Among Men")
-plot_standardised_allcause_age_f <- plot_standardised_rates(all_cause_standard, "F", "All-Cause", "Among Women")
+plot_standardised_allcause_age_m <- plot_standardised_rates(all_cause_standard, "All-Cause", "M","Among Men")
+plot_standardised_allcause_age_f <- plot_standardised_rates(all_cause_standard, "All-Cause", "F","Among Women")
 
-png(filename = "./output/plots/plot_standardised_allcause_age_m.png")
+png(filename = "./output/plots/7a1_plot_standardised_allcause_age_m.png")
 plot_standardised_allcause_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_standardised_allcause_age_f.png")
+png(filename = "./output/plots/7a2_plot_standardised_allcause_age_f.png")
 plot_standardised_allcause_age_f
 dev.off()
 
 # Covid
-plot_standardised_covid_age_m <- plot_standardised_rates(covid_standard, "M", "Covid", "Among Men")
-plot_standardised_covid_age_f <- plot_standardised_rates(covid_standard, "F", "Covid", "Among Women")
+plot_standardised_covid_age_m <- plot_standardised_rates(covid_standard, "Covid", "M","Among Men")
+plot_standardised_covid_age_f <- plot_standardised_rates(covid_standard, "Covid", "F","Among Women")
 
-png(filename = "./output/plots/plot_standardised_covid_age_m.png")
+png(filename = "./output/plots/7b1_plot_standardised_covid_age_m.png")
 plot_standardised_covid_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_standardised_covid_age_f.png")
+png(filename = "./output/plots/7b2_plot_standardised_covid_age_f.png")
 plot_standardised_covid_age_f
 dev.off()
 
 # Non Covid
-plot_standardised_noncovid_age_m <- plot_standardised_rates(noncovid_standard, "M", "Non-Covid", "Among Men")
-plot_standardised_noncovid_age_f <- plot_standardised_rates(noncovid_standard, "F", "Non-Covid", "Among Women")
+plot_standardised_noncovid_age_m <- plot_standardised_rates(noncovid_standard, "Non-Covid", "M","Among Men")
+plot_standardised_noncovid_age_f <- plot_standardised_rates(noncovid_standard, "Non-Covid", "F","Among Women")
 
-png(filename = "./output/plots/plot_standardised_noncovid_age_m.png")
+png(filename = "./output/plots/7c1_plot_standardised_noncovid_age_m.png")
 plot_standardised_noncovid_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_standardised_noncovid_age_f.png")
+png(filename = "./output/plots/7c2_plot_standardised_noncovid_age_f.png")
 plot_standardised_noncovid_age_f
 dev.off()
 
@@ -340,48 +337,48 @@ noncovid_cmr <- calculate_cmr(noncovid_standard)
 # CMR tables --------------------------------------------------------------
 
 table_cmr_allcause_age <- format_cmr_table(all_cause_cmr)
-write.table(table_cmr_allcause_age, file = "./output/tables/table_cmr_allcause_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_allcause_age, file = "./output/tables/8a_table_cmr_allcause_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_cmr_covid_age <- format_cmr_table(covid_cmr)
-write.table(table_cmr_covid_age, file = "./output/tables/table_cmr_covid_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_covid_age, file = "./output/tables/8b_table_cmr_covid_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_cmr_noncovid_age <- format_cmr_table(noncovid_cmr)
-write.table(table_cmr_noncovid_age, file = "./output/tables/table_cmr_noncovid_age.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_noncovid_age, file = "./output/tables/8c_table_cmr_noncovid_age.txt", sep = "\t", na = "", row.names=FALSE)
 
 # CMR figures -------------------------------------------------------------
 
 # All cause 
-plot_cmr_allcause_age_m <- plot_cmrs(all_cause_cmr, "M", "All-Cause", "Among Men")
-plot_cmr_allcause_age_f <- plot_cmrs(all_cause_cmr, "F", "All-Cause", "Among Women")
+plot_cmr_allcause_age_m <- plot_cmrs(all_cause_cmr, "All-Cause", "M", "Among Men")
+plot_cmr_allcause_age_f <- plot_cmrs(all_cause_cmr, "All-Cause", "F",  "Among Women")
 
-png(filename = "./output/plots/plot_cmr_allcause_age_m.png")
+png(filename = "./output/plots/8a1_plot_cmr_allcause_age_m.png")
 plot_cmr_allcause_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_cmr_allcause_age_f.png")
+png(filename = "./output/plots/8a2_plot_cmr_allcause_age_f.png")
 plot_cmr_allcause_age_f
 dev.off()
 
 # Covid
-plot_cmr_covid_age_m <- plot_cmrs(covid_cmr, "M", "Covid", "Among Men")
-plot_cmr_covid_age_f <- plot_cmrs(covid_cmr, "F", "Covid", "Among Women")
+plot_cmr_covid_age_m <- plot_cmrs(covid_cmr,"Covid", "M", "Among Men")
+plot_cmr_covid_age_f <- plot_cmrs(covid_cmr,"Covid", "F", "Among Women")
 
-png(filename = "./output/plots/plot_cmr_covid_age_m.png")
+png(filename = "./output/plots/8b1_plot_cmr_covid_age_m.png")
 plot_cmr_covid_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_cmr_covid_age_f.png")
+png(filename = "./output/plots/8b2_plot_cmr_covid_age_f.png")
 plot_cmr_covid_age_f
 dev.off()
 
 # Non Covid
-plot_cmr_noncovid_age_m <- plot_cmrs(noncovid_cmr, "M", "Non-Covid", "Among Men")
-plot_cmr_noncovid_age_f <- plot_cmrs(noncovid_cmr, "F", "Non-Covid", "Among Women")
+plot_cmr_noncovid_age_m <- plot_cmrs(noncovid_cmr, "Non-Covid", "M", "Among Men")
+plot_cmr_noncovid_age_f <- plot_cmrs(noncovid_cmr, "Non-Covid", "F", "Among Women")
 
-png(filename = "./output/plots/plot_cmr_noncovid_age_m.png")
+png(filename = "./output/plots/8c1_plot_cmr_noncovid_age_m.png")
 plot_cmr_noncovid_age_m
 dev.off()
 
-png(filename = "./output/plots/plot_cmr_noncovid_age_f.png")
+png(filename = "./output/plots/8c2_plot_cmr_noncovid_age_f.png")
 plot_cmr_noncovid_age_f
 dev.off()

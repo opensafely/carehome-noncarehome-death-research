@@ -134,33 +134,33 @@ measure_noncovid_age <- measure_noncovid_age %>%
 # Tables ------------------------------------------------------------------
 
 table_descriptive_allcause <- format_table(measure_any_age, ons_any_death)
-write.table(table_descriptive_allcause, file = "./output/tables/table_descriptive_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_descriptive_allcause, file = "./output/tables/2a_table_descriptive_allcause.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_descriptive_covid <- format_table(measure_covid_age, ons_covid_death)
-write.table(table_descriptive_covid, file = "./output/tables/table_descriptive_covid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_descriptive_covid, file = "./output/tables/2b_table_descriptive_covid.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_descriptive_noncovid <- format_table(measure_noncovid_age, ons_noncovid_death)
-write.table(table_descriptive_noncovid, file = "./output/tables/table_descriptive_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_descriptive_noncovid, file = "./output/tables/2c_table_descriptive_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  -------------------------------------------------------------
 
 # all-cause mortality 
 plot_descriptive_allcause <- plot_figure(measure_any_age, Allcause)
 
-png(filename = "./output/plots/plot_descriptive_allcause.png")
+png(filename = "./output/plots/2a_plot_descriptive_allcause.png")
 plot_descriptive_allcause
 dev.off()
 
 # COVID mortality 
 plot_descriptive_covid <- plot_figure(measure_covid_age, Covid)
 
-png(filename = "./output/plots/plot_descriptive_covid.png")
+png(filename = "./output/plots/2b_plot_descriptive_covid.png")
 plot_descriptive_covid
 dev.off()
 
 # Noncovid 
 plot_descriptive_noncovid <- plot_figure(measure_noncovid_age, NonCovid)
 
-png(filename = "./output/plots/plot_descriptive_noncovid.png")
+png(filename = "./output/plots/2c_plot_descriptive_noncovid.png")
 plot_descriptive_noncovid
 dev.off()
