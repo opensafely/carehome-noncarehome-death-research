@@ -57,12 +57,17 @@ study = StudyDefinition(
         """(NOT ons_covid_death) AND ons_any_death""",
         return_expectations={"incidence": 0.15},
     ),
+    tpp_death=patients.with_death_recorded_in_primary_care(
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
+    ), 
 
     # define cause of death
     # note - only described, not used in the actual measures 
     died_cause_ons=patients.died_from_any_cause(
         returning="underlying_cause_of_death",
-        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.2,"G30":0.2, "J45":0.2}},},
+        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45":0.05 ,"G30":0.05, "A01":0.25}},},
     ),
 
     # define age (needed for population and stratification group)
@@ -152,12 +157,12 @@ study = StudyDefinition(
               AND LocationDoesNotRequireNursing='N'
               AND LocationRequiresNursing='Y'
             """,
-            "Care_Or_Nursing_Home": "IsPotentialCareHome",
+            "Care_Or_Nursing": "IsPotentialCareHome",
             "Private_Home": "DEFAULT",
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"Care_Home": 0.10, "Nursing_Home": 0.10, "Care_Or_Nursing_Home": 0.20, "Private_Home": 0.60},},
+            "category": {"ratios": {"Care_Home": 0.10, "Nursing_Home": 0.10, "Care_Or_Nursing": 0.20, "Private_Home": 0.60},},
         },
     ),
 )
@@ -169,80 +174,24 @@ measures = [
 
     # covid death
     Measure(
-        id="covid_death_all",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_type"], 
-    ),
-    Measure(
-        id="covid_death_sex",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["sex", "care_home_type"], 
-    ),
-    Measure(
         id="covid_death_age",
         numerator="ons_covid_death",
         denominator="population",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
-    Measure(
-        id="covid_death_sex_age",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_type"],  
-    ),
-
     # all-cause death
-    Measure(
-        id="allcause_death_all",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_type"], 
-    ),
-    Measure(
-        id="allcause_death_sex",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["sex", "care_home_type"],  
-    ),
     Measure(
         id="allcause_death_age",
         numerator="ons_any_death",
         denominator="population",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
-    Measure(
-        id="allcause_death_sex_age",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_type"],    
-    ),
-
     # Non covid death
-    Measure(
-        id="noncovid_death_all",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_type"], 
-    ),
-    Measure(
-        id="noncovid_death_sex",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["sex", "care_home_type"],  
-    ),
     Measure(
         id="noncovid_death_age",
         numerator="ons_noncovid_death",
         denominator="population",
         group_by = ["ageband_narrow", "care_home_type"],
-    ),
-    Measure(
-        id="noncovid_death_sex_age",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_type"],    
     ),
 
     ## 5-YEAR AGE BANDS FOR STANDARDISATION 
@@ -265,84 +214,35 @@ measures = [
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
 
-    ## SENSITIVITY: stratified by care or nursing home for completion 
+    ## SENSITIVITY 1: stratified by care or nursing home for completion 
 
     # covid death
-    Measure(
-        id="covid_death_all_chdetail",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_detail"], 
-    ),
-    Measure(
-        id="covid_death_sex_chdetail",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["sex", "care_home_detail"], 
-    ),
     Measure(
         id="covid_death_age_chdetail",
         numerator="ons_covid_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
-    Measure(
-        id="covid_death_sex_age_chdetail",
-        numerator="ons_covid_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_detail"],  
-    ),
-
     # all-cause death
-    Measure(
-        id="allcause_death_all_chdetail",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_detail"], 
-    ),
-    Measure(
-        id="allcause_death_sex_chdetail",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["sex", "care_home_detail"],  
-    ),
     Measure(
         id="allcause_death_age_chdetail",
         numerator="ons_any_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
-    Measure(
-        id="allcause_death_sex_age_chdetail",
-        numerator="ons_any_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_detail"],    
-    ),
-
     # Non covid death
-    Measure(
-        id="noncovid_death_all_chdetail",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["allpatients", "care_home_detail"], 
-    ),
-    Measure(
-        id="noncovid_death_sex_chdetail",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["sex", "care_home_detail"],  
-    ),
     Measure(
         id="noncovid_death_age_chdetail",
         numerator="ons_noncovid_death",
         denominator="population",
-        group_by = ["ageband_narrow", "care_home_detail"],
-    ),
-    Measure(
-        id="noncovid_death_sex_age_chdetail",
-        numerator="ons_noncovid_death",
-        denominator="population",
-        group_by = ["sex", "ageband_narrow", "care_home_detail"],    
+        group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
 
+    ## SENSITIVITY 2: tpp death as the outcome for comparison (all cause only)
+    Measure(
+        id="tpp_death_age",
+        numerator="tpp_death",
+        denominator="population",
+        group_by = ["ageband_narrow", "care_home_type"],
+    ),
 ]

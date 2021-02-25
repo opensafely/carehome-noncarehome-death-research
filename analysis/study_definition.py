@@ -1,5 +1,5 @@
 
-# STUDY DEFINITION FOR BASELINE CHARACTERISTICS IN 2019 (start of follow-up)
+# STUDY DEFINITION FOR BASELINE CHARACTERISTICS 
 
 # Import necessary functions
 
@@ -28,6 +28,7 @@ study = StudyDefinition(
     },
     # select the study population
     index_date="2019-02-01",
+    
     population=patients.satisfying(
         """
         (age >= 65 AND age < 120) AND 
@@ -165,50 +166,57 @@ study = StudyDefinition(
         },
     ),
     ## index of multiple deprivation, estimate of SES based on patient post code 
-    imd=patients.address_as_of(
-        "index_date",
-        returning="index_of_multiple_deprivation",
-        round_to_nearest=100,
+	imd=patients.categorised_as(
+        {
+            "0": "DEFAULT",
+            "1": """index_of_multiple_deprivation >=1 AND index_of_multiple_deprivation < 32844*1/5""",
+            "2": """index_of_multiple_deprivation >= 32844*1/5 AND index_of_multiple_deprivation < 32844*2/5""",
+            "3": """index_of_multiple_deprivation >= 32844*2/5 AND index_of_multiple_deprivation < 32844*3/5""",
+            "4": """index_of_multiple_deprivation >= 32844*3/5 AND index_of_multiple_deprivation < 32844*4/5""",
+            "5": """index_of_multiple_deprivation >= 32844*4/5 AND index_of_multiple_deprivation < 32844""",
+        },
+        index_of_multiple_deprivation=patients.address_as_of(
+            "index_date",
+            returning="index_of_multiple_deprivation",
+            round_to_nearest=100,
+        ),
         return_expectations={
             "rate": "universal",
             "category": {
                 "ratios": {
-                    "-1": 0.1,
-                    "200": 0.1,
-                    "300": 0.1,
-                    "400": 0.1,
-                    "500": 0.1,
-                    "600": 0.1,
-                    "700": 0.1,
-                    "800": 0.1,
-                    "900": 0.1,
-                    "1000": 0.1,
+                    "0": 0.05,
+                    "1": 0.19,
+                    "2": 0.19,
+                    "3": 0.19,
+                    "4": 0.19,
+                    "5": 0.19,
                 }
             },
         },
     ),
+
   # CLINICAL COMORBIDITIES  
     ## cancer 
-    lung_cancer=patients.with_these_clinical_events(
+    # cancer
+    cancer=patients.satisfying(
+        "lung_cancer OR haem_cancer OR other_cancer",
+        lung_cancer=patients.with_these_clinical_events(
         lung_cancer_codes,
         on_or_before="index_date",
-        return_first_date_in_period=True,
-        include_month=True,
-        return_expectations={"date": {"latest": "index_date"}},
-    ),
-    haem_cancer=patients.with_these_clinical_events(
+        returning="binary_flag",
+        return_expectations={"incidence": 0.10},
+        ),
+        haem_cancer=patients.with_these_clinical_events(
         haem_cancer_codes,
         on_or_before="index_date",
-        return_first_date_in_period=True,
-        include_month=True,
-        return_expectations={"date": {"latest": "index_date"}},
-    ),
-    other_cancer=patients.with_these_clinical_events(
+        return_expectations={"incidence": 0.05},
+        ),
+        other_cancer=patients.with_these_clinical_events(
         other_cancer_codes,
         on_or_before="index_date",
-        return_first_date_in_period=True,
-        include_month=True,
-        return_expectations={"date": {"latest": "index_date"}},
+        return_expectations={"incidence": 0.10},
+        ),
+
     ),
 
     ## variabels to define ckd 
