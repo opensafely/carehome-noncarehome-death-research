@@ -176,9 +176,9 @@ actions:
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        S_table_standardised_allcause_chdetail: output/tables/S_table_standardised_allcause_chdetail.txt
-        S_table_standardised_covid_chdetail: output/tables/S_table_standardised_covid_chdetail.txt
-        S_table_standardised_noncovid_chdetail: output/tables/S_table_standardised_noncovid_chdetail.txt     
+        S_table_standardised_allcause_chdetail: output/tables/S2a_table_standardised_allcause_chdetail.txt
+        S_table_standardised_covid_chdetail: output/tables/S2b_table_standardised_covid_chdetail.txt
+        S_table_standardised_noncovid_chdetail: output/tables/S2c_table_standardised_noncovid_chdetail.txt     
         S_plot_standardised_allcause_chdetail_m: output/plots/S_plot_standardised_allcause_chdetail_m.png
         S_plot_standardised_covid_chdetail_m: output/plots/S_plot_standardised_covid_chdetail_m.png
         S_plot_standardised_noncovid_chdetail_m: output/plots/S_plot_standardised_noncovid_chdetail_m.png

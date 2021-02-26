@@ -97,7 +97,7 @@ format_standardised_table <- function(data) {
 plot_standardised_rates <- function(data, titletext) {
   
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
-  titlestring <- paste("Age-standardised", titletext, "Mortality Rate by Sex and Care Home")
+  titlestring <- paste("Age-standardised", titletext, "Mortality by Sex and Care Home")
   
   plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
@@ -163,11 +163,11 @@ format_cmr_table <- function(data) {
 plot_cmrs <- function(data, titletext) { 
   
   y_value <- (max({{data}}$ucl_cmr) + (max({{data}}$ucl_cmr)/4)) 
-  titlestring <- paste("Age-standardised", titletext, "Comparative Mortality Ratio by Sex and Care Home")
+  titlestring <- paste("Age-standardised", titletext, "CMR by Sex and Care Home")
   
   ggplot({{data}}, aes (x = as.Date(Y_date, "%Y-%m-%d"), y = cmr, colour = Y_sex, fill = Y_sex)) + 
     geom_line(size = 1) + 
-    geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA) +
+    geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     labs(x = "Time Period", 
          y = "Ratio of Standardised Rates per 1,000 individuals", 
          title = titlestring,
