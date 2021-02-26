@@ -176,20 +176,20 @@ actions:
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        S_table_standardised_allcause_chdetail: output/tables/S_table_standardised_allcause_chdetail.txt
-        S_table_standardised_covid_chdetail: output/tables/S_table_standardised_covid_chdetail.txt
-        S_table_standardised_noncovid_chdetail: output/tables/S_table_standardised_noncovid_chdetail.txt     
-        S_plot_standardised_allcause_chdetail_m: output/plots/S_plot_standardised_allcause_chdetail_m.png
-        S_plot_standardised_covid_chdetail_m: output/plots/S_plot_standardised_covid_chdetail_m.png
-        S_plot_standardised_noncovid_chdetail_m: output/plots/S_plot_standardised_noncovid_chdetail_m.png
-        S_plot_standardised_allcause_chdetail_f: output/plots/S_plot_standardised_allcause_chdetail_f.png
-        S_plot_standardised_covid_chdetail_f: output/plots/S_plot_standardised_covid_chdetail_f.png
-        S_plot_standardised_noncovid_chdetail_f: output/plots/S_plot_standardised_noncovid_chdetail_f.png
+        S2a_table_standardised_allcause_chdetail: output/tables/S2a_table_standardised_allcause_chdetail.txt
+        S2b_table_standardised_covid_chdetail: output/tables/S2b_table_standardised_covid_chdetail.txt
+        S2c_table_standardised_noncovid_chdetail: output/tables/S2c_table_standardised_noncovid_chdetail.txt     
+        S2a1_plot_standardised_allcause_chdetail_m: output/plots/S2a1_plot_standardised_allcause_chdetail_m.png
+        S2a2_plot_standardised_allcause_chdetail_f: output/plots/S2a2_plot_standardised_allcause_chdetail_f.png
+        S2b1_plot_standardised_covid_chdetail_m: output/plots/S2b1_plot_standardised_covid_chdetail_m.png
+        S2b2_plot_standardised_covid_chdetail_f: output/plots/S2b2_plot_standardised_covid_chdetail_f.png
+        S2c1_plot_standardised_noncovid_chdetail_m: output/plots/S2c1_plot_standardised_noncovid_chdetail_m.png
+        S2c2_plot_standardised_noncovid_chdetail_f: output/plots/S2c2_plot_standardised_noncovid_chdetail_f.png
 
   S030_sensitivity_descriptive_mortality_rates_tpp:
     run: r:latest analysis/S030_sensitivity_descriptive_mortality_rates_tpp.R 
     needs: [generate_sensitivity_measures_cohorts, generate_sensitivity_measures]
     outputs: 
       moderately_sensitive:
-        S_table_descriptive_allcause: output/tables/S_table_descriptive_allcause_tpp.txt
-        S_plot_descriptive_noncovid: output/plots/S_plot_descriptive_allcause_tpp.png
+        S3_table_descriptive_allcause: output/tables/S3_table_descriptive_allcause_tpp.txt
+        S3_plot_descriptive_noncovid: output/plots/S3_plot_descriptive_allcause_tpp.png

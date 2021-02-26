@@ -111,14 +111,14 @@ measure_any_age <- measure_any_age %>%
 # Tables ------------------------------------------------------------------
 
 S_table_descriptive_allcause_tpp <- format_table(measure_any_age, tpp_death)
-write.table(S_table_descriptive_allcause_tpp, file = "./output/tables/S_table_descriptive_allcause_tpp.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(S_table_descriptive_allcause_tpp, file = "./output/tables/S3_table_descriptive_allcause_tpp.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  -------------------------------------------------------------
 
 # all-cause mortality 
 S_plot_descriptive_allcause_tpp <- plot_figure(measure_any_age, TPP)
 
-png(filename = "./output/plots/S_plot_descriptive_allcause_tpp.png")
+png(filename = "./output/plots/S3_plot_descriptive_allcause_tpp.png")
 S_plot_descriptive_allcause_tpp
 dev.off()
 

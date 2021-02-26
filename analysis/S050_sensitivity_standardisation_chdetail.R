@@ -29,9 +29,10 @@ standardise <- function(data, outcome) {
   
     {{data}} %>% 
     left_join(european_standard, by = c("ageband_five")) %>% 
+    # remove care or nursing as expected small numbers
+    filter(care_home_detail != "Care_Or_Nursing") %>% 
     # expected deaths is mortality rate times the standard groupsize 
-    mutate(value = ifelse({{outcome}}<= 5, NA, value), 
-           expected_deaths = value * groupsize) %>% 
+    mutate(expected_deaths = value * groupsize) %>% 
     # sum by group 
     group_by(date, sex, care_home_detail) %>% 
     mutate(total_expected = sum(expected_deaths)) %>% 
@@ -85,7 +86,7 @@ format_standardised_table <- function(data) {
     rename(Date = Care_Home_date, 
            Gender = Care_Home_sex) %>% 
     select(Gender, Date, matches("Standardised*"), matches("Confidence*")) %>% 
-    select(Gender, Date, (matches("Care_Home*")), (matches("Nursing_Home*")), (matches("Care_or*")), (matches("Private_Home*"))) %>% 
+    select(Gender, Date, (matches("Care_Home*")), (matches("Nursing_Home*")), (matches("Care_Or*")), (matches("Private_Home*"))) %>% 
     arrange(Gender, Date)
 
   }
@@ -93,17 +94,16 @@ format_standardised_table <- function(data) {
 # 3. Plot standardised rates 
 # function to plot the standardised rates w. CIs. 
 
-plot_standardised_rates <- function(data, sex, titletext, grouptext) {
+plot_standardised_rates <- function(data, titletext, sex, grouptext) {
   
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   sexfilter <- enquo(sex)
-  titlestring <- paste("Age-standardised", titletext, "Mortality Rate by Care Home Type", grouptext)
+  titlestring <- paste("Age-standardised", titletext, "Mortality", grouptext)
   
   {{data}} %>% 
     filter(if (!!sexfilter == "F") (sex == "F") else TRUE) %>% 
-    filter(if (!!sexfilter == "M") (sex == "M") else TRUE)
-  
-  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = care_home_detail)) + 
+    filter(if (!!sexfilter == "M") (sex == "M") else TRUE) %>% 
+    ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = care_home_detail)) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
@@ -173,13 +173,13 @@ noncovid_standard <- standardise(noncovid, ons_noncovid_death)
 # DSR tables  ----------------------------------------------------------------
 
 S_table_standardised_allcause_chdetail <- format_standardised_table(all_cause_standard)
-write.table(S_table_standardised_allcause_chdetail, file = "./output/tables/S_table_standardised_allcause_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(S_table_standardised_allcause_chdetail, file = "./output/tables/S2a_table_standardised_allcause_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
 
 S_table_standardised_covid_chdetail <- format_standardised_table(covid_standard)
-write.table(S_table_standardised_covid_chdetail, file = "./output/tables/S_table_standardised_covid_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(S_table_standardised_covid_chdetail, file = "./output/tables/S2b_table_standardised_covid_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
 
 S_table_standardised_noncovid_chdetail <- format_standardised_table(noncovid_standard)
-write.table(S_table_standardised_noncovid_chdetail, file = "./output/tables/S_table_standardised_noncovid_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(S_table_standardised_noncovid_chdetail, file = "./output/tables/S2c_table_standardised_noncovid_chdetail.txt", sep = "\t", na = "", row.names=FALSE)
 
 # DSR figures --------------------------------------------------------------
 
@@ -187,11 +187,11 @@ write.table(S_table_standardised_noncovid_chdetail, file = "./output/tables/S_ta
 S_plot_standardised_allcause_chdetail_m <- plot_standardised_rates(all_cause_standard, "All-Cause", "M", "Among Men")
 S_plot_standardised_allcause_chdetail_f <- plot_standardised_rates(all_cause_standard, "All-Cause", "F", "Among Women")
 
-png(filename = "./output/plots/S_plot_standardised_allcause_chdetail_m.png")
+png(filename = "./output/plots/S2a1_plot_standardised_allcause_chdetail_m.png")
 S_plot_standardised_allcause_chdetail_m
 dev.off()
 
-png(filename = "./output/plots/S_plot_standardised_allcause_chdetail_f.png")
+png(filename = "./output/plots/S2a2_plot_standardised_allcause_chdetail_f.png")
 S_plot_standardised_allcause_chdetail_f
 dev.off()
 
@@ -199,11 +199,11 @@ dev.off()
 S_plot_standardised_covid_chdetail_m <- plot_standardised_rates(covid_standard, "Covid", "M", "Among Men")
 S_plot_standardised_covid_chdetail_f <- plot_standardised_rates(covid_standard, "Covid", "F", "Among Women")
 
-png(filename = "./output/plots/S_plot_standardised_covid_chdetail_m.png")
+png(filename = "./output/plots/S2b1_plot_standardised_covid_chdetail_m.png")
 S_plot_standardised_covid_chdetail_m
 dev.off()
 
-png(filename = "./output/plots/S_plot_standardised_covid_chdetail_f.png")
+png(filename = "./output/plots/S2b2_plot_standardised_covid_chdetail_f.png")
 S_plot_standardised_covid_chdetail_f
 dev.off()
 
@@ -211,10 +211,10 @@ dev.off()
 S_plot_standardised_noncovid_chdetail_m <- plot_standardised_rates(noncovid_standard, "Covid", "M", "Among Men")
 S_plot_standardised_noncovid_chdetail_f <- plot_standardised_rates(noncovid_standard, "Covid", "F", "Among Women")
 
-png(filename = "./output/plots/S_plot_standardised_noncovid_chdetail_m.png")
+png(filename = "./output/plots/S2c1_plot_standardised_noncovid_chdetail_m.png")
 S_plot_standardised_noncovid_chdetail_m
 dev.off()
 
-png(filename = "./output/plots/S_plot_standardised_noncovid_chdetail_f.png")
+png(filename = "./output/plots/S2c2_plot_standardised_noncovid_chdetail_f.png")
 S_plot_standardised_noncovid_chdetail_f
 dev.off()

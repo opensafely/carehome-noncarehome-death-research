@@ -98,7 +98,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
   
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   sexfilter <- enquo(sex)
-  titlestring <- paste("Age-standardised", titletext, "Mortality Rate by Agegroup and Care Home", grouptext)
+  titlestring <- paste("Age-standardised", titletext, "Mortality by Age and Care Home", grouptext)
 
   {{data}} %>% 
     filter(if (!!sexfilter == "F") (sex == "F") else TRUE) %>% 
