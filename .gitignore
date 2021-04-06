@@ -10,3 +10,4 @@ analysis.Rproj
 data/*
 !data/.gitkeep
 !data/european_standard_population.csv
+venv/
