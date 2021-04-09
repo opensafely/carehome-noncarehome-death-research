@@ -50,6 +50,7 @@ indicator_summary <- function(data, groupvar, ...) {
         list(count = sum, percent = mean), 
         na.rm = TRUE, 
         .names = "{.fn}-{.col}")) %>% 
+    mutate(across(contains("percent"), ~round(.x*100, digits = 2))) %>% 
     pivot_longer(!care_home_group, 
                  names_to = c(".value", "variable"), 
                  names_sep = "-") %>% 
@@ -66,8 +67,9 @@ factor_summary <- function(data, groupvar, ...) {
     pivot_longer(c(all_of(...)), names_to = "variable", values_to = "value") %>% 
     group_by(care_home_group, variable, value) %>% 
     summarise(count = n()) %>% 
-    mutate(percent = count / sum(count)) %>% 
-    pivot_wider(names_from = care_home_group, values_from = c(count, percent)) 
+    mutate(percent = round((count / sum(count))*100), digits = 2) %>% 
+    pivot_wider(names_from = care_home_group, values_from = c(count, percent)) %>% 
+    arrange(variable)
 }
 
 # 3. Function to summarise a vector of continous variables 
@@ -83,6 +85,7 @@ cont_summary <- function(data, groupvar, ...) {
         list(count = mean, percent = sd), 
         na.rm = TRUE, 
         .names = "{.fn}-{.col}")) %>% 
+    mutate(across(where(is.numeric), ~round(.x, digits = 2))) %>% 
     pivot_longer(!care_home_group, 
                  names_to = c(".value", "variable"), 
                  names_sep = "-") %>% 
