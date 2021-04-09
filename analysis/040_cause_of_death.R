@@ -40,7 +40,6 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
   carehomefilter <- enquo(care_home_filter)
   covidfilter <- enquo(remove_covid_deaths)
   
-  
   data <- data %>% 
     filter(ons_any_death == 1) %>% 
     filter(care_home_type == !!carehomefilter) %>% 
@@ -49,14 +48,15 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
     rename(Care_Home = care_home_type) %>%
     # extract relevant parts of the ICD-10 codes to classify deaths
     mutate(cause_chapter = str_sub(died_cause_ons,1,1)) %>% 
-    mutate(cause_number = str_sub(died_cause_ons,2,3)) %>% 
+    mutate(cause_number = as.numeric(str_sub(died_cause_ons,2))) %>% 
     # create specific causes of death to match K Baskharan's analysis
     # assumes COVID-19 if more than one primary/underlying 
     mutate(Cause_of_Death = case_when(
       cause_chapter == "C" ~ "Cancer",
       cause_chapter == "I" ~ "Cardiovascular Disease",
       cause_chapter == "J" ~ "Respiratory Disease",
-      cause_chapter == "F" & (cause_number > 0 & cause_number < 3) ~ 'Dementia', 
+      # dementia codes should be F01, F02, F03 and G30     
+      cause_chapter == "F" & (cause_number >= 1 & cause_number < 4) ~ 'Dementia', 
       cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
       ons_covid_death == 1 ~ "COVID-19", 
       TRUE ~ "Other"),
