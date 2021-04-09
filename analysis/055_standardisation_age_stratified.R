@@ -37,7 +37,7 @@ standardise <- function(data, outcome) {
     # the directly standardised rate is expected deaths over total standard population size 
     # calculate the SE around the dsri 
     mutate(dsr = total_expected/total, 
-           se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
+           se_dsri = (groupsize^2*value * (1- value))/population) %>% 
     # sum standard error per category
     group_by(date, sex, over80, care_home_type) %>% 
     mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
@@ -103,14 +103,14 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
   {{data}} %>% 
     filter(if (!!sexfilter == "F") (sex == "F") else TRUE) %>% 
     filter(if (!!sexfilter == "M") (sex == "M") else TRUE) %>% 
-    ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = over80, shape = care_home_type, group = interaction(over80, care_home_type))) + 
+    ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = over80, linetype = care_home_type, group = interaction(over80, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
-         shape = "Carehome", 
+         linetype = "Carehome", 
          colour = "Over 80") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(limits = c(0,150)) +
     scale_colour_manual(values = c("#FF934F", "#2E4052")) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
@@ -181,7 +181,7 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
          y = "Ratio of Standardised Rates per 1,000 individuals", 
          title = titlestring,
          colour = "Over 80") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(trans = 'log10') +
     scale_colour_manual(values = c("#FF934F", "#2E4052")) +
     scale_fill_manual(values = c("#FF934F", "#2E4052")) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +

@@ -59,12 +59,12 @@ calculate_measures <- function(data) {
          rd = (Care_or_Nursing_Home_value - Private_Home_value), 
          Relative_Risk = round(rr,2), 
          Risk_Difference = round(rd*1000,2)) %>% 
-    # calculate confidence intervals for relative risk
+    # calculate confidence intervals for relative risk (Kirkwood and Sterne, p156)
     mutate(se_log_rr = sqrt((1/Care_or_Nursing_Home_n) - (1/Care_or_Nursing_Home_N) + (1/Private_Home_n) - (1/Private_Home_N)), 
            ef = exp(1.96 * se_log_rr), 
            rr_lcl = rr/ef, 
            rr_ucl = rr*ef) %>% 
-    # calculate confidence interval for risk difference 
+    # calculate confidence interval for risk difference (Kirkwood and Sterne, p152)
     mutate(se_rd = sqrt((Care_or_Nursing_Home_value*(1-Care_or_Nursing_Home_value)/Care_or_Nursing_Home_N))+(Private_Home_value*(1-Private_Home_value)/Private_Home_N), 
            rd_lcl = rd - 1.96*se_rd, 
            rd_ucl = rd + 1.96*se_rd, 
@@ -84,7 +84,7 @@ plot_comparative_figure <- function(data, axistext) {
     labs(x = "Time Period", 
          y = "Relative Risk (care homes vs. private homes)", 
          title = titlestring) + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(trans= 'log10') +
     scale_colour_viridis_d() + 
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 

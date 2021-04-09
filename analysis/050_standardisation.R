@@ -23,7 +23,9 @@ dir.create(file.path("./output/plots"), showWarnings = FALSE, recursive = TRUE)
 # Functions ---------------------------------------------------------------
 
 # 1. Function to directly standardise rates calculated by measures 
-# formulas for CIs available in [enter reference]
+# formulas for CIs available in Kirkwood and Sterne (DSR, p266) vs Clayton and Hills (CMF, p138-139) and are copied into the below issue 
+# REVIEWER: PLEASE CHECK THESE HAVE BEEN ACCURATELY CODED AS THIS HAS BEEN DONE MANUALLY 
+# https://github.com/opensafely/carehome-noncarehome-death-research/issues/42 
 
 standardise <- function(data, outcome) { 
   
@@ -36,9 +38,9 @@ standardise <- function(data, outcome) {
     mutate(total_expected = sum(expected_deaths)) %>% 
     ungroup() %>%
     # the directly standardised rate is expected deaths over total standard population size 
-    # calculate the SE around the dsri 
+    # calculate the SE around the dsr for each row (dsri)
     mutate(dsr = total_expected/total, 
-           se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
+           se_dsri = (groupsize^2*value * (1- value))/population) %>% 
     # sum standard error per category
     group_by(date, sex, care_home_type) %>% 
     mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
@@ -54,7 +56,7 @@ standardise <- function(data, outcome) {
     # keep only one row per unique group 
     select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
     distinct() %>% 
-    # Finalise calculating and formatting confidence interval 
+    # Finalise calculating and formatting confidence interval around the dsr 
     mutate(lcl = dsr - 1.96 * se_dsr, 
            ucl = dsr + 1.96 * se_dsr, 
            Confidence_Interval = paste(round(lcl*1000,2), round(ucl*1000,2), sep = "-"),
@@ -99,14 +101,14 @@ plot_standardised_rates <- function(data, titletext) {
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   titlestring <- paste("Age-standardised", titletext, "Mortality by Sex and Care Home")
   
-  plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, shape = care_home_type, group = interaction(sex, care_home_type))) + 
+  plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
-         shape = "Care Home", 
+         linetype = "Care Home", 
          colour = "Gender") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(limits = c(0,100)) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
@@ -141,7 +143,6 @@ calculate_cmr <- function(data) {
            lcl_cmr = cmr/ef_cmr, 
            ucl_cmr = cmr*ef_cmr) 
 }
-
  
 # 5. Format table of CMRs 
 # function to format and output table of CMRs
@@ -172,7 +173,7 @@ plot_cmrs <- function(data, titletext) {
          y = "Ratio of Standardised Rates per 1,000 individuals", 
          title = titlestring,
          colour = "Gender") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(trans = 'log10') +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
