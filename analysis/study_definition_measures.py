@@ -64,10 +64,9 @@ study = StudyDefinition(
     ), 
 
     # define cause of death
-    # note - only described, not used in the actual measures 
     died_cause_ons=patients.died_from_any_cause(
         returning="underlying_cause_of_death",
-        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45":0.05 ,"G30":0.05, "A01":0.25}},},
+        return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45.1":0.05 ,"G30":0.05, "A01.2":0.25}},},
     ),
 
     # define age (needed for population and stratification group)

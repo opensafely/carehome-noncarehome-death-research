@@ -68,14 +68,14 @@ plot_figure <- function(data, axistext) {
   ystring <- paste(as_label(enquo(axistext)), "Mortality Rate per 1,000 individuals")
   titlestring <- paste(as_label(enquo(axistext)), "Mortality Rate by Age, crude")
   
-  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, shape = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
+  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = ystring, 
          title = titlestring, 
-         shape = "Care Home", 
+         linetype = "Care Home", 
          colour = "Age") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(limits = c(0,100)) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     scale_colour_viridis_d() + 
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 

@@ -40,7 +40,7 @@ standardise <- function(data, outcome) {
     # the directly standardised rate is expected deaths over total standard population size 
     # calculate the SE around the dsri 
     mutate(dsr = total_expected/total, 
-           se_dsri = groupsize^2*(value * (1- value)/population)) %>% 
+           se_dsri = (groupsize^2*value * (1- value))/population) %>% 
     # sum standard error per category
     group_by(date, sex, care_home_detail) %>% 
     mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
@@ -109,7 +109,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
          colour = "Carehome Type") + 
-    scale_y_continuous(limits = c(0,y_value)) +
+    scale_y_continuous(limits = c(0,150)) +
     scale_color_viridis_d(option = "plasma") +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
