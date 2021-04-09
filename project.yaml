@@ -19,8 +19,14 @@ actions:
       highly_sensitive:
         cohort: output/input_2020-02-01.csv
 
+  generate_cohort_2021:
+    run: cohortextractor:latest generate_cohort --study-definition study_definition --index-date-range "2021-02-01" 
+    outputs:
+      highly_sensitive:
+        cohort: output/input_2021-02-01.csv
+
   generate_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2021-01-31 by month"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_measures --index-date-range "2019-02-01 to 2021-03-31 by month"
     outputs:
       highly_sensitive:
         cohort_measures: output/input_measures_*.csv
@@ -54,6 +60,13 @@ actions:
       highly_sensitive:
         data2: output/study_population_2020.csv
 
+  010_data_management_2021:
+    run: r:latest analysis/010_data_management.R ./output/input_2021-02-01.csv ./output/study_population_2021.csv
+    needs: [generate_cohort_2021]
+    outputs: 
+      highly_sensitive:
+        data2: output/study_population_2021.csv
+
   020_baseline_characteristics_2019:
     run: r:latest analysis/020_baseline_characteristics.R ./output/study_population_2019.csv ./output/tables/1_table_descriptive_2019.txt
     needs: [generate_cohort_2019, 010_data_management_2019]
@@ -67,6 +80,13 @@ actions:
     outputs: 
       moderately_sensitive:
         table1b: output/tables/1_table_descriptive_2020.txt
+
+  020_baseline_characteristics_2021:
+    run: r:latest analysis/020_baseline_characteristics.R ./output/study_population_2021.csv ./output/tables/1_table_descriptive_2021.txt
+    needs: [generate_cohort_2021, 010_data_management_2021]
+    outputs: 
+      moderately_sensitive:
+        table1b: output/tables/1_table_descriptive_2021.txt
 
   030_descriptive_mortality_rates:
     run: r:latest analysis/030_descriptive_mortality_rates.R 

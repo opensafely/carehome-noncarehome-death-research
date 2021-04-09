@@ -93,6 +93,7 @@ study_population <- study_population %>%
 tabyl(study_population$sex)
 
 ##-- IMD 
+# note that this is outputted as quintiles from absolute values in the study definition 
 print("IMD")
 
 # data check
@@ -115,6 +116,7 @@ study_population <- study_population %>%
 tabyl(study_population$imd_cat)
 
 ##-- Rural Urban 
+# this is a numeric variable that takes a series of different values with -1 missing
 print("Rural Urban")
 
 #  data check
@@ -124,9 +126,9 @@ summary(study_population$rural_urban)
 # create categories 
 study_population <- study_population %>% 
   mutate(urban = case_when(
-    rural_urban == 5 ~ 1, 
-    rural_urban == 8 ~ 1, 
-    TRUE ~ 0
+    rural_urban >=1 & rural_urban <5 ~ "Urban", 
+    rural_urban <= 0 ~ "Missing", 
+    TRUE ~ "Rural"
   ))  
 
 # check variable creation 
@@ -172,7 +174,7 @@ crosstab
 ##-- Flu Vaccine 
 print("Flu Vaccine")
 
-# cata check
+# data check
 tabyl(study_population$flu_vaccine) 
 
 # replace missing
@@ -190,8 +192,8 @@ print("CKD")
 summary(study_population$creatinine)
 
 # calculate egfr and categorise as ckd 
-# translated from Stata code. 
-# QC of this outstanding, however, not crucial variable for project 
+# translated from Stata code https://github.com/opensafely/ics-research
+# REVIEWER - please check this although variable is not crucial for the project    
 study_population <- study_population %>% 
   mutate(creatinine = replace(creatinine, creatinine <20 | creatinine >3000, NA)) %>% 
   mutate(SCR_adj = creatinine/88.4) %>% 
@@ -229,7 +231,7 @@ apply(study_population[c("ckd_egfr", "esrf", "ckd")], 2, tabyl)
 
 # Outcome Variables -------------------------------------------------------
 
-# create indicator variables and tabublate 
+# create indicator variables and tabulate 
 
 study_population <- study_population  %>%  
   mutate(tpp_death = case_when(

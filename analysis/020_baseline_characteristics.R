@@ -6,7 +6,7 @@
 #              baseline characteristics 
 # Input:       study_population_[year].csv 
 # Output:      table1_[year].txt 
-# Edits:      
+# Edits:       round values, re-order rows of factor variables 
 
 # Housekeeping  -----------------------------------------------------------
 
@@ -50,6 +50,7 @@ indicator_summary <- function(data, groupvar, ...) {
         list(count = sum, percent = mean), 
         na.rm = TRUE, 
         .names = "{.fn}-{.col}")) %>% 
+    mutate(across(contains("percent"), ~round(.x*100, digits = 2))) %>% 
     pivot_longer(!care_home_group, 
                  names_to = c(".value", "variable"), 
                  names_sep = "-") %>% 
@@ -59,6 +60,8 @@ indicator_summary <- function(data, groupvar, ...) {
 
 # 2. Function to summarise a vector of factor variables 
 # Returns a tibble of counts and percentages for each level of the factor 
+# note the row order outputted is a little quirky here and I'm not sure why
+# REVIEWER - added a step to at least present vars together here but curious if there's a better way... 
 factor_summary <- function(data, groupvar, ...) {
   
   {{data}} %>% 
@@ -66,11 +69,12 @@ factor_summary <- function(data, groupvar, ...) {
     pivot_longer(c(all_of(...)), names_to = "variable", values_to = "value") %>% 
     group_by(care_home_group, variable, value) %>% 
     summarise(count = n()) %>% 
-    mutate(percent = count / sum(count)) %>% 
-    pivot_wider(names_from = care_home_group, values_from = c(count, percent)) 
+    mutate(percent = round((count / sum(count))*100), digits = 2) %>% 
+    pivot_wider(names_from = care_home_group, values_from = c(count, percent)) %>% 
+    arrange(variable)
 }
 
-# 3. Function to summarise a vector of continous variables 
+# 3. Function to summarise a vector of continuous variables 
 # Returns a tibble of mean and standard deviation (called counts and percentages to enable binding into a table)
 cont_summary <- function(data, groupvar, ...) {
   
@@ -83,6 +87,7 @@ cont_summary <- function(data, groupvar, ...) {
         list(count = mean, percent = sd), 
         na.rm = TRUE, 
         .names = "{.fn}-{.col}")) %>% 
+    mutate(across(where(is.numeric), ~round(.x, digits = 2))) %>% 
     pivot_longer(!care_home_group, 
                  names_to = c(".value", "variable"), 
                  names_sep = "-") %>% 
@@ -113,6 +118,8 @@ factorvars <- c("ethnicity_cat", "region", "care_home_cat", "imd_cat")
 indicatorvars <- c("stroke", "dementia", "diabetes", "ckd", "cancer", "chronic_liver_disease", "chronic_cardiac_disease", "chronic_respiratory_disease") 
 
 # invoke functions to summarise different types of variables 
+# because I don't want to present variables by type but in a particular order these are invoked multiple times
+# a neater solution would be to have the function 'detect' which variable type something is and then run the appropriate summary - long term aim
 row_one <- indicator_summary(summary, care_home_group, "total")
 row_gender <- factor_summary(summary, care_home_group, "sex")
 row_age <- cont_summary(summary, care_home_group, "age")
