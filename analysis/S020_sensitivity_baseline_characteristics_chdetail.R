@@ -67,7 +67,7 @@ factor_summary <- function(data, groupvar, ...) {
     pivot_longer(c(all_of(...)), names_to = "variable", values_to = "value") %>% 
     group_by(care_home_group, variable, value) %>% 
     summarise(count = n()) %>% 
-    mutate(percent = round((count / sum(count))*100), digits = 2) %>% 
+    mutate(percent = (round((count / sum(count))*100, digits = 2))) %>% 
     pivot_wider(names_from = care_home_group, values_from = c(count, percent)) %>% 
     arrange(variable)
 }
