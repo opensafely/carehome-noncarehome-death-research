@@ -57,6 +57,17 @@ apply(study_population[c(vars)], 2, tabyl)
 # Demographics ------------------------------------------------------------
 # data management for demographic variables 
 
+##-- Age 
+print("Age")
+
+summary(study_population$age)
+
+age_summary <- study_population %>% 
+  group_by(ageband_narrow) %>% 
+  summarise(min_age = min(age), max_age = max(age))
+
+age_summary 
+
 ##-- Ethnicity 
 print("Ethnicity")
 
