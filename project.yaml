@@ -45,6 +45,10 @@ actions:
         measure7: output/measure_covid_death_age_chdetail.csv
         measure8: output/measure_allcause_death_age_chdetail.csv
         measure9: output/measure_noncovid_death_age_chdetail.csv
+        measure10: output/measure_dementia.csv
+        measure11: output/measure_cancer.csv
+        measure12: output/measure_respiratory.csv
+        measure13: output/measure_cv.csv
 
   010_data_management_2019:
     run: r:latest analysis/010_data_management.R ./output/input_2019-02-01.csv ./output/study_population_2019.csv
@@ -213,3 +217,11 @@ actions:
       moderately_sensitive:
         S3_table_descriptive_allcause: output/tables/S3_table_descriptive_allcause_tpp.txt
         S3_plot_descriptive_noncovid: output/plots/S3_plot_descriptive_allcause_tpp.png
+
+  S040_sensitivity_cause_of_death_standardised:
+    run: r:latest analysis/S040_sensitivity_cause_of_death_standardised.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
+      moderately_sensitive:
+        S4a_plot_causes_men: output/plots/S4a_plot_causes_men.png
+        S4b_plot_causes_women: output/plots/S4b_plot_causes_women.png

@@ -78,3 +78,28 @@ flu_clinical_not_given_codes = codelist_from_csv(
     system="ctv3",
     column="CTV3ID",
 )
+dementia_death_codelist = codelist(["F00", "F01", "F02", "F03", "G30"], system="icd10")
+
+respiratory_death_codelist = codelist_from_csv(
+    "codelists/opensafely-icd-10-chapter-x.csv",
+    system="icd10",
+    column="code",
+)
+
+circulatory_death_codelist = codelist_from_csv(
+    "codelists/opensafely-icd-10-chapter-ix.csv",
+    system="icd10",
+    column="code",
+)
+
+cancer_death_codelist = codelist_from_csv(
+    "codelists/user-anna-schultze-cancer.csv",
+    system="icd10",
+    column="code",
+)
+
+
+
+
+
+
