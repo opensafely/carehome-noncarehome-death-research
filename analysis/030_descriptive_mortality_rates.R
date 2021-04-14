@@ -38,7 +38,7 @@ format_table <- function(data, outcome) {
     mutate(Mortality_Rate = round((PointEst*1000),2), 
            Confidence_Interval = paste(round(Lower*1000,2), round(Upper*1000,2), sep = "-")) %>% 
     rename(n = {{outcome}}, 
-           N = population, 
+           N = registered_at_start, 
            Age = ageband_narrow) %>% 
     select(c(care_home_group, Age, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
     # need to create a unique ID for reshaping the data
@@ -102,9 +102,9 @@ measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
 # calculate confidence intervals using binconf function from Hmisc 
 # bind output into the original dataset 
 
-measure_any_age <- as_tibble(cbind(measure_any_age,((binconf(measure_any_age$ons_any_death, measure_any_age$population, alpha = 0.05, method = "wilson")))))
-measure_covid_age <- as_tibble(cbind(measure_covid_age,((binconf(measure_covid_age$ons_covid_death, measure_covid_age$population, alpha = 0.05, method = "wilson")))))
-measure_noncovid_age <- as_tibble(cbind(measure_noncovid_age,((binconf(measure_noncovid_age$ons_noncovid_death, measure_noncovid_age$population, alpha = 0.05, method = "wilson")))))
+measure_any_age <- as_tibble(cbind(measure_any_age,((binconf(measure_any_age$ons_any_death, measure_any_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+measure_covid_age <- as_tibble(cbind(measure_covid_age,((binconf(measure_covid_age$ons_covid_death, measure_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+measure_noncovid_age <- as_tibble(cbind(measure_noncovid_age,((binconf(measure_noncovid_age$ons_noncovid_death, measure_noncovid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 
 # Set rows with < 5 events to NA ----------------------------------------
 # removing events, percentage and CIs 

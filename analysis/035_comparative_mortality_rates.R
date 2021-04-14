@@ -31,7 +31,7 @@ format_comparative_table <- function(data, outcome) {
     mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename variabels to easier names 
     rename(n = {{outcome}}, 
-           N = population, 
+           N = registered_at_start, 
            Age = ageband_narrow) %>% 
     mutate(Mortality_Rate = round((value*1000),2)) %>% 
     # need to create a unique ID for reshaping the data

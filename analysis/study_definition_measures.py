@@ -27,7 +27,8 @@ study = StudyDefinition(
     # set an index date (as starting point)
     index_date="2019-02-01",
 
-    # define denominator for rates 
+    # extract source population from which the numerator and denominator for deaths will be constructed 
+    # this should be all deaths during an interval, divided by those at midpoint, so need to extract both these quantities separately 
     population=patients.satisfying(
         """
         (age >= 65 AND age < 120) AND 
@@ -212,21 +213,21 @@ measures = [
     Measure(
         id="covid_death_age",
         numerator="ons_covid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
     # all-cause death
     Measure(
         id="allcause_death_age",
         numerator="ons_any_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
     # Non covid death
     Measure(
         id="noncovid_death_age",
         numerator="ons_noncovid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
 
@@ -234,19 +235,19 @@ measures = [
     Measure(
         id="covid_death_sex_age_five",
         numerator="ons_covid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
     Measure(
         id="allcause_death_sex_age_five",
         numerator="ons_any_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
     Measure(
         id="noncovid_death_sex_age_five",
         numerator="ons_noncovid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
 
@@ -256,21 +257,21 @@ measures = [
     Measure(
         id="covid_death_age_chdetail",
         numerator="ons_covid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # all-cause death
     Measure(
         id="allcause_death_age_chdetail",
         numerator="ons_any_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # Non covid death
     Measure(
         id="noncovid_death_age_chdetail",
         numerator="ons_noncovid_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
 
@@ -278,25 +279,25 @@ measures = [
     Measure(
         id="dementia",
         numerator="ons_dementia_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
     ),
     Measure(
         id="respiratory",
         numerator="ons_respiratory_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
     ),
     Measure(
         id="cv",
         numerator="ons_cv_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
     ),
     Measure(
         id="cancer",
         numerator="ons_cancer_death",
-        denominator="registered_at_midpoint",
+        denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
     ),
 
