@@ -40,13 +40,13 @@ standardise <- function(data, outcome) {
     # the directly standardised rate is expected deaths over total standard population size 
     # calculate the SE around the dsr for each row (dsri)
     mutate(dsr = total_expected/total, 
-           se_dsri = (groupsize^2*value * (1- value))/population) %>% 
+           se_dsri = (groupsize^2*value * (1- value))/registered_at_midpoint) %>% 
     # sum standard error per category
     group_by(date, sex, care_home_type) %>% 
     mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
     ungroup() %>% 
     # calculate standard deviation (needed for calculating CI for ratio of DSRs)
-    mutate(sdi = sqrt({{outcome}})/population, 
+    mutate(sdi = sqrt({{outcome}})/registered_at_midpoint, 
            sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
     group_by(date, sex, care_home_type) %>% 
     mutate(sd_sum = sum(sdiw_squared), 
