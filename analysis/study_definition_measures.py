@@ -31,14 +31,21 @@ study = StudyDefinition(
     population=patients.satisfying(
         """
         (age >= 65 AND age < 120) AND 
-        is_registered_with_tpp AND 
         (sex = "M" OR sex = "F") AND 
-        (care_home_type = "Y" OR care_home_type = "N")
+        (care_home_type = "Y" OR care_home_type = "N") AND 
+        (registered_at_start)
         """,
-        is_registered_with_tpp=patients.registered_as_of(
+    ),
+    
+    # create registration date at start of interval
+    registered_at_start=patients.registered_as_of(
           "index_date"
         ),
-    ),
+
+    # create registration date at mid-point of interval 
+    registered_at_midpoint=patients.registered_as_of(
+          "index_date + 14 days"
+        ), 
 
     # define all outcomes (numerators)
     ons_any_death=patients.died_from_any_cause(
@@ -67,6 +74,36 @@ study = StudyDefinition(
     died_cause_ons=patients.died_from_any_cause(
         returning="underlying_cause_of_death",
         return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45.1":0.05 ,"G30":0.05, "A01.2":0.25}},},
+    ),
+
+    # causes of death as outcomes (sensitivity)
+    ons_dementia_death=patients.with_these_codes_on_death_certificate(
+       dementia_death_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=True,
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
+    ), 
+    ons_cv_death=patients.with_these_codes_on_death_certificate(
+       circulatory_death_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=True,
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
+    ),
+    ons_respiratory_death=patients.with_these_codes_on_death_certificate(
+       respiratory_death_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=True,
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
+    ),  
+    ons_cancer_death=patients.with_these_codes_on_death_certificate(
+       cancer_death_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=True,
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.1},
     ),
 
     # define age (needed for population and stratification group)
@@ -175,21 +212,21 @@ measures = [
     Measure(
         id="covid_death_age",
         numerator="ons_covid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
     # all-cause death
     Measure(
         id="allcause_death_age",
         numerator="ons_any_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
     # Non covid death
     Measure(
         id="noncovid_death_age",
         numerator="ons_noncovid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
 
@@ -197,51 +234,70 @@ measures = [
     Measure(
         id="covid_death_sex_age_five",
         numerator="ons_covid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
     Measure(
         id="allcause_death_sex_age_five",
         numerator="ons_any_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
     Measure(
         id="noncovid_death_sex_age_five",
         numerator="ons_noncovid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_type"],  
     ),
 
-    ## SENSITIVITY 1: stratified by care or nursing home for completion 
+    ## SENSITIVITY: stratified by care or nursing home for completion 
 
     # covid death
     Measure(
         id="covid_death_age_chdetail",
         numerator="ons_covid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # all-cause death
     Measure(
         id="allcause_death_age_chdetail",
         numerator="ons_any_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
     # Non covid death
     Measure(
         id="noncovid_death_age_chdetail",
         numerator="ons_noncovid_death",
-        denominator="population",
+        denominator="registered_at_midpoint",
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
 
-    ## SENSITIVITY 2: tpp death as the outcome for comparison (all cause only)
+    ## SENSITIVITY: Display cause-specific deaths over time 
     Measure(
-        id="tpp_death_age",
-        numerator="tpp_death",
-        denominator="population",
-        group_by = ["ageband_narrow", "care_home_type"],
+        id="dementia",
+        numerator="ons_dementia_death",
+        denominator="registered_at_midpoint",
+        group_by = ["sex", "ageband_five", "care_home_type"],
     ),
+    Measure(
+        id="respiratory",
+        numerator="ons_respiratory_death",
+        denominator="registered_at_midpoint",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+    Measure(
+        id="cv",
+        numerator="ons_cv_death",
+        denominator="registered_at_midpoint",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+    Measure(
+        id="cancer",
+        numerator="ons_cancer_death",
+        denominator="registered_at_midpoint",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+
 ]

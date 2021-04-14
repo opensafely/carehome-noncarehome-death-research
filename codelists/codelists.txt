@@ -13,4 +13,6 @@ opensafely/influenza-vaccination-clinical-codes-given/2020-05-21
 opensafely/influenza-vaccination-clinical-codes-not-given/2020-05-19 
 opensafely/stroke-updated/2020-06-02
 opensafely/chronic-liver-disease/2020-06-02
-
+opensafely/icd-10-chapter-x/2f59547a
+opensafely/icd-10-chapter-ix/4868c7af
+user/anna-schultze/cancer/27f4f62d 
