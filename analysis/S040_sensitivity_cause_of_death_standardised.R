@@ -98,12 +98,6 @@ european_standard <- european_standard %>%
   # keep only relevant variables 
   select(ageband_five, groupsize, total)
 
-# Data Management - OpenSAFELY --------------------------------------------
-
-# drop empty covid rows  
-covid <- covid %>% 
-  filter(ymd(date) >= ymd("20200301"))
-
 # Calculate DSRs  ------------------------------------------------------------
 
 respiratory_standard <- standardise(respiratory, ons_respiratory_death) %>% 
