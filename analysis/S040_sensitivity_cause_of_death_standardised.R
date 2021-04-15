@@ -64,7 +64,7 @@ standardise <- function(data, outcome) {
 # Read in Data ------------------------------------------------------------
 
 # opensafely population 
-covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
+
 respiratory <- fread("./output/measure_respiratory.csv", data.table = FALSE, na.strings = "")
 cancer <- fread("./output/measure_cancer.csv", data.table = FALSE, na.strings = "")
 cv <- fread("./output/measure_cv.csv", data.table = FALSE, na.strings = "")
@@ -106,9 +106,6 @@ covid <- covid %>%
 
 # Calculate DSRs  ------------------------------------------------------------
 
-covid_standard <- standardise(covid, ons_covid_death) %>% 
-  mutate(group = "Covid") %>% 
-  select(date, care_home_type, sex, dsr, group)
 respiratory_standard <- standardise(respiratory, ons_respiratory_death) %>% 
   mutate(group = "Respiratory") %>% 
   select(date, care_home_type, sex, dsr, group)
@@ -122,7 +119,7 @@ cv_standard <- standardise(cv, ons_cv_death) %>%
   mutate(group = "Cardiovascular") %>% 
   select(date, care_home_type, sex, dsr, group)
 
-all_causes <- rbind(covid_standard, respiratory_standard, dementia_standard, cancer_standard, cv_standard)
+all_causes <- rbind(respiratory_standard, dementia_standard, cancer_standard, cv_standard)
 
 # DSR figures --------------------------------------------------------------
 
