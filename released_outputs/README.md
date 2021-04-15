@@ -97,6 +97,7 @@
   * output/tables
     * [output/tables/1_table_descriptive_2019.txt](output/tables/1_table_descriptive_2019.txt)
     * [output/tables/1_table_descriptive_2020.txt](output/tables/1_table_descriptive_2020.txt)
+    * [output/tables/1_table_descriptive_2021.txt](output/tables/1_table_descriptive_2021.txt)
     * [output/tables/2a_table_descriptive_allcause.txt](output/tables/2a_table_descriptive_allcause.txt)
     * [output/tables/2b_table_descriptive_covid.txt](output/tables/2b_table_descriptive_covid.txt)
     * [output/tables/2c_table_descriptive_noncovid.txt](output/tables/2c_table_descriptive_noncovid.txt)
@@ -119,6 +120,7 @@
     * [output/tables/8a_table_cmr_allcause_age.txt](output/tables/8a_table_cmr_allcause_age.txt)
     * [output/tables/8b_table_cmr_covid_age.txt](output/tables/8b_table_cmr_covid_age.txt)
     * [output/tables/8c_table_cmr_noncovid_age.txt](output/tables/8c_table_cmr_noncovid_age.txt)
+    * [output/tables/preliminary_results_v0.3.xlsx](output/tables/preliminary_results_v0.3.xlsx)
     * [output/tables/S1_table_descriptive_2019.txt](output/tables/S1_table_descriptive_2019.txt)
     * [output/tables/S2a_table_standardised_allcause_chdetail.txt](output/tables/S2a_table_standardised_allcause_chdetail.txt)
     * [output/tables/S2b_table_standardised_covid_chdetail.txt](output/tables/S2b_table_standardised_covid_chdetail.txt)
