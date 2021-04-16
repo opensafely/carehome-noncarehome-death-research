@@ -56,7 +56,7 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
       cause_chapter == "I" ~ "Cardiovascular Disease",
       cause_chapter == "J" ~ "Respiratory Disease",
       # dementia codes should be F01, F02, F03 and G30     
-      cause_chapter == "F" & (cause_number >= 1 & cause_number < 4) ~ 'Dementia', 
+      cause_chapter == "F" & (cause_number >= 0 & cause_number < 4) ~ 'Dementia', 
       cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
       ons_covid_death == 1 ~ "COVID-19", 
       TRUE ~ "Other"),
