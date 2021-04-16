@@ -173,7 +173,7 @@ plot_cmrs <- function(data, titletext) {
          y = "Ratio of Standardised Rates per 1,000 individuals", 
          title = titlestring,
          colour = "Gender") + 
-    scale_y_continuous(trans = 'log10') +
+    scale_y_continuous(trans = 'log10', limits = c(1,60)) +
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
