@@ -176,7 +176,7 @@ actions:
 # SENSITIVITY ANALYSES 
 
   generate_sensitivity_measures_cohorts:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_sensitivity --index-date-range "2016-02-01 to 2021-01-31 by month"
+    run: cohortextractor:latest generate_cohort --study-definition study_definition_sensitivity --index-date-range "2016-02-01 to 2021-03-31 by month"
     outputs:
       highly_sensitive:
         cohort_measures: output/input_sensitivity_*.csv

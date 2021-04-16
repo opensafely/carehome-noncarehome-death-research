@@ -84,7 +84,7 @@ plot_comparative_figure <- function(data, axistext) {
     labs(x = "Time Period", 
          y = "Relative Risk (care homes vs. private homes)", 
          title = titlestring) + 
-    scale_y_continuous(trans= 'log10') +
+    scale_y_continuous(trans = "log10", limits = c(1,40)) +
     scale_colour_viridis_d() + 
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
