@@ -5,7 +5,7 @@
 # Description: calculate directly standardised mortality rates 
 # Input:       measure_[outcome]_[group].csv
 # Output:      tables into analysis/outfiles as per project.yaml 
-# Edits:      
+# Edits:        
 
 # Housekeeping  -----------------------------------------------------------
 

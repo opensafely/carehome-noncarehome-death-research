@@ -6,7 +6,7 @@
 # Input:       measure_[outcome]_[group].csv
 # Output:      analysis/outfiles/table5.txt
 #              analysis/outfiles/figure4-5.png
-# Edits:      
+# Edits:         
 
 # Housekeeping  -----------------------------------------------------------
 
