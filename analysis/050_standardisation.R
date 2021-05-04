@@ -101,7 +101,7 @@ plot_standardised_rates <- function(data, titletext) {
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   titlestring <- paste("Age-standardised", titletext, "Mortality by Sex and Care Home")
   
-  plot_8a <- ggplot(covid_standard, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
+  plot_8a <- ggplot({{data}}), aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
