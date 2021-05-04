@@ -6,7 +6,7 @@
 # Input:       measure_[outcome]_[group].csv
 # Output:      analysis/outfiles/table5.txt
 #              analysis/outfiles/figure4-5.png
-# Edits:      
+# Edits:         
 
 # Housekeeping  -----------------------------------------------------------
 
@@ -27,7 +27,7 @@ dir.create(file.path("./output/plots"), showWarnings = FALSE, recursive = TRUE)
 
 format_comparative_table <- function(data, outcome) { 
   
-  {{data}} %>% 
+  {{data}} %>% # Nice - didn't know you could do this with curly brackets!
     mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename variabels to easier names 
     rename(n = {{outcome}}, 
@@ -54,7 +54,7 @@ format_comparative_table <- function(data, outcome) {
 
 calculate_measures <- function(data) { 
   
-  {{data}} %>% 
+  {{data}} %>%
   mutate(rr = (Care_or_Nursing_Home_value/Private_Home_value), 
          rd = (Care_or_Nursing_Home_value - Private_Home_value), 
          Relative_Risk = round(rr,2), 
@@ -79,7 +79,7 @@ plot_comparative_figure <- function(data, axistext) {
   y_value <- (max({{data}}$Relative_Risk) + (max({{data}}$Relative_Risk)/4)) 
   titlestring <- paste(as_label(enquo(axistext)), "mortality relative risk, crude")
   
-  ggplot({{data}}, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, )) + 
+  ggplot({{data}}, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age)) + # Rogue comma at the end of aes() here?
     geom_line(size =1) +
     labs(x = "Time Period", 
          y = "Relative Risk (care homes vs. private homes)", 
@@ -104,6 +104,8 @@ measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.ta
 
 # Remove empty COVID rows--------------------------------------------------
 
+# Not sure I follow why these rows are "empty"? Is this because 2020-03-01 is the first time covid is recorded, so any rows prior don't have covid cases?
+# No problem for functionality just my understanding
 measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
 
 # Set rows with < 5 events to NA ----------------------------------------
@@ -126,7 +128,9 @@ measure_noncovid_age <- measure_noncovid_age %>%
 ##-- All cause 
 
 comparative_allcause <- format_comparative_table(measure_any_age, ons_any_death)
-comparative_allcause <- calculate_measures(comparative_allcause)
+comparative_allcause <- calculate_measures(comparative_allcause) 
+# Latter doesn't work on dummy data as end up with -ve RR and RD variance - "value" supposed to be a proportion but gt 1?
+# Maybe not an issue with real data though?
 
 table_comparative_allcause <- comparative_allcause %>% 
   select(Date, Age, Care_or_Nursing_Home_Mortality_Rate, Private_Home_Mortality_Rate, Relative_Risk, Relative_Risk_CI, Risk_Difference, Risk_Difference_CI) %>% 

@@ -30,7 +30,7 @@ dir.create(file.path("./output/plots"), showWarnings = FALSE, recursive = TRUE)
 standardise <- function(data, outcome) { 
   
     {{data}} %>% 
-    left_join(european_standard, by = c("ageband_five")) %>% 
+    left_join(european_standard, by = "ageband_five") %>% 
     # expected deaths is mortality rate times the standard groupsize 
     mutate(expected_deaths = value * groupsize) %>% 
     # sum by group 
@@ -52,7 +52,7 @@ standardise <- function(data, outcome) {
     mutate(sd_sum = sum(sdiw_squared), 
            sd = sqrt(sd_sum)) %>% 
     ungroup() %>% 
-    mutate(log_sd = sd/dsr) %>% 
+    mutate(log_sd = sd/dsr) %>% # I don't follow why this is a log?
     # keep only one row per unique group 
     select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
     distinct() %>% 
@@ -101,14 +101,14 @@ plot_standardised_rates <- function(data, titletext) {
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   titlestring <- paste("Age-standardised", titletext, "Mortality by Sex and Care Home")
   
-  plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
+  plot_8a <- ggplot(covid_standard, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
          linetype = "Care Home", 
          colour = "Gender") + 
-    scale_y_continuous(limits = c(0,100)) +
+    scale_y_continuous(limits = c(0,100)) + # Why this limit? Because you don't expect more than 100 per 1,000 and want to exclude anomalies? Could you instead set it dynamically to some multiple of the maximum?
     scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),

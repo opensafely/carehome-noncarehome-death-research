@@ -34,17 +34,17 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
   data <- fread(inputdata, data.table = FALSE, na.strings = "")
   
   # extract time period from the variable name for creating a date variable to separate datasets once appended 
-  time_period <- ymd(str_sub(inputdata, 25, 34))
+  time_period <- ymd(word(inputdata, 3, sep = "_")) # rather than hard coding the character positions you could pull the third word or something similar separating by _
   
   # input arguments in quotes
-  carehomefilter <- enquo(care_home_filter)
-  covidfilter <- enquo(remove_covid_deaths)
+  # carehomefilter <- enquo(care_home_filter)
+  # covidfilter <- enquo(remove_covid_deaths)
   
-  data <- data %>% 
+  data <- data %>%
     filter(ons_any_death == 1) %>% 
-    filter(care_home_type == !!carehomefilter) %>% 
-    filter(if (!!covidfilter == "Y") (ons_covid_death != 1) else TRUE) %>% 
-    mutate(Year = time_period) %>% 
+    # I think this works equivalently without needing the enquo()?
+    filter(care_home_type == !!care_home_filter) %>% 
+    filter(if (remove_covid_deaths == "Y") (ons_covid_death != 1) else TRUE) %>% 
     rename(Care_Home = care_home_type) %>%
     # extract relevant parts of the ICD-10 codes to classify deaths
     mutate(cause_chapter = str_sub(died_cause_ons,1,1)) %>% 
@@ -55,20 +55,20 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
       cause_chapter == "C" ~ "Cancer",
       cause_chapter == "I" ~ "Cardiovascular Disease",
       cause_chapter == "J" ~ "Respiratory Disease",
-      # dementia codes should be F01, F02, F03 and G30     
+      # Have you checked they're definitely all capitalised and formatted in the same way? e.g. anything after first letter is definitely numeric with no separators other than .?
       cause_chapter == "F" & (cause_number >= 0 & cause_number < 4) ~ 'Dementia', 
       cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
       ons_covid_death == 1 ~ "COVID-19", 
       TRUE ~ "Other"),
-      Cause_of_Death = factor(Cause_of_Death, levels = c("Other", "Cardiovascular Disease", "Cancer", "Respiratory Disease", "Dementia", "COVID-19"))) %>% 
+      Cause_of_Death = factor(Cause_of_Death, levels = c("Other", "Cardiovascular Disease", "Cancer", "Respiratory Disease", "Dementia", "COVID-19"))) %>%
     # calculate frequency of each cod
     group_by(Cause_of_Death) %>% 
-    summarise(Count = n()) %>% 
-    mutate(Percentage = round((Count/sum(Count)),4)*100) %>% 
-    mutate(Year = time_period) %>% 
+    summarise(Count = n()) %>% # can also use count() or tally()
+    ungroup() %>% # good practice not to leave groups hanging around in case you use this data again for something else
+    mutate(Percentage = round((Count/sum(Count)),4)*100,
+           Year = time_period) %>% # Do you want the whole date or just the year with year(time_period)? If former maybe call it date instead?) %>% 
     # select only relevant variables
-    select(Year, Cause_of_Death, Percentage, Count)
-
+    select(Year, Cause_of_Death, Percentage, Count) 
 } 
 
 # 2. Function to plot of causes of death
