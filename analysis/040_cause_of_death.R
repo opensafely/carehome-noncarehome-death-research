@@ -60,7 +60,7 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
       cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
       ons_covid_death == 1 ~ "COVID-19", 
       TRUE ~ "Other"),
-      Cause_of_Death = factor(Cause_of_Death, levels = c("Other", "Cardiovascular Disease", "Cancer", "Respiratory Disease", "Dementia", "COVID-19"))) %>% 
+      Cause_of_Death = factor(Cause_of_Death, levels = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19"))) %>% 
     # calculate frequency of each cod
     group_by(Cause_of_Death) %>% 
     summarise(Count = n()) %>% 
@@ -80,7 +80,7 @@ cause_of_death_plot <- function(data, axistext) {
   ggplot({{data}}, aes(x = Year, y = Percentage, fill = Cause_of_Death), position = "stack") + 
   geom_area(alpha=0.6 , size=.5, colour="white") + 
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
-  scale_fill_viridis_d() + 
+  scale_fill_viridis_d(limits = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19")) + 
   theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
         axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
         plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
