@@ -105,6 +105,10 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
     filter(if (!!sexfilter == "M") (sex == "M") else TRUE) %>% 
     ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = over80, linetype = care_home_type, group = interaction(over80, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
+    geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=2,geom="label") +
+    geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=2,geom="label") +
     labs(x = "Time Period", 
          y = "Standardised Rate per 1,000 individuals", 
          title = titlestring,
@@ -175,7 +179,11 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
     filter(if (!!sexfilter == "F") (Gender == "F") else TRUE) %>% 
     filter(if (!!sexfilter == "M") (Gender == "M") else TRUE) %>% 
     ggplot(aes (x = as.Date(Date, "%Y-%m-%d"), y = cmr, colour = over80, fill = over80)) + 
-    geom_line(size = 1) + 
+    geom_line(size = 1) +
+    geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
+    geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
     geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     labs(x = "Time Period", 
          y = "Ratio of Standardised Rates per 1,000 individuals", 
