@@ -49,6 +49,12 @@ actions:
         measure11: output/measure_cancer.csv
         measure12: output/measure_respiratory.csv
         measure13: output/measure_cv.csv
+        measure14: output/measure_tested_covid.csv
+        measure15: output/measure_admitted_covid.csv
+        measure16: output/measure_admitted_any.csv
+        measure17: output/measure_tested_covid_age.csv
+        measure18: output/measure_admitted_covid_age.csv
+        measure19: output/measure_admitted_any_age.csv
 
   010_data_management_2019:
     run: r:latest analysis/010_data_management.R ./output/input_2019-02-01.csv ./output/study_population_2019.csv
@@ -218,10 +224,20 @@ actions:
         S3_table_descriptive_allcause: output/tables/S3_table_descriptive_allcause_tpp.txt
         S3_plot_descriptive_noncovid: output/plots/S3_plot_descriptive_allcause_tpp.png
 
-  S040_sensitivity_cause_of_death_standardised:
-    run: r:latest analysis/S040_sensitivity_cause_of_death_standardised.R 
+  S030_sensitivity_descriptive_test_admission:
+    run: r:latest analysis/S030_descriptive_test_admission.R 
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
-        S4a_plot_causes_men: output/plots/S4a_plot_causes_men.png
-        S4b_plot_causes_women: output/plots/S4b_plot_causes_women.png
+        S3a_table_descriptive_testing: output/tables/S3a_table_descriptive_tested.txt
+        S3a_plot_descriptive_testing: output/plots/S3a_plot_descriptive_tested.png
+        S3b_table_descriptive_testing: output/tables/S3b_table_descriptive_admitted_covid.txt
+        S3b_plot_descriptive_testing: output/plots/S3b_plot_descriptive_admitted_covid.png
+        S3c_table_descriptive_testing: output/tables/S3c_table_descriptive_admitted_any.txt
+        S3c_plot_descriptive_testing: output/plots/S3c_plot_descriptive_admitted_any.png
+
+
+
+
+
+
