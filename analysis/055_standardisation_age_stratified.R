@@ -253,10 +253,6 @@ allcause <- fread("./output/measure_allcause_death_sex_age_five.csv", data.table
 covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 noncovid <- fread("./output/measure_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 
-# drop empty covid rows  
-covid <- covid %>% 
-  filter(ymd(date) >= ymd("20200301"))
-
 allcause <- allcause %>% 
   # create young/old variable 
   mutate(over80 = case_when(

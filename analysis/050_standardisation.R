@@ -52,6 +52,7 @@ standardise <- function(data, outcome) {
     mutate(sd_sum = sum(sdiw_squared), 
            sd = sqrt(sd_sum)) %>% 
     ungroup() %>% 
+    # the variable is called log because it calcluates the SD for the SMR on a log scale, it's not meant to be logged
     mutate(log_sd = sd/dsr) %>% 
     # keep only one row per unique group 
     select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
@@ -227,12 +228,6 @@ european_standard <- european_standard %>%
          groupsize = EuropeanStandardPopulation) %>% 
   # keep only relevant variables 
   select(ageband_five, groupsize, total)
-
-# Data Management - OpenSAFELY --------------------------------------------
-
-# drop empty covid rows  
-covid <- covid %>% 
-  filter(ymd(date) >= ymd("20200301"))
 
 # Calculate DSRs  ------------------------------------------------------------
 

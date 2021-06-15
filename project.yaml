@@ -225,7 +225,7 @@ actions:
         S3_plot_descriptive_noncovid: output/plots/S3_plot_descriptive_allcause_tpp.png
 
   S030_sensitivity_descriptive_test_admission:
-    run: r:latest analysis/S030_descriptive_test_admission.R 
+    run: r:latest analysis/S030_sensitivity_descriptive_test_admission.R 
     needs: [generate_measures_cohorts, generate_measures]
     outputs: 
       moderately_sensitive:
@@ -236,6 +236,23 @@ actions:
         S3c_table_descriptive_testing: output/tables/S3c_table_descriptive_admitted_any.txt
         S3c_plot_descriptive_testing: output/plots/S3c_plot_descriptive_admitted_any.png
 
+  S050_sensitivity_standardisation_testing_admission:
+    run: r:latest analysis/S050_sensitivity_standardisation_testing_admission.R 
+    needs: [generate_measures_cohorts, generate_measures]
+    outputs: 
+      moderately_sensitive:
+        S5a_table_standardised_tested: output/tables/S5a_table_standardised_tested.txt
+        S5b_table_standardised_admittedcovid: output/tables/S5b_table_standardised_admittedcovid.txt
+        S5c_table_standardised_admittedany: output/tables/S5c_table_standardised_admittedany.txt     
+        S5a_plot_standardised_tested: output/plots/S5a_plot_standardised_tested.png
+        S5b_plot_standardised_admittedcovid: output/plots/S5b_plot_standardised_admittedcovid.png
+        S5c_plot_standardised_admittedany: output/plots/S5c_plot_standardised_admittedany.png
+        S6a_table_cmr_tested: output/tables/S6a_table_cmr_tested.txt
+        S6b_table_cmr_admittedcovid: output/tables/S6b_table_cmr_admittedcovid.txt
+        S6c_table_cmr_admittedany: output/tables/S6c_table_cmr_admittedany.txt
+        S6a_plot_cmr_tested: output/plots/S6a_plot_cmr_tested.png
+        S6b_plot_cmr_admittedcovid: output/plots/S6b_plot_cmr_admittedcovid.png
+        S6c_plot_cmr_admittedamy: output/plots/S6c_plot_cmr_admittedany.png
 
 
 

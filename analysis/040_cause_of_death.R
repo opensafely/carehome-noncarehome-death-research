@@ -34,7 +34,7 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
   data <- fread(inputdata, data.table = FALSE, na.strings = "")
   
   # extract time period from the variable name for creating a date variable to separate datasets once appended 
-  time_period <- ymd(str_sub(inputdata, 25, 34))
+  time_period <- ymd(word(inputdata, 3, sep = "_"))
   
   # input arguments in quotes
   carehomefilter <- enquo(care_home_filter)
@@ -44,7 +44,7 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
     filter(ons_any_death == 1) %>% 
     filter(care_home_type == !!carehomefilter) %>% 
     filter(if (!!covidfilter == "Y") (ons_covid_death != 1) else TRUE) %>% 
-    mutate(Year = time_period) %>% 
+    mutate(Time_Period = time_period) %>% 
     rename(Care_Home = care_home_type) %>%
     # extract relevant parts of the ICD-10 codes to classify deaths
     mutate(cause_chapter = str_sub(died_cause_ons,1,1)) %>% 
@@ -60,14 +60,25 @@ cause_of_death_format <- function(inputdata, care_home_filter, remove_covid_deat
       cause_chapter == "G" & cause_number == 30 ~ 'Dementia', 
       ons_covid_death == 1 ~ "COVID-19", 
       TRUE ~ "Other"),
-      Cause_of_Death = factor(Cause_of_Death, levels = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19"))) %>% 
-    # calculate frequency of each cod
+      Cause_of_Death = factor(Cause_of_Death, levels = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19"))) 
+ 
+# check the formatting of causes of death greater than 5 classed as dementia and other 
+   check <- data %>% 
+    filter(Cause_of_Death == "Other") %>% 
+    group_by(died_cause_ons) %>% 
+    summarise(count = n()) %>% 
+    mutate(count = ifelse(count <= 5, NA, count)) 
+  
+   print(check) 
+   
+   data <- data %>% 
+    # calculate frequency of each code 
     group_by(Cause_of_Death) %>% 
     summarise(Count = n()) %>% 
     mutate(Percentage = round((Count/sum(Count)),4)*100) %>% 
-    mutate(Year = time_period) %>% 
+    mutate(Time_Period = time_period) %>% 
     # select only relevant variables
-    select(Year, Cause_of_Death, Percentage, Count)
+    select(Time_Period, Cause_of_Death, Percentage, Count)
 
 } 
 
@@ -77,7 +88,7 @@ cause_of_death_plot <- function(data, axistext) {
   
   titlestring <- paste("Cause of Death over Time in ", axistext)
   
-  ggplot({{data}}, aes(x = Year, y = Percentage, fill = Cause_of_Death), position = "stack") + 
+  ggplot({{data}}, aes(x = Time_Period, y = Percentage, fill = Cause_of_Death), position = "stack") + 
   geom_area(alpha=0.6 , size=.5, colour="white") + 
   scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
   scale_fill_viridis_d(limits = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19")) + 
