@@ -106,7 +106,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
     ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = care_home_detail)) + 
     geom_line(size = 1) + geom_point() + 
     labs(x = "Time Period", 
-         y = "Standardised Rate per 1,000 individuals", 
+         y = "Standardised Risk per 1,000 individuals", 
          title = titlestring,
          colour = "Carehome Type") + 
     scale_y_continuous(limits = c(0,150)) +
