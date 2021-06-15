@@ -1,8 +1,9 @@
 # Program Information  ----------------------------------------------------
 
-# Program:     S030_sensitivity_descriptive_mortality_rates_tpp.R
+# Program:     030_descriptive_mortality_rates
 # Author:      Anna Schultze 
-# Description: Table and plot of mortality rates going back many more years, using TPP death only 
+# Description: Edit the crude mortality rates already calculated by the measures framework 
+#              Add confidence intervals, format the table, and plot it as a line plot (accounting for missing values)
 # Input:       measure_[outcome]_[group].csv
 # Output:      analysis/outfiles/table[].txt
 #              analysis/outfiles/figure[].png
@@ -37,7 +38,7 @@ format_table <- function(data, outcome) {
     mutate(Mortality_Rate = round((PointEst*1000),2), 
            Confidence_Interval = paste(round(Lower*1000,2), round(Upper*1000,2), sep = "-")) %>% 
     rename(n = {{outcome}}, 
-           N = population, 
+           N = registered_at_start, 
            Age = ageband_narrow) %>% 
     select(c(care_home_group, Age, date, n, N, Mortality_Rate, Confidence_Interval)) %>% 
     # need to create a unique ID for reshaping the data
@@ -65,22 +66,22 @@ format_table <- function(data, outcome) {
 plot_figure <- function(data, axistext) { 
   
   y_value <- (max({{data}}$value) + (max({{data}}$value)/4)) * 1000
-  ystring <- paste(as_label(enquo(axistext)), "Mortality Rate per 1,000 individuals")
-  titlestring <- paste(as_label(enquo(axistext)), "Mortality Rate by Age, crude")
+  ystring <- paste(as_label(enquo(axistext)), "Rate per 1,000 individuals")
+  titlestring <- paste(as_label(enquo(axistext)), "Rate by Age, crude")
   
   ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
-    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, geom="label", size = 3) +
     geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
-    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, geom="label", size = 3) +
     labs(x = "Time Period", 
          y = ystring, 
          title = titlestring, 
          linetype = "Care Home", 
          colour = "Age") + 
     scale_y_continuous(limits = c(0,100)) +
-    scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+    scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     scale_colour_viridis_d() + 
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
@@ -93,36 +94,73 @@ plot_figure <- function(data, axistext) {
 
 # Read in Data ------------------------------------------------------------
 
-measure_any_age <- fread("./output/measure_tpp_death_age.csv", data.table = FALSE, na.strings = "")
+measure_tested_covid_age <- fread("./output/measure_tested_covid_age.csv", data.table = FALSE, na.strings = "")
+measure_admitted_covid_age <- fread("./output/measure_admitted_covid_age.csv", data.table = FALSE, na.strings = "")
+measure_admitted_any_age <- fread("./output/measure_admitted_any_age.csv", data.table = FALSE, na.strings = "")
 
 # Confidence Intervals ----------------------------------------------------
 # calculate confidence intervals using binconf function from Hmisc 
 # bind output into the original dataset 
 
-measure_any_age <- as_tibble(cbind(measure_any_age,((binconf(measure_any_age$tpp_death, measure_any_age$population, alpha = 0.05, method = "wilson")))))
+measure_tested_covid_age <- as_tibble(cbind(measure_tested_covid_age,((binconf(measure_tested_covid_age$tested_covid, measure_tested_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+measure_admitted_covid_age <- as_tibble(cbind(measure_admitted_covid_age,((binconf(measure_admitted_covid_age$admitted_covid, measure_admitted_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+measure_admitted_any_age <- as_tibble(cbind(measure_admitted_any_age,((binconf(measure_admitted_any_age$admitted_any, measure_admitted_any_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 
 # Set rows with < 5 events to NA ----------------------------------------
 # removing events, percentage and CIs 
 
-measure_any_age <- measure_any_age %>% 
-  mutate(value = ifelse(tpp_death <= 5, NA, value), 
-         ons_any_death = ifelse(tpp_death <= 5, NA, tpp_death), 
-         PointEst = ifelse(tpp_death <= 5, NA, PointEst), 
-         Lower = ifelse(tpp_death <= 5, NA, Lower), 
-         Upper = ifelse(tpp_death <= 5, NA, Upper), 
+measure_tested_covid_age <- measure_tested_covid_age %>% 
+  mutate(value = ifelse(tested_covid <= 5, NA, value), 
+         tested_covid = ifelse(tested_covid <= 5, NA, tested_covid), 
+         PointEst = ifelse(tested_covid <= 5, NA, PointEst), 
+         Lower = ifelse(tested_covid <= 5, NA, Lower), 
+         Upper = ifelse(tested_covid <= 5, NA, Upper), 
          ) 
+
+measure_admitted_covid_age <- measure_admitted_covid_age %>% 
+  mutate(value = ifelse(admitted_covid <= 5, NA, value), 
+         admitted_covid = ifelse(admitted_covid <= 5, NA, admitted_covid), 
+         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
+         Lower = ifelse(admitted_covid <= 5, NA, Lower),
+         Upper = ifelse(admitted_covid <= 5, NA, Upper)) 
+
+measure_admitted_any_age <- measure_admitted_any_age %>% 
+  mutate(value = ifelse(admitted_any <= 5, NA, value), 
+         admitted_any = ifelse(admitted_any <= 5, NA, admitted_any), 
+         PointEst = ifelse(admitted_any <= 5, NA, PointEst),          
+         Lower = ifelse(admitted_any <= 5, NA, Lower),
+         Upper = ifelse(admitted_any <= 5, NA, Upper)) 
 
 # Tables ------------------------------------------------------------------
 
-S_table_descriptive_allcause_tpp <- format_table(measure_any_age, tpp_death)
-write.table(S_table_descriptive_allcause_tpp, file = "./output/tables/S3_table_descriptive_allcause_tpp.txt", sep = "\t", na = "", row.names=FALSE)
+table_descriptive_tested <- format_table(measure_tested_covid_age, tested_covid)
+write.table(table_descriptive_tested, file = "./output/tables/S3a_table_descriptive_tested.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_descriptive_admitted_covid <- format_table(measure_admitted_covid_age, admitted_covid)
+write.table(table_descriptive_admitted_covid, file = "./output/tables/S3b_table_descriptive_admitted_covid.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_descriptive_admitted_any <- format_table(measure_admitted_any_age, admitted_any)
+write.table(table_descriptive_admitted_any, file = "./output/tables/S3c_table_descriptive_admitted_any.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  -------------------------------------------------------------
 
-# all-cause mortality 
-S_plot_descriptive_allcause_tpp <- plot_figure(measure_any_age, TPP)
+# Test
+plot_descriptive_tested <- plot_figure(measure_tested_covid_age, Testing)
 
-png(filename = "./output/plots/S3_plot_descriptive_allcause_tpp.png")
-S_plot_descriptive_allcause_tpp
+png(filename = "./output/plots/S3a_plot_descriptive_tested.png")
+plot_descriptive_tested
 dev.off()
 
+# COVID admission 
+plot_descriptive_admitted_covid <- plot_figure(measure_admitted_covid_age, Covid_Admission)
+
+png(filename = "./output/plots/S3b_plot_descriptive_admitted_covid.png")
+plot_descriptive_admitted_covid
+dev.off()
+
+# Any Admission  
+plot_descriptive_admitted_any <- plot_figure(measure_admitted_any_age, Admission)
+
+png(filename = "./output/plots/S3c_plot_descriptive_admitted_any.png")
+plot_descriptive_admitted_any
+dev.off()

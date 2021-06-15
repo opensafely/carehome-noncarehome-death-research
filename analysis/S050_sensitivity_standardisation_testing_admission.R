@@ -52,7 +52,6 @@ standardise <- function(data, outcome) {
     mutate(sd_sum = sum(sdiw_squared), 
            sd = sqrt(sd_sum)) %>% 
     ungroup() %>% 
-    # the variable is called log because it calcluates the SD for the SMR on a log scale, it's not meant to be logged
     mutate(log_sd = sd/dsr) %>% 
     # keep only one row per unique group 
     select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
@@ -197,9 +196,9 @@ plot_cmrs <- function(data, titletext) {
 # Read in Data ------------------------------------------------------------
 
 # opensafely population 
-allcause <- fread("./output/measure_allcause_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
-covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
-noncovid <- fread("./output/measure_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
+tested <- fread("./output/measure_tested_covid.csv", data.table = FALSE, na.strings = "")
+admittedcovid <- fread("./output/measure_admitted_covid.csv", data.table = FALSE, na.strings = "")
+admittedany <- fread("./output/measure_admitted_any.csv", data.table = FALSE, na.strings = "")
 
 # standard population 
 european_standard <- fread("./data/european_standard_population.csv", data.table = FALSE, na.strings = "")
@@ -231,74 +230,74 @@ european_standard <- european_standard %>%
 
 # Calculate DSRs  ------------------------------------------------------------
 
-all_cause_standard <- standardise(allcause, ons_any_death)
-covid_standard <- standardise(covid, ons_covid_death)
-noncovid_standard <- standardise(noncovid, ons_noncovid_death)
+tested_standard <- standardise(tested, tested_covid)
+admittedcovid_standard <- standardise(admittedcovid, admitted_covid)
+admittedany_standard <- standardise(admittedany, admitted_any)
 
 # DSR tables  ----------------------------------------------------------------
 
-table_standardised_allcause <- format_standardised_table(all_cause_standard)
-write.table(table_standardised_allcause, file = "./output/tables/5a_table_standardised_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+table_standardised_tested <- format_standardised_table(tested_standard)
+write.table(table_standardised_tested, file = "./output/tables/S5a_table_standardised_tested.txt", sep = "\t", na = "", row.names=FALSE)
 
-table_standardised_covid <- format_standardised_table(covid_standard)
-write.table(table_standardised_covid, file = "./output/tables/5b_table_standardised_covid.txt", sep = "\t", na = "", row.names=FALSE)
+table_standardised_admittedcovid <- format_standardised_table(admittedcovid_standard)
+write.table(table_standardised_admittedcovid, file = "./output/tables/S5b_table_standardised_admittedcovid.txt", sep = "\t", na = "", row.names=FALSE)
 
-table_standardised_noncovid <- format_standardised_table(noncovid_standard)
-write.table(table_standardised_noncovid, file = "./output/tables/5c_table_standardised_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
+table_standardised_admittedany <- format_standardised_table(admittedany_standard)
+write.table(table_standardised_admittedany, file = "./output/tables/S5c_table_standardised_admittedany.txt", sep = "\t", na = "", row.names=FALSE)
 
 # DSR figures --------------------------------------------------------------
 
-plot_standardised_allcause <- plot_standardised_rates(all_cause_standard, "All-Cause")
+plot_standardised_tested <- plot_standardised_rates(tested_standard, "Testing")
 
-png(filename = "./output/plots/5a_plot_standardised_allcause.png")
-plot_standardised_allcause
+png(filename = "./output/plots/S5a_plot_standardised_tested.png")
+plot_standardised_tested
 dev.off()
 
-plot_standardised_covid <- plot_standardised_rates(covid_standard, "Covid")
+plot_standardised_admittedcovid <- plot_standardised_rates(admittedcovid_standard, "Admission (COVID)")
 
-png(filename = "./output/plots/5b_plot_standardised_covid.png")
-plot_standardised_covid
+png(filename = "./output/plots/S5b_plot_standardised_admittedcovid.png")
+plot_standardised_admittedcovid
 dev.off()
 
-plot_standardised_noncovid <- plot_standardised_rates(noncovid_standard, "Non-Covid")
+plot_standardised_admittedany <- plot_standardised_rates(admittedany_standard, "Admission (Any)")
 
-png(filename = "./output/plots/5c_plot_standardised_noncovid.png")
-plot_standardised_noncovid
+png(filename = "./output/plots/S5c_plot_standardised_admittedany.png")
+plot_standardised_admittedany
 dev.off()
 
 # Calculate CMRs ----------------------------------------------------------
 
-all_cause_cmr <- calculate_cmr(all_cause_standard)
-covid_cmr <- calculate_cmr(covid_standard)
-noncovid_cmr <- calculate_cmr(noncovid_standard)
+tested_cmr <- calculate_cmr(tested_standard)
+admittedcovid_cmr <- calculate_cmr(admittedcovid_standard)
+admittedany_cmr <- calculate_cmr(admittedany_standard)
 
 # CMR tables --------------------------------------------------------------
 
-table_cmr_allcause <- format_cmr_table(all_cause_cmr)
-write.table(table_cmr_allcause, file = "./output/tables/6a_table_cmr_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+table_cmr_tested <- format_cmr_table(tested_cmr)
+write.table(table_cmr_tested, file = "./output/tables/S6a_table_cmr_tested.txt", sep = "\t", na = "", row.names=FALSE)
 
-table_cmr_covid <- format_cmr_table(covid_cmr)
-write.table(table_cmr_covid, file = "./output/tables/6b_table_cmr_covid.txt", sep = "\t", na = "", row.names=FALSE)
+table_cmr_admittedcovid <- format_cmr_table(admittedcovid_cmr)
+write.table(table_cmr_admittedcovid, file = "./output/tables/S6b_table_cmr_admittedcovid.txt", sep = "\t", na = "", row.names=FALSE)
 
-table_cmr_noncovid <- format_cmr_table(noncovid_cmr)
-write.table(table_cmr_noncovid, file = "./output/tables/6c_table_cmr_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
+table_cmr_admittedany <- format_cmr_table(admittedany_cmr)
+write.table(table_cmr_admittedany, file = "./output/tables/S6c_table_cmr_admittedany.txt", sep = "\t", na = "", row.names=FALSE)
 
 # CMR figures -------------------------------------------------------------
 
-plot_cmr_allcause <- plot_cmrs(all_cause_cmr, "All-Cause")
+plot_cmr_tested <- plot_cmrs(tested_cmr, "Testing")
 
-png(filename = "./output/plots/6a_plot_cmr_allcause.png")
-plot_cmr_allcause
+png(filename = "./output/plots/S6a_plot_cmr_tested.png")
+plot_cmr_tested
 dev.off()
 
-plot_cmr_covid <- plot_cmrs(covid_cmr, "Covid")
+plot_cmr_admittedcovid <- plot_cmrs(admittedcovid_cmr, "Admission (Covid)")
 
-png(filename = "./output/plots/6b_plot_cmr_covid.png")
-plot_cmr_covid
+png(filename = "./output/plots/S6b_plot_cmr_admittedcovid.png")
+plot_cmr_admittedcovid
 dev.off()
 
-plot_cmr_noncovid <- plot_cmrs(noncovid_cmr, "Non-Covid")
+plot_cmr_admittedany <- plot_cmrs(admittedany_cmr, "Admission (any)")
 
-png(filename = "./output/plots/6c_plot_cmr_noncovid.png")
-plot_cmr_noncovid
+png(filename = "./output/plots/S6c_plot_cmr_admittedany.png")
+plot_cmr_admittedany
 dev.off()

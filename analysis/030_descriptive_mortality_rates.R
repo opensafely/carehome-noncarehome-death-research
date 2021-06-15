@@ -71,13 +71,17 @@ plot_figure <- function(data, axistext) {
   
   ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
+    geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
+    geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
     labs(x = "Time Period", 
          y = ystring, 
          title = titlestring, 
          linetype = "Care Home", 
          colour = "Age") + 
     scale_y_continuous(limits = c(0,100)) +
-    scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+    scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     scale_colour_viridis_d() + 
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
@@ -93,10 +97,6 @@ plot_figure <- function(data, axistext) {
 measure_any_age <- fread("./output/measure_allcause_death_age.csv", data.table = FALSE, na.strings = "")
 measure_covid_age <- fread("./output/measure_covid_death_age.csv", data.table = FALSE, na.strings = "")
 measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.table = FALSE, na.strings = "")
-
-# Remove empty COVID rows--------------------------------------------------
-
-measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
 
 # Confidence Intervals ----------------------------------------------------
 # calculate confidence intervals using binconf function from Hmisc 

@@ -79,8 +79,12 @@ plot_comparative_figure <- function(data, axistext) {
   y_value <- (max({{data}}$Relative_Risk) + (max({{data}}$Relative_Risk)/4)) 
   titlestring <- paste(as_label(enquo(axistext)), "mortality relative risk, crude")
   
-  ggplot({{data}}, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age, )) + 
+  ggplot({{data}}, aes (x = as.Date(Date, "%Y-%m-%d"), y = Relative_Risk, group = Age, colour = Age)) + 
     geom_line(size =1) +
+    geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
+    geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
     labs(x = "Time Period", 
          y = "Relative Risk (care homes vs. private homes)", 
          title = titlestring) + 
@@ -101,10 +105,6 @@ plot_comparative_figure <- function(data, axistext) {
 measure_any_age <- fread("./output/measure_allcause_death_age.csv", data.table = FALSE, na.strings = "")
 measure_covid_age <- fread("./output/measure_covid_death_age.csv", data.table = FALSE, na.strings = "")
 measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.table = FALSE, na.strings = "")
-
-# Remove empty COVID rows--------------------------------------------------
-
-measure_covid_age <- measure_covid_age %>% filter(ymd(date) >= ymd("20200301"))
 
 # Set rows with < 5 events to NA ----------------------------------------
 # removing events and percentages 

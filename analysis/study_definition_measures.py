@@ -106,6 +106,25 @@ study = StudyDefinition(
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
     ),
+    # sensitivity outcomes
+    tested_covid=patients.with_test_result_in_sgss(
+        pathogen="SARS-CoV-2",
+        test_result="any",
+        between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+        returning="binary_flag", 
+        return_expectations={"incidence" : 0.1},
+    ),
+    admitted_covid=patients.admitted_to_hospital(
+        returning="binary_flag",
+        with_these_diagnoses=covid_codelist,
+        between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+        return_expectations={"incidence" : 0.1},
+    ),
+    admitted_any=patients.admitted_to_hospital(
+        returning="binary_flag",
+        between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+        return_expectations={"incidence" : 0.1},
+    ),
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(
@@ -299,6 +318,48 @@ measures = [
         numerator="ons_cancer_death",
         denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+
+    ## SENSITIVITY: Hospital admissions and COVID-19 testing in care home compared to non care home residents 
+
+    ### for standardisation 
+    Measure(
+        id="tested_covid",
+        numerator="tested_covid",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+    Measure(
+        id="admitted_covid",
+        numerator="admitted_covid",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+    Measure(
+        id="admitted_any",
+        numerator="admitted_any",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+
+    ### for stratification by age 
+    Measure(
+        id="tested_covid_age",
+        numerator="tested_covid",
+        denominator="registered_at_start",
+        group_by = ["ageband_narrow", "care_home_type"],
+    ),
+    Measure(
+        id="admitted_covid_age",
+        numerator="admitted_covid",
+        denominator="registered_at_start",
+        group_by = ["ageband_narrow", "care_home_type"],
+    ),
+    Measure(
+        id="admitted_any_age",
+        numerator="admitted_any",
+        denominator="registered_at_start",
+        group_by = ["ageband_narrow", "care_home_type"],
     ),
 
 ]
