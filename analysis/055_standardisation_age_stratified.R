@@ -110,7 +110,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
     geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=2,geom="label") +
     labs(x = "Time Period", 
-         y = "Standardised Rate per 1,000 individuals", 
+         y = "Standardised Risk per 1,000 individuals", 
          title = titlestring,
          linetype = "Carehome", 
          colour = "Over 80") + 
@@ -186,7 +186,7 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
     annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
     geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     labs(x = "Time Period", 
-         y = "Ratio of Standardised Rates per 1,000 individuals", 
+         y = "Ratio of Standardised Risks per 1,000 individuals", 
          title = titlestring,
          colour = "Over 80") + 
     scale_y_continuous(trans = 'log10') +

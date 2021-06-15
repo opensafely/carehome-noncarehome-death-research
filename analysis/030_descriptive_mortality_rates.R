@@ -66,8 +66,8 @@ format_table <- function(data, outcome) {
 plot_figure <- function(data, axistext) { 
   
   y_value <- (max({{data}}$value) + (max({{data}}$value)/4)) * 1000
-  ystring <- paste(as_label(enquo(axistext)), "Mortality Rate per 1,000 individuals")
-  titlestring <- paste(as_label(enquo(axistext)), "Mortality Rate by Age, crude")
+  ystring <- paste(as_label(enquo(axistext)), "Mortality Risk per 1,000 individuals")
+  titlestring <- paste(as_label(enquo(axistext)), "Mortality Risk by Age, crude")
   
   ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
