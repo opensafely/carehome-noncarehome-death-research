@@ -182,7 +182,7 @@ plot_cmrs <- function(data, titletext) {
          title = titlestring,
          colour = "Gender") + 
     scale_y_continuous(trans = 'log10', limits = c(1,60)) +
-    scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+    scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
           plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
@@ -227,6 +227,23 @@ european_standard <- european_standard %>%
          groupsize = EuropeanStandardPopulation) %>% 
   # keep only relevant variables 
   select(ageband_five, groupsize, total)
+
+
+# Data Management - OpenSAFELY  -------------------------------------------
+
+## There are v low counts of admissions before 1st wave, likely error in code use - set these to 0 otherwise CMR ends up at infinity 
+
+tested <- tested %>% 
+  mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
+         tested_covid = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, tested_covid)) 
+
+admittedcovid <- admittedcovid %>% 
+  mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
+         admitted_covid = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, admitted_covid)) 
+
+admittedany <- admittedany %>% 
+  mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
+         admitted_any = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, admitted_any)) 
 
 # Calculate DSRs  ------------------------------------------------------------
 

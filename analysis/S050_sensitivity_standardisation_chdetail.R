@@ -105,6 +105,10 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
     filter(if (!!sexfilter == "M") (sex == "M") else TRUE) %>% 
     ggplot(aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = care_home_detail)) + 
     geom_line(size = 1) + geom_point() + 
+    geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=2,geom="label") +
+    geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
+    annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=2,geom="label") +
     labs(x = "Time Period", 
          y = "Standardised Risk per 1,000 individuals", 
          title = titlestring,
