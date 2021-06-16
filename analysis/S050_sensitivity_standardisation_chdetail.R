@@ -115,7 +115,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
          colour = "Carehome Type") + 
     scale_y_continuous(limits = c(0,150)) +
     scale_color_viridis_d(option = "plasma") +
-    scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+    scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
           plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),
