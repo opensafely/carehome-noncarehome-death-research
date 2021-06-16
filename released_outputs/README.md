@@ -94,6 +94,8 @@
     * [output/plots/S2c1_plot_standardised_noncovid_chdetail_m.png](output/plots/S2c1_plot_standardised_noncovid_chdetail_m.png)
     * [output/plots/S2c2_plot_standardised_noncovid_chdetail_f.png](output/plots/S2c2_plot_standardised_noncovid_chdetail_f.png)
     * [output/plots/S3_plot_descriptive_allcause_tpp.png](output/plots/S3_plot_descriptive_allcause_tpp.png)
+    * [output/plots/S4a_plot_causes_men.png](output/plots/S4a_plot_causes_men.png)
+    * [output/plots/S4b_plot_causes_women.png](output/plots/S4b_plot_causes_women.png)
   * output/tables
     * [output/tables/1_table_descriptive_2019.txt](output/tables/1_table_descriptive_2019.txt)
     * [output/tables/1_table_descriptive_2020.txt](output/tables/1_table_descriptive_2020.txt)

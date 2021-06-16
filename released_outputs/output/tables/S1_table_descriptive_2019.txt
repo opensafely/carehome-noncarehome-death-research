@@ -1,39 +1,39 @@
 "variable"	"value"	"count_Overall"	"percent_Overall"	"count_Care_Home"	"percent_Care_Home"	"count_Nursing_Home"	"percent_Nursing_Home"	"count_Care_or_Nursing"	"percent_Care_or_Nursing"	"count_Private_Home"	"percent_Private_Home"
-"total"		4313329	100	49067	100	43664	100	2314	100	4218284	100
-"sex"	"Female"	2323408	53.87	35675	72.71	29173	66.81	1591	68.76	2256969	53.5
-"sex"	"Male"	1989921	46.13	13392	27.29	14491	33.19	723	31.24	1961315	46.5
-"age"	"Mean, SD"	75	7.54	86	7.61	85	8.02	85	7.86	75	7.36
-"care_home_cat"	"Care Home"	49067	1.14	49067	100						
-"care_home_cat"	"Care or Nursing Home"	2314	0.05					2314	100		
-"care_home_cat"	"Nursing Home"	43664	1.01			43664	100				
-"care_home_cat"	"Private Home"	4218284	97.8							4218284	100
+"total"		4329078	100	49172	100	43679	100	2364	100	4233863	100
+"sex"	"Female"	2331960	53.87	35752	72.71	29204	66.86	1630	68.95	2265374	53.51
+"sex"	"Male"	1997118	46.13	13420	27.29	14475	33.14	734	31.05	1968489	46.49
+"age"	"Mean, SD"	75	7.54	86	7.62	85	8.01	85	7.85	75	7.36
+"care_home_cat"	"Care Home"	49172	1.14	49172	100						
+"care_home_cat"	"Care or Nursing Home"	2364	0.05					2364	100		
+"care_home_cat"	"Nursing Home"	43679	1.01			43679	100				
+"care_home_cat"	"Private Home"	4233863	97.8							4233863	100
 "ethnicity_cat"	"Asian or British Asian"	[REDACTED]
-"ethnicity_cat"	"Black"	[REDACTED] 
-"ethnicity_cat"	"Missing"	[REDACTED] 
-"ethnicity_cat"	"Mixed"	[REDACTED] 
-"ethnicity_cat"	"Other"	[REDACTED] 
-"ethnicity_cat"	"White"	[REDACTED] 
-"imd_cat"	"1 - Least Deprived"	614852	14.25	8537	17.4	8099	18.55	695	30.03	597521	14.17
-"imd_cat"	"2"	758502	17.59	10934	22.28	8247	18.89	529	22.86	738792	17.51
-"imd_cat"	"3"	970058	22.49	10942	22.3	9483	21.72	366	15.82	949267	22.5
-"imd_cat"	"4"	986945	22.88	10047	20.48	8647	19.8	376	16.25	967875	22.94
-"imd_cat"	"5 - Most Deprived"	964371	22.36	8408	17.14	8968	20.54	325	14.04	946670	22.44
-"imd_cat"	"Missing"	18601	0.43	199	0.41	220	0.5	23	0.99	18159	0.43
-"region"	"East"	1017612	23.59	12460	25.39	9416	21.56	386	16.68	995350	23.6
-"region"	"East Midlands"	767410	17.79	9320	18.99	7476	17.12	296	12.79	750318	17.79
-"region"	"London"	165217	3.83	442	0.9	1480	3.39			163295	3.87
+"ethnicity_cat"	"Black"	[REDACTED]
+"ethnicity_cat"	"Missing"[REDACTED]
+"ethnicity_cat"	"Mixed"	[REDACTED]
+"ethnicity_cat"	"Other"	[REDACTED]
+"ethnicity_cat"	"White"	[REDACTED]
+"imd_cat"	"1 - Least Deprived"	615577	14.22	8544	17.38	8056	18.44	707	29.91	598270	14.13
+"imd_cat"	"2"	760064	17.56	10932	22.23	8276	18.95	565	23.9	740291	17.49
+"imd_cat"	"3"	974750	22.52	10997	22.36	9451	21.64	366	15.48	953936	22.53
+"imd_cat"	"4"	992850	22.93	10092	20.52	8681	19.87	376	15.91	973701	23
+"imd_cat"	"5 - Most Deprived"	967192	22.34	8409	17.1	8979	20.56	327	13.83	949477	22.43
+"imd_cat"	"Missing"	18645	0.43	198	0.4	236	0.54	23	0.97	18188	0.43
+"region"	"East"	1021027	23.59	12480	25.38	9446	21.63	386	16.33	998715	23.59
+"region"	"East Midlands"	766727	17.71	9271	18.85	7524	17.23	296	12.52	749636	17.71
+"region"	"London"	165002	3.81	435	0.88	1479	3.39			163088	3.85
 "region"	"NA"	863	0.02	12	0.02					851	0.02
-"region"	"North East"	198652	4.61	1992	4.06	1966	4.5	142	6.14	194552	4.61
-"region"	"North West"	402109	9.32	4237	8.64	4369	10.01	638	27.57	392865	9.31
-"region"	"South East"	315994	7.33	4017	8.19	3852	8.82	277	11.97	307848	7.3
-"region"	"South West"	723253	16.77	7760	15.82	7644	17.51	241	10.41	707608	16.77
-"region"	"West Midlands"	153756	3.56	1435	2.92	1473	3.37	135	5.83	150713	3.57
-"region"	"Yorkshire and The Humber"	568463	13.18	7392	15.07	5988	13.71	199	8.6	554884	13.15
-"stroke"		287405	6.66	9714	19.8	10599	24.27	544	23.51	266548	6.32
-"dementia"		211001	4.89	29409	59.94	25448	58.28	1411	60.98	154733	3.67
-"diabetes"		915182	21.22	11059	22.54	10618	24.32	565	24.42	892940	21.17
-"ckd"		442623	10.26	11118	22.66	7954	18.22	480	20.74	423071	10.03
-"cancer"		638170	14.8	7539	15.36	7464	17.09	373	16.12	622794	14.76
-"chronic_liver_disease"		36148	0.84	423	0.86	467	1.07	29	1.25	35229	0.84
-"chronic_cardiac_disease"		861828	19.98	14770	30.1	13337	30.54	731	31.59	832990	19.75
-"chronic_respiratory_disease"		484967	11.24	5900	12.02	6218	14.24	374	16.16	472475	11.2
+"region"	"North East"	200185	4.62	2008	4.08	1943	4.45	142	6.01	196092	4.63
+"region"	"North West"	402111	9.29	4251	8.65	4352	9.96	684	28.93	392824	9.28
+"region"	"South East"	318494	7.36	4060	8.26	3841	8.79	278	11.76	310315	7.33
+"region"	"South West"	724861	16.74	7806	15.87	7646	17.5	240	10.15	709169	16.75
+"region"	"West Midlands"	154434	3.57	1428	2.9	1465	3.35	135	5.71	151406	3.58
+"region"	"Yorkshire and The Humber"	575374	13.29	7421	15.09	5983	13.7	203	8.59	561767	13.27
+"stroke"		288596	6.67	9734	19.8	10591	24.25	560	23.69	267711	6.32
+"dementia"		211756	4.89	29492	59.98	25491	58.36	1434	60.66	155339	3.67
+"diabetes"		920356	21.26	11102	22.58	10636	24.35	566	23.94	898052	21.21
+"ckd"		444229	10.26	11151	22.68	7947	18.19	497	21.02	424634	10.03
+"cancer"		640900	14.8	7559	15.37	7471	17.1	379	16.03	625491	14.77
+"chronic_liver_disease"		36287	0.84	421	0.86	468	1.07	30	1.27	35368	0.84
+"chronic_cardiac_disease"		864976	19.98	14827	30.15	13318	30.49	756	31.98	836075	19.75
+"chronic_respiratory_disease"		486564	11.24	5907	12.01	6217	14.23	388	16.41	474052	11.2
