@@ -1,144 +1,144 @@
-"Year"	"Cause_of_Death"	"Percentage"	"Count"
-2019-02-01	"Other"	37.87	1339
-2019-02-01	"Cardiovascular Disease"	17.65	624
-2019-02-01	"Cancer"	11.76	416
-2019-02-01	"Respiratory Disease"	12.61	446
-2019-02-01	"Dementia"	20.11	711
-2019-03-01	"Other"	38.88	1233
-2019-03-01	"Cardiovascular Disease"	18.8	596
-2019-03-01	"Cancer"	11.26	357
-2019-03-01	"Respiratory Disease"	11.79	374
-2019-03-01	"Dementia"	19.27	611
-2019-04-01	"Other"	37.25	1213
-2019-04-01	"Cardiovascular Disease"	18.98	618
-2019-04-01	"Cancer"	12.99	423
-2019-04-01	"Respiratory Disease"	11.98	390
-2019-04-01	"Dementia"	18.8	612
-2019-05-01	"Other"	38.85	1234
-2019-05-01	"Cardiovascular Disease"	19.49	619
-2019-05-01	"Cancer"	12	381
-2019-05-01	"Respiratory Disease"	11.18	355
-2019-05-01	"Dementia"	18.48	587
-2019-06-01	"Other"	37.68	1142
-2019-06-01	"Cardiovascular Disease"	19.93	604
-2019-06-01	"Cancer"	14.91	452
-2019-06-01	"Respiratory Disease"	9.7	294
-2019-06-01	"Dementia"	17.78	539
-2019-07-01	"Other"	39.92	1225
-2019-07-01	"Cardiovascular Disease"	19.78	607
-2019-07-01	"Cancer"	13.42	412
-2019-07-01	"Respiratory Disease"	9.51	292
-2019-07-01	"Dementia"	17.37	533
-2019-08-01	"Other"	38.03	1186
-2019-08-01	"Cardiovascular Disease"	20.49	639
-2019-08-01	"Cancer"	16.26	507
-2019-08-01	"Respiratory Disease"	7.89	246
-2019-08-01	"Dementia"	17.35	541
-2019-09-01	"Other"	39.12	1226
-2019-09-01	"Cardiovascular Disease"	20.07	629
-2019-09-01	"Cancer"	13.85	434
-2019-09-01	"Respiratory Disease"	9.86	309
-2019-09-01	"Dementia"	17.1	536
-2019-10-01	"Other"	40.21	1520
-2019-10-01	"Cardiovascular Disease"	18.2	688
-2019-10-01	"Cancer"	12.28	464
-2019-10-01	"Respiratory Disease"	10.5	397
-2019-10-01	"Dementia"	18.81	711
-2019-11-01	"Other"	38.89	1541
-2019-11-01	"Cardiovascular Disease"	18.3	725
-2019-11-01	"Cancer"	13	515
-2019-11-01	"Respiratory Disease"	11.43	453
-2019-11-01	"Dementia"	18.37	728
-2019-12-01	"Other"	38.8	1706
-2019-12-01	"Cardiovascular Disease"	16.65	732
-2019-12-01	"Cancer"	11.83	520
-2019-12-01	"Respiratory Disease"	12.92	568
-2019-12-01	"Dementia"	19.81	871
-2020-01-01	"Other"	40.2	1695
-2020-01-01	"Cardiovascular Disease"	17.01	717
-2020-01-01	"Cancer"	10.48	442
-2020-01-01	"Respiratory Disease"	12.88	543
-2020-01-01	"Dementia"	19.43	819
-2020-02-01	"Other"	38.96	1470
-2020-02-01	"Cardiovascular Disease"	18.55	700
-2020-02-01	"Cancer"	12.88	486
-2020-02-01	"Respiratory Disease"	11.16	421
-2020-02-01	"Dementia"	18.45	696
-2020-03-01	"Other"	38.75	1653
-2020-03-01	"Cardiovascular Disease"	16.53	705
-2020-03-01	"Cancer"	11.44	488
-2020-03-01	"Respiratory Disease"	10.95	467
-2020-03-01	"Dementia"	18.31	781
-2020-03-01	"COVID-19"	4.03	172
-2020-04-01	"Other"	27.38	2512
-2020-04-01	"Cardiovascular Disease"	10.2	936
-2020-04-01	"Cancer"	5.51	505
-2020-04-01	"Respiratory Disease"	6.21	570
-2020-04-01	"Dementia"	12.33	1131
-2020-04-01	"COVID-19"	38.36	3519
-2020-05-01	"Other"	26.02	1411
-2020-05-01	"Cardiovascular Disease"	11.93	647
-2020-05-01	"Cancer"	7.47	405
-2020-05-01	"Respiratory Disease"	5.13	278
-2020-05-01	"Dementia"	12.59	683
-2020-05-01	"COVID-19"	36.86	1999
-2020-06-01	"Other"	35.55	1051
-2020-06-01	"Cardiovascular Disease"	18.03	533
-2020-06-01	"Cancer"	10.96	324
-2020-06-01	"Respiratory Disease"	7.1	210
-2020-06-01	"Dementia"	14.82	438
-2020-06-01	"COVID-19"	13.53	400
-2020-07-01	"Other"	39.78	1102
-2020-07-01	"Cardiovascular Disease"	20.4	565
-2020-07-01	"Cancer"	13.32	369
-2020-07-01	"Respiratory Disease"	7	194
-2020-07-01	"Dementia"	15.56	431
-2020-07-01	"COVID-19"	3.94	109
-2020-08-01	"Other"	39.77	1191
-2020-08-01	"Cardiovascular Disease"	21.84	654
-2020-08-01	"Cancer"	12.89	386
-2020-08-01	"Respiratory Disease"	7.05	211
-2020-08-01	"Dementia"	16.99	509
-2020-08-01	"COVID-19"	1.47	44
-2020-09-01	"Other"	42.46	1251
-2020-09-01	"Cardiovascular Disease"	20.4	601
-2020-09-01	"Cancer"	12.12	357
-2020-09-01	"Respiratory Disease"	7.26	214
-2020-09-01	"Dementia"	16.12	475
-2020-09-01	"COVID-19"	1.63	48
-2020-10-01	"Other"	39.35	1427
-2020-10-01	"Cardiovascular Disease"	16.88	612
-2020-10-01	"Cancer"	11.06	401
-2020-10-01	"Respiratory Disease"	8.41	305
-2020-10-01	"Dementia"	16.19	587
-2020-10-01	"COVID-19"	8.11	294
-2020-11-01	"Other"	31.25	1296
-2020-11-01	"Cardiovascular Disease"	14.54	603
-2020-11-01	"Cancer"	9.09	377
-2020-11-01	"Respiratory Disease"	5.57	231
-2020-11-01	"Dementia"	13.91	577
-2020-11-01	"COVID-19"	25.63	1063
-2020-12-01	"Other"	28.52	1292
-2020-12-01	"Cardiovascular Disease"	13.58	615
-2020-12-01	"Cancer"	8.39	380
-2020-12-01	"Respiratory Disease"	4.68	212
-2020-12-01	"Dementia"	13.93	631
-2020-12-01	"COVID-19"	30.91	1400
-2021-01-01	"Other"	22.26	1428
-2021-01-01	"Cardiovascular Disease"	10.07	646
-2021-01-01	"Cancer"	6.36	408
-2021-01-01	"Respiratory Disease"	4.05	260
-2021-01-01	"Dementia"	9.7	622
-2021-01-01	"COVID-19"	47.56	3051
-2021-02-01	"Other"	28.04	1094
-2021-02-01	"Cardiovascular Disease"	14.53	567
-2021-02-01	"Cancer"	7.94	310
-2021-02-01	"Respiratory Disease"	5.25	205
-2021-02-01	"Dementia"	12.58	491
-2021-02-01	"COVID-19"	31.65	1235
-2021-03-01	"Other"	39.28	834
-2021-03-01	"Cardiovascular Disease"	18.51	393
-2021-03-01	"Cancer"	10.79	229
-2021-03-01	"Respiratory Disease"	6.59	140
-2021-03-01	"Dementia"	16.58	352
-2021-03-01	"COVID-19"	8.24	175
+"Time_Period"	"Cause_of_Death"	"Percentage"	"Count"
+2019-02-01	"Respiratory Disease"	12.56	445
+2019-02-01	"Dementia"	20.03	710
+2019-02-01	"Cardiovascular Disease"	17.75	629
+2019-02-01	"Cancer"	11.74	416
+2019-02-01	"Other"	37.92	1344
+2019-03-01	"Respiratory Disease"	11.76	374
+2019-03-01	"Dementia"	19.25	612
+2019-03-01	"Cardiovascular Disease"	18.84	599
+2019-03-01	"Cancer"	11.26	358
+2019-03-01	"Other"	38.9	1237
+2019-04-01	"Respiratory Disease"	12.01	392
+2019-04-01	"Dementia"	18.78	613
+2019-04-01	"Cardiovascular Disease"	18.96	619
+2019-04-01	"Cancer"	12.9	421
+2019-04-01	"Other"	37.35	1219
+2019-05-01	"Respiratory Disease"	11.22	357
+2019-05-01	"Dementia"	18.48	588
+2019-05-01	"Cardiovascular Disease"	19.45	619
+2019-05-01	"Cancer"	12.01	382
+2019-05-01	"Other"	38.84	1236
+2019-06-01	"Respiratory Disease"	9.71	295
+2019-06-01	"Dementia"	17.8	541
+2019-06-01	"Cardiovascular Disease"	19.91	605
+2019-06-01	"Cancer"	14.94	454
+2019-06-01	"Other"	37.64	1144
+2019-07-01	"Respiratory Disease"	9.51	293
+2019-07-01	"Dementia"	17.36	535
+2019-07-01	"Cardiovascular Disease"	19.86	612
+2019-07-01	"Cancer"	13.37	412
+2019-07-01	"Other"	39.89	1229
+2019-08-01	"Respiratory Disease"	7.82	245
+2019-08-01	"Dementia"	17.4	545
+2019-08-01	"Cardiovascular Disease"	20.46	641
+2019-08-01	"Cancer"	16.25	509
+2019-08-01	"Other"	38.08	1193
+2019-09-01	"Respiratory Disease"	9.87	310
+2019-09-01	"Dementia"	17.06	536
+2019-09-01	"Cardiovascular Disease"	20.02	629
+2019-09-01	"Cancer"	13.88	436
+2019-09-01	"Other"	39.18	1231
+2019-10-01	"Respiratory Disease"	10.47	396
+2019-10-01	"Dementia"	18.85	713
+2019-10-01	"Cardiovascular Disease"	18.16	687
+2019-10-01	"Cancer"	12.29	465
+2019-10-01	"Other"	40.23	1522
+2019-11-01	"Respiratory Disease"	11.46	455
+2019-11-01	"Dementia"	18.31	727
+2019-11-01	"Cardiovascular Disease"	18.29	726
+2019-11-01	"Cancer"	13.02	517
+2019-11-01	"Other"	38.92	1545
+2019-12-01	"Respiratory Disease"	12.89	568
+2019-12-01	"Dementia"	19.84	874
+2019-12-01	"Cardiovascular Disease"	16.66	734
+2019-12-01	"Cancer"	11.78	519
+2019-12-01	"Other"	38.83	1711
+2020-01-01	"Respiratory Disease"	12.9	546
+2020-01-01	"Dementia"	19.4	821
+2020-01-01	"Cardiovascular Disease"	16.99	719
+2020-01-01	"Cancer"	10.44	442
+2020-01-01	"Other"	40.26	1704
+2020-02-01	"Respiratory Disease"	11.18	424
+2020-02-01	"Dementia"	18.44	699
+2020-02-01	"Cardiovascular Disease"	18.54	703
+2020-02-01	"Cancer"	12.95	491
+2020-02-01	"Other"	38.88	1474
+2020-03-01	"Respiratory Disease"	10.97	468
+2020-03-01	"Dementia"	18.28	780
+2020-03-01	"Cardiovascular Disease"	16.54	706
+2020-03-01	"Cancer"	11.39	486
+2020-03-01	"Other"	38.78	1655
+2020-03-01	"COVID-19"	4.05	173
+2020-04-01	"Respiratory Disease"	6.21	571
+2020-04-01	"Dementia"	12.33	1134
+2020-04-01	"Cardiovascular Disease"	10.17	935
+2020-04-01	"Cancer"	5.54	509
+2020-04-01	"Other"	27.41	2520
+2020-04-01	"COVID-19"	38.34	3525
+2020-05-01	"Respiratory Disease"	5.15	280
+2020-05-01	"Dementia"	12.58	684
+2020-05-01	"Cardiovascular Disease"	11.95	650
+2020-05-01	"Cancer"	7.45	405
+2020-05-01	"Other"	26.07	1418
+2020-05-01	"COVID-19"	36.81	2002
+2020-06-01	"Respiratory Disease"	7.1	211
+2020-06-01	"Dementia"	14.73	438
+2020-06-01	"Cardiovascular Disease"	18.03	536
+2020-06-01	"Cancer"	10.97	326
+2020-06-01	"Other"	35.65	1060
+2020-06-01	"COVID-19"	13.52	402
+2020-07-01	"Respiratory Disease"	7.02	195
+2020-07-01	"Dementia"	15.47	430
+2020-07-01	"Cardiovascular Disease"	20.4	567
+2020-07-01	"Cancer"	13.28	369
+2020-07-01	"Other"	39.91	1109
+2020-07-01	"COVID-19"	3.92	109
+2020-08-01	"Respiratory Disease"	7.07	213
+2020-08-01	"Dementia"	17	512
+2020-08-01	"Cardiovascular Disease"	21.68	653
+2020-08-01	"Cancer"	12.88	388
+2020-08-01	"Other"	39.91	1202
+2020-08-01	"COVID-19"	1.46	44
+2020-09-01	"Respiratory Disease"	7.22	214
+2020-09-01	"Dementia"	16.14	478
+2020-09-01	"Cardiovascular Disease"	20.43	605
+2020-09-01	"Cancer"	12.12	359
+2020-09-01	"Other"	42.51	1259
+2020-09-01	"COVID-19"	1.59	47
+2020-10-01	"Respiratory Disease"	8.35	305
+2020-10-01	"Dementia"	16.16	590
+2020-10-01	"Cardiovascular Disease"	16.95	619
+2020-10-01	"Cancer"	11.01	402
+2020-10-01	"Other"	39.32	1436
+2020-10-01	"COVID-19"	8.21	300
+2020-11-01	"Respiratory Disease"	5.55	231
+2020-11-01	"Dementia"	13.85	577
+2020-11-01	"Cardiovascular Disease"	14.5	604
+2020-11-01	"Cancer"	9.08	378
+2020-11-01	"Other"	31.38	1307
+2020-11-01	"COVID-19"	25.64	1068
+2020-12-01	"Respiratory Disease"	4.61	210
+2020-12-01	"Dementia"	13.9	633
+2020-12-01	"Cardiovascular Disease"	13.57	618
+2020-12-01	"Cancer"	8.41	383
+2020-12-01	"Other"	28.6	1302
+2020-12-01	"COVID-19"	30.9	1407
+2021-01-01	"Respiratory Disease"	4.05	261
+2021-01-01	"Dementia"	9.72	627
+2021-01-01	"Cardiovascular Disease"	10.06	649
+2021-01-01	"Cancer"	6.36	410
+2021-01-01	"Other"	22.37	1443
+2021-01-01	"COVID-19"	47.44	3060
+2021-02-01	"Respiratory Disease"	5.23	206
+2021-02-01	"Dementia"	12.44	490
+2021-02-01	"Cardiovascular Disease"	14.5	571
+2021-02-01	"Cancer"	7.97	314
+2021-02-01	"Other"	28.15	1109
+2021-02-01	"COVID-19"	31.71	1249
+2021-03-01	"Respiratory Disease"	7.06	212
+2021-03-01	"Dementia"	16.08	483
+2021-03-01	"Cardiovascular Disease"	18.94	569
+2021-03-01	"Cancer"	10.52	316
+2021-03-01	"Other"	39.88	1198
+2021-03-01	"COVID-19"	7.52	226
