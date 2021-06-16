@@ -192,7 +192,7 @@ plot_cmrs <- function(data, titletext, sex, grouptext) {
     scale_y_continuous(trans = 'log10') +
     scale_colour_manual(values = c("#FF934F", "#2E4052")) +
     scale_fill_manual(values = c("#FF934F", "#2E4052")) +
-    scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+    scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
           axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),
           plot.title = element_text(margin = margin(t = 0, r = 0, b = 20, l = 0)),

@@ -80,7 +80,6 @@ plot_figure <- function(data, axistext) {
          title = titlestring, 
          linetype = "Care Home", 
          colour = "Age") + 
-    scale_y_continuous(limits = c(0,100)) +
     scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
     scale_colour_viridis_d() + 
     theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
