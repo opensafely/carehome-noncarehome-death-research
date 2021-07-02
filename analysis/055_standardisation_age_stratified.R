@@ -109,7 +109,7 @@ plot_standardised_rates <- function(data, titletext, sex, grouptext) {
     annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=2,geom="label") +
     geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=2,geom="label") +
-    labs(x = "Time Period", 
+    labs(x = "Calendar Month", 
          y = "Standardised Risk per 1,000 individuals", 
          title = titlestring,
          linetype = "Carehome", 

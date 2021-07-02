@@ -75,7 +75,7 @@ plot_figure <- function(data, axistext) {
     annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
     geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
-    labs(x = "Time Period", 
+    labs(x = "Calendar Month", 
          y = ystring, 
          title = titlestring, 
          linetype = "Care Home", 
