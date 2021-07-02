@@ -90,7 +90,7 @@ cause_of_death_plot <- function(data, axistext) {
   
   ggplot({{data}}, aes(x = Time_Period, y = Percentage, fill = Cause_of_Death), position = "stack") + 
   geom_area(alpha=0.6 , size=.5, colour="white") + 
-  scale_x_date(date_labels = "%B %y", date_breaks = "8 weeks") +
+  scale_x_date(date_labels = "%B %y", date_breaks = "2 months") +
   scale_fill_viridis_d(limits = c("Respiratory Disease", "Dementia", "Cardiovascular Disease", "Cancer", "Other", "COVID-19")) + 
   theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)), 
         axis.title.x = element_text(margin = margin(t = 20, r = 0, b = 0, l = 0)),

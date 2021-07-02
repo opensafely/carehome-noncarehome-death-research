@@ -85,8 +85,8 @@ plot_comparative_figure <- function(data, axistext) {
     annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
     geom_vline(xintercept = as.numeric(as.Date("2020-09-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-09-01"),y=+Inf,label="Wave 2",vjust=1, size = 3, geom="label") +
-    labs(x = "Time Period", 
-         y = "Relative Risk (care homes vs. private homes)", 
+    labs(x = "Calendar Month", 
+         y = "Relative Risk (care homes vs. private homes; log scale)", 
          title = titlestring) + 
     scale_y_continuous(trans = "log10", limits = c(1,100)) +
     scale_colour_viridis_d() + 
