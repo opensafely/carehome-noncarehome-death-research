@@ -1,6 +1,6 @@
 # Mortality among Care Home Residents in England during the first and second waves of the COVID-19 pandemic: an analysis of 4.3 million adults over the age of 65
 
-This is the code and configuration for our paper, Mortality among Care Home Residents in England during the first and second waves of the COVID-19 pandemic: an analysis of 4.3 million adults over the age of 65. 
+This is the code and configuration for our paper, "Mortality among Care Home Residents in England during the first and second waves of the COVID-19 pandemic: an analysis of 4.3 million adults over the age of 65". 
 
 The paper is pre-printed and under review with a journal. Open an issue or email me at anna.schultze@lshtm.ac.uk for comments, suggestions or questions.  
 
