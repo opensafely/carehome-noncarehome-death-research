@@ -1,12 +1,10 @@
-# Work In Progress 
+# Mortality among Care Home Residents in England during the first and second waves of the COVID-19 pandemic: an analysis of 4.3 million adults over the age of 65
 
-This is a template repository for making new OpenSAFELY resarch projects.  Eventually it'll become a framework. To get started, create a new repo using this repo as a template, delete this front matter, and edit the text that follows.
+This is the code and configuration for our paper, Mortality among Care Home Residents in England during the first and second waves of the COVID-19 pandemic: an analysis of 4.3 million adults over the age of 65. 
 
-# The impact of the COVID-19 pandemic on mortality risk among older adults living in care homes in the UK : An OpenSAFELY Cohort Study 
+The paper is pre-printed and under review with a journal. Open an issue or email me at anna.schultze@lshtm.ac.uk for comments, suggestions or questions.  
 
-This is the code and configuration for our paper, _name goes here_
-
-* The paper is [here]()
+* The paper is [here]() 
 * Raw model outputs, including charts, crosstabs, etc, are in `released_analysis_results/`
 * If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
 * If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
