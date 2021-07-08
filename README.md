@@ -5,7 +5,7 @@ This is the code and configuration for our paper, "Mortality among Care Home Res
 The paper is pre-printed and under review with a journal. Open an issue or email me at anna.schultze@lshtm.ac.uk for comments, suggestions or questions.  
 
 * A link to the paper will be put here once our pre-print has gone live. 
-* Raw model outputs, including charts, crosstabs, etc, are in `released_analysis_results/`
+* Raw model outputs, including charts, crosstabs, etc, are in `released_outputs/output`
 * If you are interested in how we defined our variables, take a look at the [study definition](analysis/study_definition.py); this is written in `python`, but non-programmers should be able to understand what is going on there
 * If you are interested in how we defined our code lists, look in the [codelists folder](./codelists/).
 * Developers and epidemiologists interested in the code should review
