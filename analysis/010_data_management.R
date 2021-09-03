@@ -4,10 +4,9 @@
 # Author:      Anna Schultze 
 # Description: Conduct data management for presentation of baseline data 
 # Input:       input.csv 
-#              Arguments 1 = input data name, 2 = output data name 
+#              Arguments 1 = input data name, 2 = output data name, 3 = extra output data name
 #              Note: only runs through command line w. supplied arguments 
 # Output:      study_population.csv into output/
-# Edits:       22 Dec 2020: make data management discrete (per variable) to help debugging
 
 # Housekeeping  -----------------------------------------------------------
 
@@ -24,9 +23,11 @@ args = commandArgs(trailingOnly=TRUE)
 print("These are my input arguments")
 print(args[1])
 print(args[2])
+print(args[3])
 
 inputdata <- toString(args[1]) 
 outputdata <- toString(args[2])
+outputdata_extra <- toString(args[3])
 
 # Read in Data -----------------------------------------------------------
 input <- fread(inputdata, data.table = FALSE, na.strings = "")
@@ -180,6 +181,18 @@ crosstab <- study_population %>%
 
 crosstab
 
+# New care home resident? 
+
+# create categories
+study_population <- study_population %>% 
+  mutate(new_resident = case_when(
+    care_home_type == "PC" & care_home_prior == "U" ~ 1,  
+    care_home_type == "PS" & care_home_prior == "U" ~ 1,  
+    care_home_type == "PN" & care_home_prior == "U" ~ 1,  
+    TRUE ~ 0))
+
+tabyl(study_population$new_resident)
+
 # Other Covariates -----------------------------------------------------
 
 ##-- Flu Vaccine 
@@ -270,7 +283,7 @@ crosstab
 
 # check correlation between TPP and ONS deaths 
 study_population <- study_population  %>%    
-  mutate(tpp_death_date = as.numeric(ymd(tpp_death_date)))  %>% 
+  mutate(tpp_death_date = as.numeric(ymd(tpp_death_date))) %>% 
   mutate(ons_any_death_date = as.numeric(ymd(ons_any_death_date)))  %>% 
   mutate(discrepancy = case_when(
     tpp_death_date != ons_any_death_date ~ 1, 
@@ -288,7 +301,12 @@ print("Difference in days between death date in TPP and ONS, where this exists")
 summary(date_check$date_difference)
 
 # Save Dataset as CSV -----------------------------------------------------
-
 write.csv(study_population, outputdata, row.names = FALSE)
+
+# reduce dataset to only new residents 
+study_population_new <- study_population %>% 
+  filter(new_resident == 1) 
+
+write.csv(study_population_new, outputdata_extra, row.names = FALSE)
 
 
