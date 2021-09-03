@@ -33,7 +33,7 @@ study = StudyDefinition(
         """
         (age >= 65 AND age < 120) AND 
         (sex = "M" OR sex = "F") AND 
-        (care_home_type = "Y" OR care_home_type = "N") AND 
+        (care_home_type = "Yes" OR care_home_type = "No") AND 
         (registered_at_start)
         """,
     ),
@@ -77,35 +77,6 @@ study = StudyDefinition(
         return_expectations={"category": {"ratios": {"U071":0.2, "I21":0.2, "C34":0.1, "C83":0.1 , "J09":0.05 , "J45.1":0.05 ,"G30":0.05, "A01.2":0.25}},},
     ),
 
-    # causes of death as outcomes (sensitivity)
-    ons_dementia_death=patients.with_these_codes_on_death_certificate(
-       dementia_death_codelist,
-       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
-       match_only_underlying_cause=True,
-       returning="binary_flag",
-       return_expectations={"incidence" : 0.1},
-    ), 
-    ons_cv_death=patients.with_these_codes_on_death_certificate(
-       circulatory_death_codelist,
-       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
-       match_only_underlying_cause=True,
-       returning="binary_flag",
-       return_expectations={"incidence" : 0.1},
-    ),
-    ons_respiratory_death=patients.with_these_codes_on_death_certificate(
-       respiratory_death_codelist,
-       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
-       match_only_underlying_cause=True,
-       returning="binary_flag",
-       return_expectations={"incidence" : 0.1},
-    ),  
-    ons_cancer_death=patients.with_these_codes_on_death_certificate(
-       cancer_death_codelist,
-       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
-       match_only_underlying_cause=True,
-       returning="binary_flag",
-       return_expectations={"incidence" : 0.1},
-    ),
     # sensitivity outcomes
     tested_covid=patients.with_test_result_in_sgss(
         pathogen="SARS-CoV-2",
@@ -124,6 +95,10 @@ study = StudyDefinition(
         returning="binary_flag",
         between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
         return_expectations={"incidence" : 0.1},
+    ),
+    admitted_noncovid=patients.satisfying(
+        """(NOT admitted_covid) AND admitted_any""",
+        return_expectations={"incidence": 0.15},
     ),
 
     # define age (needed for population and stratification group)
@@ -181,22 +156,22 @@ study = StudyDefinition(
     care_home_type=patients.care_home_status_as_of(
         "index_date",
         categorised_as={
-            "Y": """
+            "Yes": """
               IsPotentialCareHome
               AND LocationDoesNotRequireNursing='Y'
               AND LocationRequiresNursing='N'
             """,
-            "Y": """
+            "Yes": """
               IsPotentialCareHome
               AND LocationDoesNotRequireNursing='N'
               AND LocationRequiresNursing='Y'
             """,
-            "Y": "IsPotentialCareHome",
-            "N": "DEFAULT",
+            "Yes": "IsPotentialCareHome",
+            "No": "DEFAULT",
         },
         return_expectations={
             "rate": "universal",
-            "category": {"ratios": {"Y": 0.30, "N": 0.70},},
+            "category": {"ratios": {"Yes": 0.30, "No": 0.70},},
         },
     ),
     #care_home_type - specific institution 
@@ -294,32 +269,6 @@ measures = [
         group_by = ["sex", "ageband_five", "care_home_detail"],
     ),
 
-    ## SENSITIVITY: Display cause-specific deaths over time 
-    Measure(
-        id="dementia",
-        numerator="ons_dementia_death",
-        denominator="registered_at_start",
-        group_by = ["sex", "ageband_five", "care_home_type"],
-    ),
-    Measure(
-        id="respiratory",
-        numerator="ons_respiratory_death",
-        denominator="registered_at_start",
-        group_by = ["sex", "ageband_five", "care_home_type"],
-    ),
-    Measure(
-        id="cv",
-        numerator="ons_cv_death",
-        denominator="registered_at_start",
-        group_by = ["sex", "ageband_five", "care_home_type"],
-    ),
-    Measure(
-        id="cancer",
-        numerator="ons_cancer_death",
-        denominator="registered_at_start",
-        group_by = ["sex", "ageband_five", "care_home_type"],
-    ),
-
     ## SENSITIVITY: Hospital admissions and COVID-19 testing in care home compared to non care home residents 
 
     ### for standardisation 
@@ -338,6 +287,12 @@ measures = [
     Measure(
         id="admitted_any",
         numerator="admitted_any",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "care_home_type"],
+    ),
+    Measure(
+        id="admitted_noncovid",
+        numerator="admitted_noncovid",
         denominator="registered_at_start",
         group_by = ["sex", "ageband_five", "care_home_type"],
     ),
@@ -361,5 +316,10 @@ measures = [
         denominator="registered_at_start",
         group_by = ["ageband_narrow", "care_home_type"],
     ),
-
+    Measure(
+        id="admitted_noncovid_age",
+        numerator="admitted_noncovid",
+        denominator="registered_at_start",
+        group_by = ["ageband_narrow", "care_home_type"],
+    ),
 ]

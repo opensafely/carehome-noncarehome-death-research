@@ -33,7 +33,7 @@ format_table <- function(data, outcome) {
   
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename key variables to how you want them displayed in tables and select the relevant ones
     mutate(Mortality_Rate = round((PointEst*1000),2), 
            Confidence_Interval = paste(round(Lower*1000,2), round(Upper*1000,2), sep = "-")) %>% 
@@ -96,6 +96,7 @@ plot_figure <- function(data, axistext) {
 measure_tested_covid_age <- fread("./output/measure_tested_covid_age.csv", data.table = FALSE, na.strings = "")
 measure_admitted_covid_age <- fread("./output/measure_admitted_covid_age.csv", data.table = FALSE, na.strings = "")
 measure_admitted_any_age <- fread("./output/measure_admitted_any_age.csv", data.table = FALSE, na.strings = "")
+measure_admitted_noncovid_age <- fread("./output/measure_admitted_noncovid_age.csv", data.table = FALSE, na.strings = "")
 
 # Confidence Intervals ----------------------------------------------------
 # calculate confidence intervals using binconf function from Hmisc 
@@ -104,6 +105,7 @@ measure_admitted_any_age <- fread("./output/measure_admitted_any_age.csv", data.
 measure_tested_covid_age <- as_tibble(cbind(measure_tested_covid_age,((binconf(measure_tested_covid_age$tested_covid, measure_tested_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 measure_admitted_covid_age <- as_tibble(cbind(measure_admitted_covid_age,((binconf(measure_admitted_covid_age$admitted_covid, measure_admitted_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 measure_admitted_any_age <- as_tibble(cbind(measure_admitted_any_age,((binconf(measure_admitted_any_age$admitted_any, measure_admitted_any_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+measure_admitted_noncovid_age <- as_tibble(cbind(measure_admitted_noncovid_age,((binconf(measure_admitted_noncovid_age$admitted_noncovid, measure_admitted_noncovid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 
 # Set rows with < 5 events to NA ----------------------------------------
 # removing events, percentage and CIs 
@@ -130,6 +132,12 @@ measure_admitted_any_age <- measure_admitted_any_age %>%
          Lower = ifelse(admitted_any <= 5, NA, Lower),
          Upper = ifelse(admitted_any <= 5, NA, Upper)) 
 
+measure_admitted_noncovid_age <- measure_admitted_noncovid_age %>% 
+  mutate(value = ifelse(admitted_noncovid <= 5, NA, value), 
+         admitted_noncovid = ifelse(admitted_noncovid <= 5, NA, admitted_noncovid), 
+         PointEst = ifelse(admitted_noncovid <= 5, NA, PointEst),          
+         Lower = ifelse(admitted_noncovid <= 5, NA, Lower),
+         Upper = ifelse(admitted_noncovid <= 5, NA, Upper)) 
 # Tables ------------------------------------------------------------------
 
 table_descriptive_tested <- format_table(measure_tested_covid_age, tested_covid)
@@ -140,6 +148,9 @@ write.table(table_descriptive_admitted_covid, file = "./output/tables/S3b_table_
 
 table_descriptive_admitted_any <- format_table(measure_admitted_any_age, admitted_any)
 write.table(table_descriptive_admitted_any, file = "./output/tables/S3c_table_descriptive_admitted_any.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_descriptive_admitted_noncovid <- format_table(measure_admitted_noncovid_age, admitted_noncovid)
+write.table(table_descriptive_admitted_noncovid, file = "./output/tables/S3d_table_descriptive_admitted_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures  -------------------------------------------------------------
 
@@ -163,3 +174,11 @@ plot_descriptive_admitted_any <- plot_figure(measure_admitted_any_age, Admission
 png(filename = "./output/plots/S3c_plot_descriptive_admitted_any.png")
 plot_descriptive_admitted_any
 dev.off()
+
+# NonCOVID Admission  
+plot_descriptive_admitted_noncovid <- plot_figure(measure_admitted_noncovid_age, NonCovid_Admission)
+
+png(filename = "./output/plots/S3d_plot_descriptive_admitted_noncovid.png")
+plot_descriptive_admitted_noncovid
+dev.off()
+

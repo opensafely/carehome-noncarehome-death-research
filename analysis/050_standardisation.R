@@ -71,7 +71,7 @@ format_standardised_table <- function(data) {
   
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename and select what to present in tables 
     rename(Gender = sex) %>% 
     select(c(care_home_group, Gender, date, Standardised_Rate, Confidence_Interval)) %>% 
@@ -142,8 +142,8 @@ calculate_cmr <- function(data) {
       values_from = c(date, sex, dsr, log_sd), 
       names_glue = "{care_home_type}_{.value}") %>% 
     # calculate CI 
-    mutate(cmr = Y_dsr/N_dsr, 
-           sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+    mutate(cmr = Yes_dsr/No_dsr, 
+           sd_log_cmr = sqrt(Yes_log_sd^2 + No_log_sd^2),
            ef_cmr = exp(1.96 * sd_log_cmr), 
            lcl_cmr = cmr/ef_cmr, 
            ucl_cmr = cmr*ef_cmr) 
@@ -155,8 +155,8 @@ calculate_cmr <- function(data) {
 format_cmr_table <- function(data) {
   
   {{data}} %>% 
-    rename(Date = Y_date, 
-           Gender = Y_sex) %>% 
+    rename(Date = Yes_date, 
+           Gender = Yes_sex) %>% 
     mutate(Confidence_Interval = paste(round(lcl_cmr,2), round(ucl_cmr,2), sep = "-"), 
            Comparative_Mortality_Rate = round(cmr,2)) %>% 
     select(Gender, Date, Comparative_Mortality_Rate, Confidence_Interval) %>% 
@@ -171,7 +171,7 @@ plot_cmrs <- function(data, titletext) {
   y_value <- (max({{data}}$ucl_cmr) + (max({{data}}$ucl_cmr)/4)) 
   titlestring <- paste("Age-standardised", titletext, "CMR by Sex and Care Home")
   
-  ggplot({{data}}, aes (x = as.Date(Y_date, "%Y-%m-%d"), y = cmr, colour = Y_sex, fill = Y_sex)) + 
+  ggplot({{data}}, aes (x = as.Date(Yes_date, "%Y-%m-%d"), y = cmr, colour = Yes_sex, fill = Yes_sex)) + 
     geom_line(size = 1) + 
     geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 

@@ -45,13 +45,35 @@ study = StudyDefinition(
 
     ## deregistration (censor) date
     dereg_date=patients.date_deregistered_from_all_supported_practices(
-        on_or_after="2020-02-01", date_format="YYYY-MM",
+        on_or_after="index_date", date_format="YYYY-MM",
     ),
 
     # HOUSEHOLD INFORMATION
     ## care home status 
     care_home_type=patients.care_home_status_as_of(
         "index_date",
+        categorised_as={
+            "PC": """
+              IsPotentialCareHome
+              AND LocationDoesNotRequireNursing='Y'
+              AND LocationRequiresNursing='N'
+            """,
+            "PN": """
+              IsPotentialCareHome
+              AND LocationDoesNotRequireNursing='N'
+              AND LocationRequiresNursing='Y'
+            """,
+            "PS": "IsPotentialCareHome",
+            "U": "DEFAULT",
+        },
+        return_expectations={
+            "rate": "universal",
+            "category": {"ratios": {"PC": 0.30, "PN": 0.10, "PS": 0.10, "U":0.5},},
+        },
+    ),
+
+    care_home_prior=patients.care_home_status_as_of(
+        "index_date - 1 months",
         categorised_as={
             "PC": """
               IsPotentialCareHome

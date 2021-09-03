@@ -110,21 +110,13 @@ cause_of_death_plot <- function(data, axistext) {
 
 ##-- With COVID deaths
 # care homes
-table_allcauses_ch <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "Y", remove_covid_deaths = "N"))
+table_allcauses_ch <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "Yes", remove_covid_deaths = "N"))
 write.table(table_allcauses_ch, file = "./output/tables/4a_table_allcauses_ch.txt", sep = "\t", na = "", row.names=FALSE)
-
-# private homes 
-table_allcauses_ph <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "N", remove_covid_deaths = "N"))
-write.table(table_allcauses_ph, file = "./output/tables/4b_table_allcauses_ph.txt", sep = "\t", na = "", row.names=FALSE)
 
 ##-- Without COVID deaths 
 # care homes
-table_nccauses_ch <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "Y", remove_covid_deaths = "Y"))
+table_nccauses_ch <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "Yes", remove_covid_deaths = "Y"))
 write.table(table_nccauses_ch, file = "./output/tables/4c_table_nccauses_ch.txt", sep = "\t", na = "", row.names=FALSE)
-
-# private homes 
-table_nccauses_ph <- map_dfr(file_list, ~cause_of_death_format(.x, care_home_filter = "N", remove_covid_deaths = "Y"))
-write.table(table_nccauses_ph, file = "./output/tables/4d_table_nccauses_ph.txt", sep = "\t", na = "", row.names=FALSE)
 
 # Figures -----------------------------------------------------------------
 
@@ -136,25 +128,11 @@ png(filename = "./output/plots/4a_plot_allcauses_ch.png")
 plot_allcauses_ch
 dev.off()
 
-# private homes
-plot_allcauses_ph <- cause_of_death_plot(table_allcauses_ph, "Private Home Residents")
-
-png(filename = "./output/plots/4b_plot_allcauses_ph.png")
-plot_allcauses_ph
-dev.off()
-
 ##-- With non COVID deaths 
 # care homes
 plot_nccauses_ch <- cause_of_death_plot(table_nccauses_ch, "Care Home Residents")
 
 png(filename = "./output/plots/4c_plot_nccauses_ch.png")
 plot_nccauses_ch
-dev.off()
-
-# non care homes
-plot_nccauses_ph <- cause_of_death_plot(table_nccauses_ph, "Private Home Residents")
-
-png(filename = "./output/plots/4d_plot_nccauses_ph.png")
-plot_nccauses_ph
 dev.off()
 

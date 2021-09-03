@@ -67,7 +67,7 @@ format_standardised_table <- function(data) {
   
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename and select what to present in tables 
     rename(Gender = sex) %>% 
     select(c(care_home_group, Gender, over80, date, Standardised_Rate, Confidence_Interval)) %>% 
@@ -144,14 +144,14 @@ calculate_cmr <- function(data) {
       values_from = c(date, sex, over80, dsr, log_sd), 
       names_glue = "{care_home_type}_{.value}") %>% 
     # calculate CI 
-    mutate(cmr = Y_dsr/N_dsr, 
-           sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+    mutate(cmr = Yes_dsr/No_dsr, 
+           sd_log_cmr = sqrt(Yes_log_sd^2 + No_log_sd^2),
            ef_cmr = exp(1.96 * sd_log_cmr), 
            lcl_cmr = cmr/ef_cmr, 
            ucl_cmr = cmr*ef_cmr) %>% 
-    rename(Date = Y_date, 
-           Gender = Y_sex, 
-           over80 = Y_over80) 
+    rename(Date = Yes_date, 
+           Gender = Yes_sex, 
+           over80 = Yes_over80) 
 }
 
 # 5. Format table of CMRs 
