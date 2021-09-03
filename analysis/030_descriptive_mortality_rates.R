@@ -33,7 +33,7 @@ format_table <- function(data, outcome) {
   
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename key variables to how you want them displayed in tables and select the relevant ones
     mutate(Mortality_Rate = round((PointEst*1000),2), 
            Confidence_Interval = paste(round(Lower*1000,2), round(Upper*1000,2), sep = "-")) %>% 

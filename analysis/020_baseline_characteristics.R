@@ -115,7 +115,7 @@ summary <- study_population %>%
 
 # list the variables you want to have in your table according to type 
 factorvars <- c("ethnicity_cat", "region", "care_home_cat", "imd_cat")
-indicatorvars <- c("stroke", "dementia", "diabetes", "ckd", "cancer", "chronic_liver_disease", "chronic_cardiac_disease", "chronic_respiratory_disease") 
+indicatorvars <- c("new_resident", "stroke", "dementia", "diabetes", "ckd", "cancer", "chronic_liver_disease", "chronic_cardiac_disease", "chronic_respiratory_disease") 
 
 # invoke functions to summarise different types of variables 
 # because I don't want to present variables by type but in a particular order these are invoked multiple times

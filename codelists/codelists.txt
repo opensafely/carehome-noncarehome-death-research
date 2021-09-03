@@ -16,3 +16,4 @@ opensafely/chronic-liver-disease/2020-06-02
 opensafely/icd-10-chapter-x/2f59547a
 opensafely/icd-10-chapter-ix/4868c7af
 user/anna-schultze/cancer/27f4f62d 
+primis-covid19-vacc-uptake/longres/v1

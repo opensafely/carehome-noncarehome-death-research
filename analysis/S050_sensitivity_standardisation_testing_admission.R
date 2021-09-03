@@ -70,7 +70,7 @@ format_standardised_table <- function(data) {
   
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename and select what to present in tables 
     rename(Gender = sex) %>% 
     select(c(care_home_group, Gender, date, Standardised_Rate, Confidence_Interval)) %>% 
@@ -140,8 +140,8 @@ calculate_cmr <- function(data) {
       values_from = c(date, sex, dsr, log_sd), 
       names_glue = "{care_home_type}_{.value}") %>% 
     # calculate CI 
-    mutate(cmr = Y_dsr/N_dsr, 
-           sd_log_cmr = sqrt(Y_log_sd^2 + N_log_sd^2),
+    mutate(cmr = Yes_dsr/No_dsr, 
+           sd_log_cmr = sqrt(Yes_log_sd^2 + No_log_sd^2),
            ef_cmr = exp(1.96 * sd_log_cmr), 
            lcl_cmr = cmr/ef_cmr, 
            ucl_cmr = cmr*ef_cmr) 
@@ -153,8 +153,8 @@ calculate_cmr <- function(data) {
 format_cmr_table <- function(data) {
   
   {{data}} %>% 
-    rename(Date = Y_date, 
-           Gender = Y_sex) %>% 
+    rename(Date = Yes_date, 
+           Gender = Yes_sex) %>% 
     mutate(Confidence_Interval = paste(round(lcl_cmr,2), round(ucl_cmr,2), sep = "-"), 
            Comparative_Mortality_Rate = round(cmr,2)) %>% 
     select(Gender, Date, Comparative_Mortality_Rate, Confidence_Interval) %>% 
@@ -169,7 +169,7 @@ plot_cmrs <- function(data, titletext) {
   y_value <- (max({{data}}$ucl_cmr) + (max({{data}}$ucl_cmr)/4)) 
   titlestring <- paste("Age-standardised", titletext, "CMR by Sex and Care Home")
   
-  ggplot({{data}}, aes (x = as.Date(Y_date, "%Y-%m-%d"), y = cmr, colour = Y_sex, fill = Y_sex)) + 
+  ggplot({{data}}, aes (x = as.Date(Yes_date, "%Y-%m-%d"), y = cmr, colour = Yes_sex, fill = Yes_sex)) + 
     geom_line(size = 1) + 
     geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
@@ -198,6 +198,7 @@ plot_cmrs <- function(data, titletext) {
 tested <- fread("./output/measure_tested_covid.csv", data.table = FALSE, na.strings = "")
 admittedcovid <- fread("./output/measure_admitted_covid.csv", data.table = FALSE, na.strings = "")
 admittedany <- fread("./output/measure_admitted_any.csv", data.table = FALSE, na.strings = "")
+admittednoncovid <- fread("./output/measure_admitted_noncovid.csv", data.table = FALSE, na.strings = "")
 
 # standard population 
 european_standard <- fread("./data/european_standard_population.csv", data.table = FALSE, na.strings = "")
@@ -230,7 +231,7 @@ european_standard <- european_standard %>%
 
 # Data Management - OpenSAFELY  -------------------------------------------
 
-## There are v low counts of admissions before 1st wave, likely error in code use - set these to 0 otherwise CMR ends up at infinity 
+## There are v low counts of covid admissions and tests before 1st wave, likely error in code use - set these to 0 otherwise CMR ends up at infinity 
 
 tested <- tested %>% 
   mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
@@ -240,15 +241,12 @@ admittedcovid <- admittedcovid %>%
   mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
          admitted_covid = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, admitted_covid)) 
 
-admittedany <- admittedany %>% 
-  mutate(value = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, value),
-         admitted_any = ifelse(as.Date(date, "%Y-%m-%d") <= "2020-02-01", NA, admitted_any)) 
-
 # Calculate DSRs  ------------------------------------------------------------
 
 tested_standard <- standardise(tested, tested_covid)
 admittedcovid_standard <- standardise(admittedcovid, admitted_covid)
 admittedany_standard <- standardise(admittedany, admitted_any)
+admittednoncovid_standard <- standardise(admittednoncovid, admitted_noncovid)
 
 # DSR tables  ----------------------------------------------------------------
 
@@ -260,6 +258,9 @@ write.table(table_standardised_admittedcovid, file = "./output/tables/S5b_table_
 
 table_standardised_admittedany <- format_standardised_table(admittedany_standard)
 write.table(table_standardised_admittedany, file = "./output/tables/S5c_table_standardised_admittedany.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_standardised_admittednoncovid <- format_standardised_table(admittednoncovid_standard)
+write.table(table_standardised_admittednoncovid, file = "./output/tables/S5d_table_standardised_admittednoncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # DSR figures --------------------------------------------------------------
 
@@ -281,11 +282,18 @@ png(filename = "./output/plots/S5c_plot_standardised_admittedany.png")
 plot_standardised_admittedany
 dev.off()
 
+plot_standardised_admittednoncovid <- plot_standardised_rates(admittednoncovid_standard, "Admission (Non-COVID)")
+
+png(filename = "./output/plots/S5d_plot_standardised_admittednoncovid.png")
+plot_standardised_admittednoncovid
+dev.off()
+
 # Calculate CMRs ----------------------------------------------------------
 
 tested_cmr <- calculate_cmr(tested_standard)
 admittedcovid_cmr <- calculate_cmr(admittedcovid_standard)
 admittedany_cmr <- calculate_cmr(admittedany_standard)
+admittednoncovid_cmr <- calculate_cmr(admittednoncovid_standard)
 
 # CMR tables --------------------------------------------------------------
 
@@ -297,6 +305,9 @@ write.table(table_cmr_admittedcovid, file = "./output/tables/S6b_table_cmr_admit
 
 table_cmr_admittedany <- format_cmr_table(admittedany_cmr)
 write.table(table_cmr_admittedany, file = "./output/tables/S6c_table_cmr_admittedany.txt", sep = "\t", na = "", row.names=FALSE)
+
+table_cmr_admittednoncovid <- format_cmr_table(admittednoncovid_cmr)
+write.table(table_cmr_admittednoncovid, file = "./output/tables/S6d_table_cmr_admittednoncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # CMR figures -------------------------------------------------------------
 
@@ -316,4 +327,10 @@ plot_cmr_admittedany <- plot_cmrs(admittedany_cmr, "Admission (any)")
 
 png(filename = "./output/plots/S6c_plot_cmr_admittedany.png")
 plot_cmr_admittedany
+dev.off()
+
+plot_cmr_admittednoncovid <- plot_cmrs(admittednoncovid_cmr, "Admission (NonCovid)")
+
+png(filename = "./output/plots/S6c_plot_cmr_admittednoncovid.png")
+plot_cmr_admittednoncovid
 dev.off()

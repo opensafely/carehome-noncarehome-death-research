@@ -34,7 +34,7 @@ standardise <- function(data, outcome) {
     # expected deaths is mortality rate times the standard groupsize 
     mutate(expected_deaths = value * groupsize) %>% 
     # sum by group 
-    group_by(date, sex, care_home_type) %>% 
+    group_by(date, sex, any_care_home) %>% 
     mutate(total_expected = sum(expected_deaths)) %>% 
     ungroup() %>%
     # the directly standardised rate is expected deaths over total standard population size 
@@ -42,21 +42,23 @@ standardise <- function(data, outcome) {
     mutate(dsr = total_expected/total, 
            se_dsri = (groupsize^2*value * (1- value))/registered_at_start) %>% 
     # sum standard error per category
-    group_by(date, sex, care_home_type) %>% 
+    group_by(date, sex, any_care_home) %>% 
     mutate(se_dsr = (sqrt(sum(se_dsri)))/total) %>% 
     ungroup() %>% 
     # calculate standard deviation (needed for calculating CI for ratio of DSRs)
     mutate(sdi = sqrt({{outcome}})/registered_at_start, 
            sdiw_squared = ((sdi * (groupsize/total))^2)) %>% 
-    group_by(date, sex, care_home_type) %>% 
+    group_by(date, sex, any_care_home) %>% 
     mutate(sd_sum = sum(sdiw_squared), 
            sd = sqrt(sd_sum)) %>% 
     ungroup() %>% 
     # the variable is called log because it calcluates the SD for the SMR on a log scale, it's not meant to be logged
     mutate(log_sd = sd/dsr) %>% 
     # keep only one row per unique group 
-    select(date, care_home_type, sex, dsr, se_dsr, log_sd) %>% 
+    select(date, any_care_home, sex, dsr, se_dsr, log_sd) %>% 
     distinct() %>% 
+    # make care home character var for plotting 
+    mutate(care_home_group = ifelse((any_care_home == 1), "Care_or_Nursing_Home", "Private_Home")) %>% 
     # Finalise calculating and formatting confidence interval around the dsr 
     mutate(lcl = dsr - 1.96 * se_dsr, 
            ucl = dsr + 1.96 * se_dsr, 
@@ -70,8 +72,6 @@ standardise <- function(data, outcome) {
 format_standardised_table <- function(data) { 
   
   {{data}} %>% 
-    # create a labelled variable for outputting in table formats 
-    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename and select what to present in tables 
     rename(Gender = sex) %>% 
     select(c(care_home_group, Gender, date, Standardised_Rate, Confidence_Interval)) %>% 
@@ -102,7 +102,7 @@ plot_standardised_rates <- function(data, titletext) {
   y_value <- (max({{data}}$dsr) + (max({{data}}$dsr)/4)) * 1000
   titlestring <- paste("Age-standardised", titletext, "Mortality by Sex and Care Home")
   
-  plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_type, group = interaction(sex, care_home_type))) + 
+  plot_8a <- ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = dsr*1000, colour = sex, linetype = care_home_group, group = interaction(sex, care_home_group))) + 
     geom_line(size = 1) + geom_point() + 
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=2,geom="label") +
@@ -132,18 +132,18 @@ calculate_cmr <- function(data) {
   
   {{data}} %>% 
     # make wide on care home status, which are the dsrs to be compared 
-    group_by(care_home_type) %>% 
+    group_by(care_home_group) %>% 
     mutate(id = row_number()) %>% 
     ungroup %>% 
     # reshape wide 
     pivot_wider(
       id_cols = id, 
-      names_from = care_home_type, 
+      names_from = care_home_group, 
       values_from = c(date, sex, dsr, log_sd), 
-      names_glue = "{care_home_type}_{.value}") %>% 
+      names_glue = "{care_home_group}_{.value}") %>% 
     # calculate CI 
-    mutate(cmr = Yes_dsr/No_dsr, 
-           sd_log_cmr = sqrt(Yes_log_sd^2 + No_log_sd^2),
+    mutate(cmr = Care_or_Nursing_Home_dsr/Private_Home_dsr, 
+           sd_log_cmr = sqrt(Care_or_Nursing_Home_log_sd^2 + Private_Home_log_sd^2),
            ef_cmr = exp(1.96 * sd_log_cmr), 
            lcl_cmr = cmr/ef_cmr, 
            ucl_cmr = cmr*ef_cmr) 
@@ -155,8 +155,8 @@ calculate_cmr <- function(data) {
 format_cmr_table <- function(data) {
   
   {{data}} %>% 
-    rename(Date = Yes_date, 
-           Gender = Yes_sex) %>% 
+    rename(Date = Care_or_Nursing_Home_date, 
+           Gender = Care_or_Nursing_Home_sex) %>% 
     mutate(Confidence_Interval = paste(round(lcl_cmr,2), round(ucl_cmr,2), sep = "-"), 
            Comparative_Mortality_Rate = round(cmr,2)) %>% 
     select(Gender, Date, Comparative_Mortality_Rate, Confidence_Interval) %>% 
@@ -171,7 +171,7 @@ plot_cmrs <- function(data, titletext) {
   y_value <- (max({{data}}$ucl_cmr) + (max({{data}}$ucl_cmr)/4)) 
   titlestring <- paste("Age-standardised", titletext, "CMR by Sex and Care Home")
   
-  ggplot({{data}}, aes (x = as.Date(Yes_date, "%Y-%m-%d"), y = cmr, colour = Yes_sex, fill = Yes_sex)) + 
+  ggplot({{data}}, aes (x = as.Date(Care_or_Nursing_Home_date, "%Y-%m-%d"), y = cmr, colour = Care_or_Nursing_Home_sex, fill = Care_or_Nursing_Home_sex)) + 
     geom_line(size = 1) + 
     geom_ribbon(aes(ymin=lcl_cmr, ymax=ucl_cmr), alpha = 0.1, colour = NA, show.legend = F) +
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
@@ -197,9 +197,9 @@ plot_cmrs <- function(data, titletext) {
 # Read in Data ------------------------------------------------------------
 
 # opensafely population 
-allcause <- fread("./output/measure_allcause_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
-covid <- fread("./output/measure_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
-noncovid <- fread("./output/measure_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
+allcause <- fread("./output/measure_SENS_allcause_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
+covid <- fread("./output/measure_SENS_covid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
+noncovid <- fread("./output/measure_SENS_noncovid_death_sex_age_five.csv", data.table = FALSE, na.strings = "")
 
 # standard population 
 european_standard <- fread("./data/european_standard_population.csv", data.table = FALSE, na.strings = "")
@@ -238,31 +238,31 @@ noncovid_standard <- standardise(noncovid, ons_noncovid_death)
 # DSR tables  ----------------------------------------------------------------
 
 table_standardised_allcause <- format_standardised_table(all_cause_standard)
-write.table(table_standardised_allcause, file = "./output/tables/5a_table_standardised_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_allcause, file = "./output/tables/S7a_table_standardised_allcause.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_standardised_covid <- format_standardised_table(covid_standard)
-write.table(table_standardised_covid, file = "./output/tables/5b_table_standardised_covid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_covid, file = "./output/tables/S7b_table_standardised_covid.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_standardised_noncovid <- format_standardised_table(noncovid_standard)
-write.table(table_standardised_noncovid, file = "./output/tables/5c_table_standardised_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_standardised_noncovid, file = "./output/tables/S7c_table_standardised_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # DSR figures --------------------------------------------------------------
 
 plot_standardised_allcause <- plot_standardised_rates(all_cause_standard, "All-Cause")
 
-png(filename = "./output/plots/5a_plot_standardised_allcause.png")
+png(filename = "./output/plots/S7a_plot_standardised_allcause.png")
 plot_standardised_allcause
 dev.off()
 
 plot_standardised_covid <- plot_standardised_rates(covid_standard, "Covid")
 
-png(filename = "./output/plots/5b_plot_standardised_covid.png")
+png(filename = "./output/plots/S7b_plot_standardised_covid.png")
 plot_standardised_covid
 dev.off()
 
 plot_standardised_noncovid <- plot_standardised_rates(noncovid_standard, "Non-Covid")
 
-png(filename = "./output/plots/5c_plot_standardised_noncovid.png")
+png(filename = "./output/plots/S7c_plot_standardised_noncovid.png")
 plot_standardised_noncovid
 dev.off()
 
@@ -275,30 +275,30 @@ noncovid_cmr <- calculate_cmr(noncovid_standard)
 # CMR tables --------------------------------------------------------------
 
 table_cmr_allcause <- format_cmr_table(all_cause_cmr)
-write.table(table_cmr_allcause, file = "./output/tables/6a_table_cmr_allcause.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_allcause, file = "./output/tables/S8a_table_cmr_allcause.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_cmr_covid <- format_cmr_table(covid_cmr)
-write.table(table_cmr_covid, file = "./output/tables/6b_table_cmr_covid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_covid, file = "./output/tables/S8b_table_cmr_covid.txt", sep = "\t", na = "", row.names=FALSE)
 
 table_cmr_noncovid <- format_cmr_table(noncovid_cmr)
-write.table(table_cmr_noncovid, file = "./output/tables/6c_table_cmr_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
+write.table(table_cmr_noncovid, file = "./output/tables/S8c_table_cmr_noncovid.txt", sep = "\t", na = "", row.names=FALSE)
 
 # CMR figures -------------------------------------------------------------
 
 plot_cmr_allcause <- plot_cmrs(all_cause_cmr, "All-Cause")
 
-png(filename = "./output/plots/6a_plot_cmr_allcause.png")
+png(filename = "./output/plots/S8a_plot_cmr_allcause.png")
 plot_cmr_allcause
 dev.off()
 
 plot_cmr_covid <- plot_cmrs(covid_cmr, "Covid")
 
-png(filename = "./output/plots/6b_plot_cmr_covid.png")
+png(filename = "./output/plots/S8b_plot_cmr_covid.png")
 plot_cmr_covid
 dev.off()
 
 plot_cmr_noncovid <- plot_cmrs(noncovid_cmr, "Non-Covid")
 
-png(filename = "./output/plots/6c_plot_cmr_noncovid.png")
+png(filename = "./output/plots/S8c_plot_cmr_noncovid.png")
 plot_cmr_noncovid
 dev.off()

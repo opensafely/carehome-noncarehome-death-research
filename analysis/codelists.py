@@ -97,6 +97,12 @@ cancer_death_codelist = codelist_from_csv(
     system="icd10",
     column="code",
 )
+primis_codes = codelist_from_csv(
+    "codelists/primis-covid19-vacc-uptake-longres.csv", 
+    system="snomed", 
+    column="code",
+)
+
 
 
 

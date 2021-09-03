@@ -28,7 +28,7 @@ dir.create(file.path("./output/plots"), showWarnings = FALSE, recursive = TRUE)
 format_comparative_table <- function(data, outcome) { 
   
   {{data}} %>% 
-    mutate(care_home_group = ifelse((care_home_type == "Y"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
     # rename variabels to easier names 
     rename(n = {{outcome}}, 
            N = registered_at_start, 
