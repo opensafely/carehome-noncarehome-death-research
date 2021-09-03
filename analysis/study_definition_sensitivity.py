@@ -13,6 +13,10 @@ from cohortextractor import (
 
 # Specify study definition 
 
+# Import all codelists
+
+from codelists import *
+
 study = StudyDefinition(
     # configure the expectations framework
     default_expectations={
@@ -36,12 +40,33 @@ study = StudyDefinition(
         ),
     ),
 
+        # create registration date at start of interval
+    registered_at_start=patients.registered_as_of(
+          "index_date"
+        ),
+
+    # create registration date at mid-point of interval 
+    registered_at_midpoint=patients.registered_as_of(
+          "index_date + 14 days"
+        ), 
+
     # define all outcomes (numerators)
-    tpp_death=patients.with_death_recorded_in_primary_care(
+    ons_any_death=patients.died_from_any_cause(
        between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       returning="binary_flag",
+       return_expectations={"incidence" : 0.3},
+    ), 
+    ons_covid_death=patients.with_these_codes_on_death_certificate(
+       covid_codelist,
+       between=["first_day_of_month(index_date)", "last_day_of_month(index_date)"], 
+       match_only_underlying_cause=False,
        returning="binary_flag",
        return_expectations={"incidence" : 0.1},
     ), 
+    ons_noncovid_death=patients.satisfying(
+        """(NOT ons_covid_death) AND ons_any_death""",
+        return_expectations={"incidence": 0.15},
+    ),
 
     # define age (needed for population and stratification group)
     age=patients.age_as_of(
@@ -54,14 +79,12 @@ study = StudyDefinition(
 
     # define stratification groups 
         
-    # define an indicator variable for all patients within this cohort (needed as input for measures framework )
-    allpatients=patients.satisfying("""age>=0""", return_expectations={"incidence": 1}
-    ),
     # age groups 
-    ageband_narrow = patients.categorised_as(
+    ageband_five = patients.categorised_as(
         {   
             "0": "DEFAULT",
-            "65-74": """ age >=  65 AND age < 75""",
+            "65-69": """ age >=  65 AND age < 70""",
+            "70-74": """ age >=  70 AND age < 75""",
             "75-79": """ age >=  75 AND age < 80""",
             "80-84": """ age >=  80 AND age < 85""",
             "85-89": """ age >=  85 AND age < 90""",
@@ -69,7 +92,7 @@ study = StudyDefinition(
         },
         return_expectations={
             "rate":"universal",
-            "category": {"ratios": {"65-74": 0.4, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
+            "category": {"ratios": {"65-69": 0.2,"70-74": 0.2, "75-79": 0.2, "80-84":0.2, "85-89":0.1, "90+":0.1 }}
         },
     ),
 
@@ -103,16 +126,43 @@ study = StudyDefinition(
             "category": {"ratios": {"Y": 0.30, "N": 0.70},},
         },
     ),
+    primis_carehome_ever=patients.with_these_clinical_events(
+        primis_codes,
+        on_or_before="index_date",
+        returning="binary_flag",
+        return_expectations={"incidence": 0.1},
+    ),
 
+    #### has any value for the above 
+    any_care_home=patients.satisfying(
+        """
+        care_home_type = "Y" OR 
+        primis_carehome_ever
+        """,
+    ),
 )
 
 measures = [
 
-    ## SENSITIVITY 2: tpp death as the outcome for comparison (all cause only)
+    ## any care or nursing home, using any method
+
+    ## 5-YEAR AGE BANDS FOR STANDARDISATION 
     Measure(
-        id="tpp_death_age",
-        numerator="tpp_death",
-        denominator="population",
-        group_by = ["ageband_narrow", "care_home_type"],
+        id="SENS_covid_death_sex_age_five",
+        numerator="ons_covid_death",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "any_care_home"],  
+    ),
+    Measure(
+        id="SENS_allcause_death_sex_age_five",
+        numerator="ons_any_death",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "any_care_home"],  
+    ),
+    Measure(
+        id="SENS_noncovid_death_sex_age_five",
+        numerator="ons_noncovid_death",
+        denominator="registered_at_start",
+        group_by = ["sex", "ageband_five", "any_care_home"],  
     ),
 ]
