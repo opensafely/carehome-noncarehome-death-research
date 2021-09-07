@@ -1,0 +1,40 @@
+"variable"	"value"	"count_Overall"	"percent_Overall"	"count_Care_or_Nursing_Home"	"percent_Care_or_Nursing_Home"	"count_Private_Home"	"percent_Private_Home"
+"total"		4453598	100	97820	100	4355778	100
+"sex"	"Female"	2394119	53.76	69028	70.57	2325091	53.38
+"sex"	"Male"	2059479	46.24	28792	29.43	2030687	46.62
+"age"	"Mean, SD"	75	7.49	86	7.97	75	7.31
+"care_home_cat"	"Care Home"	51605	1.16	51605	52.76		
+"care_home_cat"	"Care or Nursing Home"	2352	0.05	2352	2.4		
+"care_home_cat"	"Nursing Home"	43863	0.98	43863	44.84		
+"care_home_cat"	"Private Home"	4355778	97.8			4355778	100
+"ethnicity_cat"	"Asian or British Asian"	122133	2.74	607	0.62	121526	2.79
+"ethnicity_cat"	"Black"	35721	0.8	459	0.47	35262	0.81
+"ethnicity_cat"	"Missing"	1008843	22.65	22585	23.09	986258	22.64
+"ethnicity_cat"	"Mixed"	13276	0.3	203	0.21	13073	0.3
+"ethnicity_cat"	"Other"	29357	0.66	340	0.35	29017	0.67
+"ethnicity_cat"	"White"	3244268	72.85	73626	75.27	3170642	72.79
+"imd_cat"	"1 - Least Deprived"	625767	14.05	17765	18.16	608002	13.96
+"imd_cat"	"2"	777788	17.46	20152	20.6	757636	17.39
+"imd_cat"	"3"	1002878	22.52	21542	22.02	981336	22.53
+"imd_cat"	"4"	1020425	22.91	19932	20.38	1000493	22.97
+"imd_cat"	"5 - Most Deprived"	996627	22.38	17764	18.16	978863	22.47
+"imd_cat"	"Missing"	30113	0.68	665	0.68	29448	0.68
+"region"	"East"	1050470	23.59	22720	23.23	1027750	23.6
+"region"	"East Midlands"	787303	17.68	18008	18.41	769295	17.66
+"region"	"London"	171050	3.84	1732	1.77	169318	3.89
+"region"	"NA"	933	0.02	23	0.02	910	0.02
+"region"	"North East"	207516	4.66	4223	4.32	203293	4.67
+"region"	"North West"	414380	9.3	9852	10.07	404528	9.29
+"region"	"South East"	329595	7.4	7908	8.08	321687	7.39
+"region"	"South West"	747575	16.79	16678	17.05	730897	16.78
+"region"	"West Midlands"	155206	3.48	2978	3.04	152228	3.49
+"region"	"Yorkshire and The Humber"	589570	13.24	13698	14	575872	13.22
+"new_resident"		4407	0.1	4407	4.51	0	0
+"stroke"		295011	6.62	20932	21.4	274079	6.29
+"dementia"		201659	4.53	56676	57.94	144983	3.33
+"diabetes"		1006794	22.61	24812	25.36	981982	22.54
+"ckd"		405523	9.11	18383	18.79	387140	8.89
+"cancer"		671833	15.09	15980	16.34	655853	15.06
+"chronic_liver_disease"		40730	0.91	1068	1.09	39662	0.91
+"chronic_cardiac_disease"		878574	19.73	29827	30.49	848747	19.49
+"chronic_respiratory_disease"		499058	11.21	13036	13.33	486022	11.16
