@@ -1,0 +1,40 @@
+"variable"	"value"	"count_Overall"	"percent_Overall"	"count_Care_or_Nursing_Home"	"percent_Care_or_Nursing_Home"	"count_Private_Home"	"percent_Private_Home"
+"total"		4466266	100	95205	100	4371061	100
+"sex"	"Female"	2401242	53.76	67515	70.92	2333727	53.39
+"sex"	"Male"	2065024	46.24	27690	29.08	2037334	46.61
+"age"	"Mean, SD"	75	7.47	86	8.01	75	7.29
+"care_home_cat"	"Care Home"	50115	1.12	50115	52.64		
+"care_home_cat"	"Care or Nursing Home"	2115	0.05	2115	2.22		
+"care_home_cat"	"Nursing Home"	42975	0.96	42975	45.14		
+"care_home_cat"	"Private Home"	4371061	97.87			4371061	100
+"ethnicity_cat"	"Asian or British Asian"	124012	2.78	629	0.66	123383	2.82
+"ethnicity_cat"	"Black"	36144	0.81	449	0.47	35695	0.82
+"ethnicity_cat"	"Missing"	1003758	22.47	21511	22.59	982247	22.47
+"ethnicity_cat"	"Mixed"	13534	0.3	203	0.21	13331	0.3
+"ethnicity_cat"	"Other"	30011	0.67	324	0.34	29687	0.68
+"ethnicity_cat"	"White"	3258807	72.96	72089	75.72	3186718	72.9
+"imd_cat"	"1 - Least Deprived"	624089	13.97	17292	18.16	606797	13.88
+"imd_cat"	"2"	778053	17.42	19622	20.61	758431	17.35
+"imd_cat"	"3"	1005575	22.51	21001	22.06	984574	22.52
+"imd_cat"	"4"	1024403	22.94	19636	20.62	1004767	22.99
+"imd_cat"	"5 - Most Deprived"	1000365	22.4	16986	17.84	983379	22.5
+"imd_cat"	"Missing"	33781	0.76	668	0.7	33113	0.76
+"region"	"East"	1052327	23.56	21866	22.97	1030461	23.57
+"region"	"East Midlands"	789011	17.67	17425	18.3	771586	17.65
+"region"	"London"	172308	3.86	1740	1.83	170568	3.9
+"region"	"NA"	1003	0.02	25	0.03	978	0.02
+"region"	"North East"	207638	4.65	4172	4.38	203466	4.65
+"region"	"North West"	415797	9.31	9556	10.04	406241	9.29
+"region"	"South East"	330773	7.41	7677	8.06	323096	7.39
+"region"	"South West"	751415	16.82	16447	17.28	734968	16.81
+"region"	"West Midlands"	154555	3.46	2930	3.08	151625	3.47
+"region"	"Yorkshire and The Humber"	591439	13.24	13367	14.04	578072	13.22
+"new_resident"		4735	0.11	4735	4.97	0	0
+"stroke"		293662	6.58	20182	21.2	273480	6.26
+"dementia"		195690	4.38	54509	57.25	141181	3.23
+"diabetes"		1025339	22.96	24505	25.74	1000834	22.9
+"ckd"		403898	9.04	17375	18.25	386523	8.84
+"cancer"		675834	15.13	15396	16.17	660438	15.11
+"chronic_liver_disease"		41584	0.93	1071	1.12	40513	0.93
+"chronic_cardiac_disease"		874202	19.57	28608	30.05	845594	19.35
+"chronic_respiratory_disease"		495368	11.09	12709	13.35	482659	11.04

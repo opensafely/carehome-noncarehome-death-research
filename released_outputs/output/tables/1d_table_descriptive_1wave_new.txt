@@ -1,0 +1,38 @@
+"variable"	"value"	"count_Overall"	"percent_Overall"	"count_Care_or_Nursing_Home"	"percent_Care_or_Nursing_Home"
+"total"		5744	100	5744	100
+"sex"	"Female"	3592	62.53	3592	62.53
+"sex"	"Male"	2152	37.47	2152	37.47
+"age"	"Mean, SD"	85	7.56	85	7.56
+"care_home_cat"	"Care Home"	2775	48.31	2775	48.31
+"care_home_cat"	"Care or Nursing Home"	128	2.23	128	2.23
+"care_home_cat"	"Nursing Home"	2841	49.46	2841	49.46
+"ethnicity_cat"	"Asian or British Asian"	41	0.71	41	0.71
+"ethnicity_cat"	"Black"	30	0.52	30	0.52
+"ethnicity_cat"	"Missing"	1291	22.48	1291	22.48
+"ethnicity_cat"	"Mixed"	10	0.17	10	0.17
+"ethnicity_cat"	"Other"	13	0.23	13	0.23
+"ethnicity_cat"	"White"	4359	75.89	4359	75.89
+"imd_cat"	"1 - Least Deprived"	1093	19.03	1093	19.03
+"imd_cat"	"2"	1126	19.6	1126	19.6
+"imd_cat"	"3"	1288	22.42	1288	22.42
+"imd_cat"	"4"	1101	19.17	1101	19.17
+"imd_cat"	"5 - Most Deprived"	1080	18.8	1080	18.8
+"imd_cat"	"Missing"	56	0.97	56	0.97
+"region"	"East"	1348	23.47	1348	23.47
+"region"	"East Midlands"	1164	20.26	1164	20.26
+"region"	"London"	88	1.53	88	1.53
+"region"	"North East"	285	4.96	285	4.96
+"region"	"North West"	614	10.69	614	10.69
+"region"	"South East"	394	6.86	394	6.86
+"region"	"South West"	902	15.7	902	15.7
+"region"	"West Midlands"	150	2.61	150	2.61
+"region"	"Yorkshire and The Humber"	799	13.91	799	13.91
+"new_resident"		5744	100	5744	100
+"stroke"		1182	20.58	1182	20.58
+"dementia"		2514	43.77	2514	43.77
+"diabetes"		1575	27.42	1575	27.42
+"ckd"		1425	24.81	1425	24.81
+"cancer"		1332	23.19	1332	23.19
+"chronic_liver_disease"		74	1.29	74	1.29
+"chronic_cardiac_disease"		2027	35.29	2027	35.29
+"chronic_respiratory_disease"		908	15.81	908	15.81
