@@ -102,22 +102,6 @@ measure_any_age <- fread("./output/measure_allcause_death_age.csv", data.table =
 measure_covid_age <- fread("./output/measure_covid_death_age.csv", data.table = FALSE, na.strings = "")
 measure_noncovid_age <- fread("./output/measure_noncovid_death_age.csv", data.table = FALSE, na.strings = "")
 
-# Set rows with < 5 events to NA ----------------------------------------
-## and scale monthly estimates 
-
-measure_any_age <- measure_any_age %>% 
-  mutate(value = ifelse(ons_any_death <= 5, NA, value), 
-         ons_any_death = ifelse(ons_any_death <= 5, NA, ons_any_death)) 
-
-
-measure_covid_age <- measure_covid_age %>% 
-  mutate(value = ifelse(ons_covid_death <= 5, NA, value), 
-         ons_covid_death = ifelse(ons_covid_death <= 5, NA, ons_covid_death)) 
-
-measure_noncovid_age <- measure_noncovid_age %>% 
-  mutate(value = ifelse(ons_noncovid_death <= 5, NA, value), 
-         ons_noncovid_death = ifelse(ons_noncovid_death <= 5, NA, ons_noncovid_death)) 
-
 # Confidence Intervals ----------------------------------------------------
 # calculate confidence intervals using binconf function from Hmisc 
 # bind output into the original dataset 
@@ -125,6 +109,28 @@ measure_noncovid_age <- measure_noncovid_age %>%
 measure_any_age <- as_tibble(cbind(measure_any_age,((binconf(measure_any_age$ons_any_death, measure_any_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 measure_covid_age <- as_tibble(cbind(measure_covid_age,((binconf(measure_covid_age$ons_covid_death, measure_covid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 measure_noncovid_age <- as_tibble(cbind(measure_noncovid_age,((binconf(measure_noncovid_age$ons_noncovid_death, measure_noncovid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
+
+# Set rows with < 5 events to NA ----------------------------------------
+measure_any_age <- measure_any_age %>% 
+  mutate(value = ifelse(ons_any_death <= 5, NA, value), 
+         ons_any_death = ifelse(ons_any_death <= 5, NA, ons_any_death), 
+         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
+         Lower = ifelse(admitted_covid <= 5, NA, Lower),
+         Upper = ifelse(admitted_covid <= 5, NA, Upper))  
+
+measure_covid_age <- measure_covid_age %>% 
+  mutate(value = ifelse(ons_covid_death <= 5, NA, value), 
+         ons_covid_death = ifelse(ons_covid_death <= 5, NA, ons_covid_death), 
+         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
+         Lower = ifelse(admitted_covid <= 5, NA, Lower),
+         Upper = ifelse(admitted_covid <= 5, NA, Upper)) 
+
+measure_noncovid_age <- measure_noncovid_age %>% 
+  mutate(value = ifelse(ons_noncovid_death <= 5, NA, value), 
+         ons_noncovid_death = ifelse(ons_noncovid_death <= 5, NA, ons_noncovid_death), 
+         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
+         Lower = ifelse(admitted_covid <= 5, NA, Lower),
+         Upper = ifelse(admitted_covid <= 5, NA, Upper))  
 
 # Tables ------------------------------------------------------------------
 
