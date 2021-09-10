@@ -67,9 +67,6 @@ standardise <- function(data, outcome) {
     mutate(Confidence_Interval = paste(round(lcl*1000,2), round(ucl*1000,2), sep = "-"),
            Standardised_Rate = round(dsr * 1000,2))
 }
-           Confidence_Interval = paste(round(lcl*1000,2), round(ucl*1000,2), sep = "-"),
-           Standardised_Rate = round(dsr * 1000,2)) 
-}
 
 # 2. Format table of standardised rates
 # function to format table of the DSRs to output, by gender 
