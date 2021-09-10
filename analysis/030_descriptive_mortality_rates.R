@@ -114,23 +114,23 @@ measure_noncovid_age <- as_tibble(cbind(measure_noncovid_age,((binconf(measure_n
 measure_any_age <- measure_any_age %>% 
   mutate(value = ifelse(ons_any_death <= 5, NA, value), 
          ons_any_death = ifelse(ons_any_death <= 5, NA, ons_any_death), 
-         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
-         Lower = ifelse(admitted_covid <= 5, NA, Lower),
-         Upper = ifelse(admitted_covid <= 5, NA, Upper))  
+         PointEst = ifelse(ons_any_death <= 5, NA, PointEst),
+         Lower = ifelse(ons_any_death <= 5, NA, Lower),
+         Upper = ifelse(ons_any_death <= 5, NA, Upper))  
 
 measure_covid_age <- measure_covid_age %>% 
   mutate(value = ifelse(ons_covid_death <= 5, NA, value), 
          ons_covid_death = ifelse(ons_covid_death <= 5, NA, ons_covid_death), 
-         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
-         Lower = ifelse(admitted_covid <= 5, NA, Lower),
-         Upper = ifelse(admitted_covid <= 5, NA, Upper)) 
+         PointEst = ifelse(ons_covid_death <= 5, NA, PointEst),
+         Lower = ifelse(ons_covid_death <= 5, NA, Lower),
+         Upper = ifelse(ons_covid_death <= 5, NA, Upper)) 
 
 measure_noncovid_age <- measure_noncovid_age %>% 
   mutate(value = ifelse(ons_noncovid_death <= 5, NA, value), 
          ons_noncovid_death = ifelse(ons_noncovid_death <= 5, NA, ons_noncovid_death), 
-         PointEst = ifelse(admitted_covid <= 5, NA, PointEst),
-         Lower = ifelse(admitted_covid <= 5, NA, Lower),
-         Upper = ifelse(admitted_covid <= 5, NA, Upper))  
+         PointEst = ifelse(ons_noncovid_death <= 5, NA, PointEst),
+         Lower = ifelse(ons_noncovid_death <= 5, NA, Lower),
+         Upper = ifelse(ons_noncovid_death <= 5, NA, Upper))  
 
 # Tables ------------------------------------------------------------------
 
