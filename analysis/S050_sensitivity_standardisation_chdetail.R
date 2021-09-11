@@ -58,9 +58,14 @@ standardise <- function(data, outcome) {
     distinct() %>% 
     # Finalise calculating and formatting confidence interval 
     mutate(lcl = dsr - 1.96 * se_dsr, 
-           ucl = dsr + 1.96 * se_dsr, 
-           Confidence_Interval = paste(round(lcl*1000,2), round(ucl*1000,2), sep = "-"),
-           Standardised_Rate = round(dsr * 1000,2)) 
+           ucl = dsr + 1.96 * se_dsr) %>% 
+  # scale mortality risks and confidence intervals 
+  mutate(dsr = dsr/(days_in_month(as.Date(date, "%Y-%m-%d")))*30, 
+         lcl = lcl/(days_in_month(as.Date(date, "%Y-%m-%d")))*30, 
+         ucl = ucl/(days_in_month(as.Date(date, "%Y-%m-%d")))*30) %>% 
+    # format CI and names 
+    mutate(Confidence_Interval = paste(round(lcl*1000,2), round(ucl*1000,2), sep = "-"),
+           Standardised_Rate = round(dsr * 1000,2))
 }
 
 # 2. Format table of standardised rates

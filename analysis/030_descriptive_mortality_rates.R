@@ -34,6 +34,10 @@ format_table <- function(data, outcome) {
   {{data}} %>% 
     # create a labelled variable for outputting in table formats 
     mutate(care_home_group = ifelse((care_home_type == "Yes"), "Care_or_Nursing_Home", "Private_Home")) %>%
+    # scale mortality risks and confidence intervals 
+    mutate(PointEst = PointEst/(days_in_month(as.Date(date, "%Y-%m-%d")))*30, 
+           Lower = Lower/(days_in_month(as.Date(date, "%Y-%m-%d")))*30, 
+           Upper = Upper/(days_in_month(as.Date(date, "%Y-%m-%d")))*30) %>% 
     # rename key variables to how you want them displayed in tables and select the relevant ones
     mutate(Mortality_Rate = round((PointEst*1000),2), 
            Confidence_Interval = paste(round(Lower*1000,2), round(Upper*1000,2), sep = "-")) %>% 
@@ -69,7 +73,7 @@ plot_figure <- function(data, axistext) {
   ystring <- paste(as_label(enquo(axistext)), "Mortality Risk per 1,000 individuals")
   titlestring <- paste(as_label(enquo(axistext)), "Mortality Risk by Age, crude")
   
-  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = value*1000, colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
+  ggplot({{data}}, aes (x = as.Date(date, "%Y-%m-%d"), y = ((value/(days_in_month(as.Date(date, "%Y-%m-%d")))*30)*1000), colour = ageband_narrow, linetype = care_home_type, group = interaction(ageband_narrow, care_home_type))) + 
     geom_line(size = 1) + geom_point() + 
     geom_vline(xintercept = as.numeric(as.Date("2020-02-01", "%Y-%m-%d")), colour = "gray48", linetype = "longdash") + 
     annotate(x=as.Date("2020-02-01"),y=+Inf,label="Wave 1",vjust=1, size = 3, geom="label") +
@@ -107,15 +111,12 @@ measure_covid_age <- as_tibble(cbind(measure_covid_age,((binconf(measure_covid_a
 measure_noncovid_age <- as_tibble(cbind(measure_noncovid_age,((binconf(measure_noncovid_age$ons_noncovid_death, measure_noncovid_age$registered_at_start, alpha = 0.05, method = "wilson")))))
 
 # Set rows with < 5 events to NA ----------------------------------------
-# removing events, percentage and CIs 
-
 measure_any_age <- measure_any_age %>% 
   mutate(value = ifelse(ons_any_death <= 5, NA, value), 
          ons_any_death = ifelse(ons_any_death <= 5, NA, ons_any_death), 
-         PointEst = ifelse(ons_any_death <= 5, NA, PointEst), 
-         Lower = ifelse(ons_any_death <= 5, NA, Lower), 
-         Upper = ifelse(ons_any_death <= 5, NA, Upper), 
-         ) 
+         PointEst = ifelse(ons_any_death <= 5, NA, PointEst),
+         Lower = ifelse(ons_any_death <= 5, NA, Lower),
+         Upper = ifelse(ons_any_death <= 5, NA, Upper))  
 
 measure_covid_age <- measure_covid_age %>% 
   mutate(value = ifelse(ons_covid_death <= 5, NA, value), 
@@ -127,9 +128,9 @@ measure_covid_age <- measure_covid_age %>%
 measure_noncovid_age <- measure_noncovid_age %>% 
   mutate(value = ifelse(ons_noncovid_death <= 5, NA, value), 
          ons_noncovid_death = ifelse(ons_noncovid_death <= 5, NA, ons_noncovid_death), 
-         PointEst = ifelse(ons_noncovid_death <= 5, NA, PointEst),          
+         PointEst = ifelse(ons_noncovid_death <= 5, NA, PointEst),
          Lower = ifelse(ons_noncovid_death <= 5, NA, Lower),
-         Upper = ifelse(ons_noncovid_death <= 5, NA, Upper)) 
+         Upper = ifelse(ons_noncovid_death <= 5, NA, Upper))  
 
 # Tables ------------------------------------------------------------------
 
